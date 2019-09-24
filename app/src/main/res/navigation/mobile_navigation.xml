@@ -7,19 +7,25 @@
 
     <fragment
         android:id="@+id/navigation_gallery"
-        android:name="com.yatochk.secure.app.ui.home.HomeFragment"
+        android:name="com.yatochk.secure.app.ui.home.GalleryFragment"
         android:label="@string/title_gallery"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/navigation_contact"
-        android:name="com.yatochk.secure.app.ui.dashboard.DashboardFragment"
+        android:name="com.yatochk.secure.app.ui.dashboard.ContactFragment"
         android:label="@string/title_contacts"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_contact" />
+
+    <fragment
+        android:id="@+id/navigation_notes"
+        android:name="com.yatochk.secure.app.ui.notifications.NotesFragment"
+        android:label="@string/title_notes"
+        tools:layout="@layout/fragment_notes" />
 
     <fragment
         android:id="@+id/navigation_internet"
-        android:name="com.yatochk.secure.app.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notes"
-        tools:layout="@layout/fragment_notifications" />
+        android:name="com.yatochk.secure.app.ui.browser.BrowserFragment"
+        android:label="@string/title_browser"
+        tools:layout="@layout/fragment_browser" />
 </navigation>
