@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_gallery,
                 R.id.navigation_contact,
                 R.id.navigation_notes,
-                R.id.navigation_notes
+                R.id.navigation_internet
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
