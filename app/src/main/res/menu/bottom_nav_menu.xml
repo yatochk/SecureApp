@@ -17,7 +17,7 @@
         android:title="@string/title_notes" />
 
     <item
-        android:id="@+id/navigation_notes"
+        android:id="@+id/navigation_internet"
         android:icon="@drawable/ic_internet"
         android:title="@string/title_browser" />
 

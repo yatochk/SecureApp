@@ -6,7 +6,9 @@ import com.yatochk.secure.app.dagger.components.DaggerAppComponent
 
 class SecureApplication : Application() {
 
-    lateinit var appComponent: AppComponent
+    companion object {
+        lateinit var appComponent: AppComponent
+    }
 
     override fun onCreate() {
         super.onCreate()
