@@ -1,4 +1,4 @@
-package com.yatochk.secure.app.ui.dashboard
+package com.yatochk.secure.app.ui.contact
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
