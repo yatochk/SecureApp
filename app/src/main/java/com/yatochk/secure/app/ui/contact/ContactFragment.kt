@@ -1,4 +1,4 @@
-package com.yatochk.secure.app.ui.dashboard
+package com.yatochk.secure.app.ui.contact
 
 import android.os.Bundle
 import android.view.LayoutInflater

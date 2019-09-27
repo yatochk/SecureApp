@@ -1,4 +1,4 @@
-package com.yatochk.secure.app.ui.home
+package com.yatochk.secure.app.ui.gallery
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

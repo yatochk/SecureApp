@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_gallery"
-        android:name="com.yatochk.secure.app.ui.home.GalleryFragment"
+        android:name="com.yatochk.secure.app.ui.gallery.GalleryFragment"
         android:label="@string/title_gallery"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/navigation_contact"
-        android:name="com.yatochk.secure.app.ui.dashboard.ContactFragment"
+        android:name="com.yatochk.secure.app.ui.contact.ContactFragment"
         android:label="@string/title_contacts"
         tools:layout="@layout/fragment_contact" />
 
     <fragment
         android:id="@+id/navigation_notes"
-        android:name="com.yatochk.secure.app.ui.notifications.NotesFragment"
+        android:name="com.yatochk.secure.app.ui.notes.NotesFragment"
         android:label="@string/title_notes"
         tools:layout="@layout/fragment_notes" />
 

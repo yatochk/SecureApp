@@ -5,7 +5,7 @@ import com.yatochk.secure.app.dagger.ViewModelFactory
 import com.yatochk.secure.app.dagger.modules.AppModule
 import com.yatochk.secure.app.dagger.modules.ViewModelModule
 import com.yatochk.secure.app.ui.browser.BrowserFragment
-import com.yatochk.secure.app.ui.home.GalleryFragment
+import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import dagger.Component
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package com.yatochk.secure.app.ui.notifications
+package com.yatochk.secure.app.ui.notes
 
 import android.os.Bundle
 import android.view.LayoutInflater
