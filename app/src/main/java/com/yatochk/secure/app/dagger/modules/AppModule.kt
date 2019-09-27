@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.yatochk.secure.app.model.database.SecureDatabase
 import com.yatochk.secure.app.model.database.dao.ContactDao
+import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.database.dao.NotesDao
 import dagger.Module
 import dagger.Provides
@@ -38,5 +39,10 @@ class AppModule(private val app: Application) {
     @Provides
     fun provideNotesDao(database: SecureDatabase): NotesDao =
         database.notesDao
+
+    @Singleton
+    @Provides
+    fun provideImagesDao(database: SecureDatabase): ImagesDao =
+        database.imagesDao
 
 }
