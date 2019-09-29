@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Image(
     @PrimaryKey
-    var path: String
+    var path: String,
+    var album: String
 )

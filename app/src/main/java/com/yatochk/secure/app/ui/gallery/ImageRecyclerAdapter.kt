@@ -5,20 +5,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yatochk.secure.app.R
-import kotlinx.android.synthetic.main.gallery_item.view.*
+import kotlinx.android.synthetic.main.image_item.view.*
 import java.io.File
 
-class GalleryRecyclerAdapter :
-    RecyclerView.Adapter<ViewHolder>() {
+class ImageRecyclerAdapter :
+    RecyclerView.Adapter<ImageViewHolder>() {
 
     private val items = ArrayList<File>()
 
     override fun getItemCount(): Int = items.size
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder = ViewHolder(p0)
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ImageViewHolder = ImageViewHolder(p0)
 
-    override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        p0.bind(items[p1], object : ViewHolder.ItemClickListener {
+    override fun onBindViewHolder(p0: ImageViewHolder, p1: Int) {
+        p0.bind(items[p1], object : ImageViewHolder.ItemClickListener {
             override fun longClick() {
             }
 
@@ -34,9 +34,9 @@ class GalleryRecyclerAdapter :
     }
 }
 
-class ViewHolder(parent: ViewGroup) :
+class ImageViewHolder(parent: ViewGroup) :
     RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.gallery_item, parent, false)
+        LayoutInflater.from(parent.context).inflate(R.layout.image_item, parent, false)
     ) {
 
     private val image = itemView.gallery_image
