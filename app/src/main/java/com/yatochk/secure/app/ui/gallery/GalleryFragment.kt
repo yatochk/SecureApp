@@ -25,7 +25,7 @@ class GalleryFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = AlbumRecyclerAdapter()
-        recycler_gallery.layoutManager = FlexboxLayoutManager(activity)
+        recycler_gallery.layoutManager = FlexboxLayoutManager(activity!!)
         recycler_gallery.adapter = adapter
         observers()
     }

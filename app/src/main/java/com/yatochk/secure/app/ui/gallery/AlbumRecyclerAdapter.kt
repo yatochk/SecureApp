@@ -27,7 +27,7 @@ class DiffAlbum : DiffUtil.ItemCallback<Album>() {
         oldItem.name == newItem.name
 
     override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean =
-        oldItem.name == newItem.name && oldItem.preview == newItem.preview
+        oldItem.name == newItem.name && oldItem.preview.rowBytes == newItem.preview.rowBytes
 
 }
 
