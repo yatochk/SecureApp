@@ -10,14 +10,20 @@ import com.yatochk.secure.app.R
 import com.yatochk.secure.app.model.images.Album
 import kotlinx.android.synthetic.main.album_item.view.*
 
-class AlbumRecyclerAdapter :
-    ListAdapter<Album, AlbumViewHolder>(DiffAlbum()) {
+class AlbumRecyclerAdapter(
+    private val itemClickListener: (String) -> Unit
+) : ListAdapter<Album, AlbumViewHolder>(DiffAlbum()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder =
         AlbumViewHolder(parent)
 
-    override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) =
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
+        getItem(position).also {
+            holder.bind(it) {
+                itemClickListener(it.name)
+            }
+        }
+    }
 
 }
 
@@ -38,7 +44,8 @@ class AlbumViewHolder(parent: ViewGroup) :
     private val textName = itemView.text_album_name
     private val imageView = itemView.gallery_album
 
-    fun bind(album: Album) {
+    fun bind(album: Album, clickListener: () -> Unit) {
+        itemView.setOnClickListener { clickListener() }
         textName.text = album.name
         Glide.with(itemView.context)
             .load(album.preview)

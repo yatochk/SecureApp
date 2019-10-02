@@ -2,6 +2,7 @@ package com.yatochk.secure.app.dagger.modules
 
 import androidx.lifecycle.ViewModel
 import com.yatochk.secure.app.dagger.ViewModelKey
+import com.yatochk.secure.app.ui.albums.AlbumViewModel
 import com.yatochk.secure.app.ui.browser.BrowserViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryViewModel
 import com.yatochk.secure.app.ui.main.MainViewModel
@@ -26,5 +27,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     internal abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AlbumViewModel::class)
+    internal abstract fun albumViewModel(viewModel: AlbumViewModel): ViewModel
 
 }
