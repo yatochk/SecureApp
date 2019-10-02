@@ -10,8 +10,10 @@ class ImageSecureController @Inject constructor(
     private val cypher: Cypher
 ) {
 
-    fun encryptImage(bytes: ByteArray, path: String): File {
-        return File(path).apply {
+    fun encryptImage(bytes: ByteArray, path: String, name: String): File {
+        val directory = File(path)
+        directory.mkdirs()
+        return File(path + name).apply {
             writeBytes(cypher.encrypt(bytes))
         }
     }

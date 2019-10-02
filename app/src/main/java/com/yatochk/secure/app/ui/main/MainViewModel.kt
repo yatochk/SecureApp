@@ -47,13 +47,14 @@ class MainViewModel @Inject constructor(
                 val photoName = "Photo_${Date().toTimeString()}"
                 val buffer = ByteArrayOutputStream(photo.width * photo.height)
                 val path = Environment.getExternalStorageDirectory().absolutePath +
-                        SECURE_FOLBER + photoName
+                        SECURE_FOLBER
                 photo.compress(CompressFormat.PNG, 100, buffer)
                 imageSecureController.encryptImage(
                     buffer.toByteArray(),
-                    path
+                    path,
+                    photoName
                 )
-                path
+                path + photoName
             }
             .map {
                 imagesDao.addImage(
@@ -66,7 +67,10 @@ class MainViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { mutableShowSuccess.value = SuccessType.ADD_PHOTO },
-                { mutableShowError.value = ErrorType.ADD_PHOTO }
+                {
+                    Log.e("Error on securing", it.localizedMessage, it)
+                    mutableShowError.value = ErrorType.ADD_PHOTO
+                }
             )
         )
     }
