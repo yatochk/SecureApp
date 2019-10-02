@@ -18,9 +18,10 @@ import javax.crypto.CipherOutputStream
 import javax.crypto.IllegalBlockSizeException
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
+import javax.inject.Singleton
 import javax.security.auth.x500.X500Principal
 
-
+@Singleton
 class Cypher @Inject constructor(private val context: Context) {
 
     companion object {
@@ -40,7 +41,8 @@ class Cypher @Inject constructor(private val context: Context) {
     fun encrypt(bytes: ByteArray): ByteArray {
         val c = Cipher.getInstance(AES_MODE, "BC")
         c.init(Cipher.ENCRYPT_MODE, secretKey)
-        return Base64.encode(bytes, Base64.DEFAULT)
+        val encryptedBytes = c.doFinal(bytes)
+        return Base64.encode(encryptedBytes, Base64.DEFAULT)
     }
 
     @Throws(IllegalBlockSizeException::class)

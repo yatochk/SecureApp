@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.model.images.Album
 import kotlinx.android.synthetic.main.album_item.view.*
-import kotlinx.android.synthetic.main.image_item.view.*
 
 class AlbumRecyclerAdapter :
     ListAdapter<Album, AlbumViewHolder>(DiffAlbum()) {
@@ -37,7 +36,7 @@ class AlbumViewHolder(parent: ViewGroup) :
     ) {
 
     private val textName = itemView.text_album_name
-    private val imageView = itemView.gallery_image
+    private val imageView = itemView.gallery_album
 
     fun bind(album: Album) {
         textName.text = album.name

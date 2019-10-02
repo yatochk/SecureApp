@@ -14,12 +14,12 @@ interface ImagesDao {
     fun getImages(albumName: String): LiveData<List<Image>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addImage(contact: Image)
+    fun addImage(image: Image)
 
     @Update
-    fun updateImage(contact: Image)
+    fun updateImage(image: Image)
 
     @Delete
-    fun deleteImage(contact: Image)
+    fun deleteImage(image: Image)
 
 }
