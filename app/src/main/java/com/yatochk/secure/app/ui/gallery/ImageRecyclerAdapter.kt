@@ -1,36 +1,29 @@
 package com.yatochk.secure.app.ui.gallery
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yatochk.secure.app.R
+import com.yatochk.secure.app.model.images.Image
 import kotlinx.android.synthetic.main.image_item.view.*
-import java.io.File
 
-class ImageRecyclerAdapter :
-    RecyclerView.Adapter<ImageViewHolder>() {
-
-    private val items = ArrayList<File>()
-
-    override fun getItemCount(): Int = items.size
+class ImageRecyclerAdapter
+    : ListAdapter<Pair<Image, Bitmap>, ImageViewHolder>(BitmapDiffUtils()) {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ImageViewHolder = ImageViewHolder(p0)
 
     override fun onBindViewHolder(p0: ImageViewHolder, p1: Int) {
-        p0.bind(items[p1], object : ImageViewHolder.ItemClickListener {
+        p0.bind(getItem(p1), object : ImageViewHolder.ItemClickListener {
             override fun longClick() {
             }
 
             override fun click() {
             }
         })
-    }
-
-    fun updateImage(videos: List<File>) {
-        items.clear()
-        items.addAll(videos)
-        notifyDataSetChanged()
     }
 }
 
@@ -41,10 +34,10 @@ class ImageViewHolder(parent: ViewGroup) :
 
     private val image = itemView.gallery_image
 
-    fun bind(file: File, selectedListener: ItemClickListener) {
+    fun bind(pair: Pair<Image, Bitmap>, selectedListener: ItemClickListener) {
         with(itemView) {
             Glide.with(context)
-                .load(file)
+                .load(pair.second)
                 .into(image)
 
             setOnClickListener {
@@ -61,4 +54,19 @@ class ImageViewHolder(parent: ViewGroup) :
         fun click()
         fun longClick()
     }
+}
+
+class BitmapDiffUtils : DiffUtil.ItemCallback<Pair<Image, Bitmap>>() {
+    override fun areItemsTheSame(
+        oldItem: Pair<Image, Bitmap>,
+        newItem: Pair<Image, Bitmap>
+    ): Boolean =
+        oldItem.first == newItem.first
+
+    override fun areContentsTheSame(
+        oldItem: Pair<Image, Bitmap>,
+        newItem: Pair<Image, Bitmap>
+    ): Boolean =
+        oldItem.second.rowBytes == newItem.second.rowBytes
+
 }
