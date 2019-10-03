@@ -3,6 +3,7 @@ package com.yatochk.secure.app.dagger
 import android.app.Application
 import com.yatochk.secure.app.dagger.components.AppComponent
 import com.yatochk.secure.app.dagger.components.DaggerAppComponent
+import com.yatochk.secure.app.dagger.modules.AppModule
 
 class SecureApplication : Application() {
 
@@ -12,7 +13,9 @@ class SecureApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.builder().build()
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
     }
 
 }

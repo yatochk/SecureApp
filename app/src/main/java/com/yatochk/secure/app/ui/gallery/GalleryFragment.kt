@@ -16,7 +16,7 @@ class GalleryFragment : BaseFragment() {
 
     private val viewModel: GalleryViewModel by viewModels { viewModelFactory }
 
-    private lateinit var adapter: GalleryRecyclerAdapter
+    private lateinit var adapter: AlbumRecyclerAdapter
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -24,15 +24,15 @@ class GalleryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = GalleryRecyclerAdapter()
-        recycler_gallery.layoutManager = FlexboxLayoutManager(activity)
+        adapter = AlbumRecyclerAdapter()
+        recycler_gallery.layoutManager = FlexboxLayoutManager(activity!!)
         recycler_gallery.adapter = adapter
         observers()
     }
 
     private fun observers() {
-        viewModel.images.observe(this) {
-            adapter.updateImage(it)
+        viewModel.albums.observe(this) {
+            adapter.submitList(it)
         }
     }
 

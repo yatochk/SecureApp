@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.yatochk.secure.app.dagger.ViewModelKey
 import com.yatochk.secure.app.ui.browser.BrowserViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryViewModel
+import com.yatochk.secure.app.ui.main.MainViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -20,5 +21,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(BrowserViewModel::class)
     internal abstract fun browserViewModel(viewModel: BrowserViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    internal abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
 
 }

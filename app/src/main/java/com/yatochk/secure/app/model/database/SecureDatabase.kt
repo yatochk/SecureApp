@@ -5,13 +5,16 @@ import androidx.room.RoomDatabase
 import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.model.database.SecureDatabase.Companion.DATABASE_VERSION
 import com.yatochk.secure.app.model.database.dao.ContactDao
+import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.database.dao.NotesDao
+import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.notes.Note
 
 @Database(
     entities = [
         Contact::class,
-        Note::class
+        Note::class,
+        Image::class
     ],
     version = DATABASE_VERSION
 )
@@ -24,5 +27,6 @@ abstract class SecureDatabase : RoomDatabase() {
 
     abstract val contactDao: ContactDao
     abstract val notesDao: NotesDao
+    abstract val imagesDao: ImagesDao
 
 }
