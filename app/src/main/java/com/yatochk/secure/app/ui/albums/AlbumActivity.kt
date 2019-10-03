@@ -39,7 +39,9 @@ class AlbumActivity : BaseActivity() {
         recycler_album_photo.adapter = adapter
         intent.getStringExtra(ALBUM_NAME)!!.also {
             text_album_name.text = it
-            viewModel.setAlbum(it)
+            if (savedInstanceState == null) {
+                viewModel.initAlbum(it)
+            }
         }
         Handler().postDelayed({
             observers()

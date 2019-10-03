@@ -60,7 +60,7 @@ class AlbumViewModel @Inject constructor(
         )
     }
 
-    fun setAlbum(albumName: String) {
+    fun initAlbum(albumName: String) {
         mediatorImages.addSource(imagesDao.getImages(albumName)) { images ->
             decryptImage(images)
         }
