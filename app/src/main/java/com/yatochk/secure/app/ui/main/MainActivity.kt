@@ -91,6 +91,8 @@ class MainActivity : BaseActivity() {
             setOnClickListener {
                 viewModel.clickPhoto()
             }
+            colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+            colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
         }
     }
     private val galleryButton by lazy {
@@ -99,6 +101,8 @@ class MainActivity : BaseActivity() {
             setOnClickListener {
                 viewModel.clickGallery()
             }
+            colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+            colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
         }
     }
 
