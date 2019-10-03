@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.viewModels
-import com.google.android.flexbox.FlexboxLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseActivity
@@ -35,7 +35,7 @@ class AlbumActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album)
         adapter = ImageRecyclerAdapter()
-        recycler_album_photo.layoutManager = FlexboxLayoutManager(this)
+        recycler_album_photo.layoutManager = GridLayoutManager(this, 4)
         recycler_album_photo.adapter = adapter
         intent.getStringExtra(ALBUM_NAME)!!.also {
             text_album_name.text = it
