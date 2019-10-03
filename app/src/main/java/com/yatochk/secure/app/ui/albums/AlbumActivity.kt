@@ -51,6 +51,9 @@ class AlbumActivity : BaseActivity() {
             images.observe(this@AlbumActivity) {
                 adapter.submitList(it)
             }
+            showError.observe(this@AlbumActivity) {
+                //TODO
+            }
         }
     }
 

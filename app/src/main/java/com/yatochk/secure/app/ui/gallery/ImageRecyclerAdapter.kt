@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yatochk.secure.app.R
+import com.yatochk.secure.app.model.images.Image
 import kotlinx.android.synthetic.main.image_item.view.*
 
 class ImageRecyclerAdapter
-    : ListAdapter<Bitmap, ImageViewHolder>(BitmapDiffUtils()) {
+    : ListAdapter<Pair<Image, Bitmap>, ImageViewHolder>(BitmapDiffUtils()) {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ImageViewHolder = ImageViewHolder(p0)
 
@@ -33,10 +34,10 @@ class ImageViewHolder(parent: ViewGroup) :
 
     private val image = itemView.gallery_image
 
-    fun bind(bitmap: Bitmap, selectedListener: ItemClickListener) {
+    fun bind(pair: Pair<Image, Bitmap>, selectedListener: ItemClickListener) {
         with(itemView) {
             Glide.with(context)
-                .load(bitmap)
+                .load(pair.second)
                 .into(image)
 
             setOnClickListener {
@@ -55,11 +56,17 @@ class ImageViewHolder(parent: ViewGroup) :
     }
 }
 
-class BitmapDiffUtils : DiffUtil.ItemCallback<Bitmap>() {
-    override fun areItemsTheSame(oldItem: Bitmap, newItem: Bitmap): Boolean =
-        oldItem.rowBytes == newItem.rowBytes
+class BitmapDiffUtils : DiffUtil.ItemCallback<Pair<Image, Bitmap>>() {
+    override fun areItemsTheSame(
+        oldItem: Pair<Image, Bitmap>,
+        newItem: Pair<Image, Bitmap>
+    ): Boolean =
+        oldItem.first == newItem.first
 
-    override fun areContentsTheSame(oldItem: Bitmap, newItem: Bitmap): Boolean =
-        oldItem.rowBytes == newItem.rowBytes
+    override fun areContentsTheSame(
+        oldItem: Pair<Image, Bitmap>,
+        newItem: Pair<Image, Bitmap>
+    ): Boolean =
+        oldItem.second.rowBytes == newItem.second.rowBytes
 
 }
