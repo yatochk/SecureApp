@@ -11,24 +11,32 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.fragment.app.Fragment
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseActivity
+import com.yatochk.secure.app.ui.browser.BrowserFragment
+import com.yatochk.secure.app.ui.contact.ContactFragment
+import com.yatochk.secure.app.ui.gallery.GalleryFragment
+import com.yatochk.secure.app.ui.notes.NotesFragment
 import com.yatochk.secure.app.utils.observe
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : BaseActivity() {
 
-    private val viewModel: MainViewModel by viewModels { viewModelFactory }
-
     companion object {
         private const val TAKE_PHOTO = 0
         private const val PICK_IMAGE = 1
     }
+
+    private val viewModel: MainViewModel by viewModels { viewModelFactory }
+    private val galleryFragment by lazy { GalleryFragment() }
+    private val contactFragment by lazy { ContactFragment() }
+    private val notesFragment by lazy { NotesFragment() }
+
+    private val browserFragment by lazy { BrowserFragment() }
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -37,28 +45,39 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val navController = findNavController(R.id.nav_host_fragment)
-        nav_view.setupWithNavController(navController)
+        goToFragment(galleryFragment)
         galleryFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
             floating_menu.isVisible = it.itemId != R.id.navigation_internet
-            when (it.itemId) {
-                R.id.navigation_gallery -> {
-                    true
+            goToFragment(
+                when (it.itemId) {
+                    R.id.navigation_gallery -> {
+                        galleryFragment
+                    }
+                    R.id.navigation_contact -> {
+                        contactFragment
+                    }
+                    R.id.navigation_notes -> {
+                        notesFragment
+                    }
+                    R.id.navigation_internet -> {
+                        browserFragment
+                    }
+                    else -> throw IllegalStateException("Not implement FAButton for ${it.itemId}")
                 }
-                R.id.navigation_contact -> {
-                    true
-                }
-                R.id.navigation_notes -> {
-                    true
-                }
-                R.id.navigation_internet -> {
-                    true
-                }
-                else -> throw IllegalStateException("Not implement FAButton for ${it.itemId}")
-            }
+            )
+            true
         }
         initObservers()
+    }
+
+    private fun goToFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.container_fragment,
+                fragment
+            )
+            .commit()
     }
 
     override fun onResume() {

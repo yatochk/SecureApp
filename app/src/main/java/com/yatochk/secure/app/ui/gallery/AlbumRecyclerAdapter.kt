@@ -1,6 +1,7 @@
 package com.yatochk.secure.app.ui.gallery
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -11,16 +12,16 @@ import com.yatochk.secure.app.model.images.Album
 import kotlinx.android.synthetic.main.album_item.view.*
 
 class AlbumRecyclerAdapter(
-    private val itemClickListener: (String) -> Unit
+    private val itemClickListener: (String, View) -> Unit
 ) : ListAdapter<Album, AlbumViewHolder>(DiffAlbum()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder =
         AlbumViewHolder(parent)
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
-        getItem(position).also {
-            holder.bind(it) {
-                itemClickListener(it.name)
+        getItem(position).also { album ->
+            holder.bind(album) {
+                itemClickListener(album.name, it)
             }
         }
     }
@@ -44,8 +45,8 @@ class AlbumViewHolder(parent: ViewGroup) :
     private val textName = itemView.text_album_name
     private val imageView = itemView.gallery_album
 
-    fun bind(album: Album, clickListener: () -> Unit) {
-        itemView.setOnClickListener { clickListener() }
+    fun bind(album: Album, clickListener: (View) -> Unit) {
+        itemView.setOnClickListener { clickListener(textName) }
         textName.text = album.name
         Glide.with(itemView.context)
             .load(album.preview)

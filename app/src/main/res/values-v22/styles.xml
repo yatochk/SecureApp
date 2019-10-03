@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="android:statusBarColor">@color/statusBarColor</item>
+    </style>
+
+    <style name="Theme.Gallery" parent="BaseActivity">
+        <item name="android:windowActivityTransitions">true</item>
+    </style>
+
+    <style name="AlbumActivity" parent="BaseActivity">
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/album_open
+        </item>
+
+        <item name="android:windowSharedElementExitTransition">
+            @transition/album_open
+        </item>
+    </style>
+
+</resources>
