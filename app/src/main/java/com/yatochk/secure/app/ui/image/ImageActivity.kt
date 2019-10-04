@@ -41,7 +41,7 @@ class ImageActivity : BaseActivity() {
         intent.getStringExtra(IMAGE_PATH)?.also {
             if (savedInstanceState == null) {
                 val decryptedBytes = imageSecureController.decryptImage(it)
-                image_content.setImageBitmap(
+                gallery_image.setImageBitmap(
                     BitmapFactory.decodeByteArray(
                         decryptedBytes,
                         0,

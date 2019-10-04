@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.database.dao.ImagesDao
@@ -32,7 +33,14 @@ class AlbumViewModel @Inject constructor(
     private val mutableOpenImage = LiveEvent<Pair<String, ImageView>>()
     val openImage: LiveData<Pair<String, ImageView>> = mutableOpenImage
 
+    private val mutableStartObserving = MutableLiveData<Void>()
+    val startObserving: LiveData<Void> = mutableStartObserving
+
     private val compositeDisposable = CompositeDisposable()
+
+    fun screenOpened() {
+        mutableStartObserving.value = null
+    }
 
     private fun decryptImage(images: List<Image>) {
         compositeDisposable.add(

@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import androidx.activity.viewModels
+import androidx.core.transition.addListener
 import androidx.recyclerview.widget.GridLayoutManager
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
@@ -48,12 +48,19 @@ class AlbumActivity : BaseActivity() {
                 viewModel.initAlbum(it)
             }
         }
-        Handler().postDelayed({
-            observers()
-        }, 500) //TODO
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.sharedElementEnterTransition.addListener(onEnd = {
+                viewModel.screenOpened()
+            })
+        } else {
+            viewModel.screenOpened()
+        }
+        viewModel.startObserving.observe(this) {
+            startObservers()
+        }
     }
 
-    private fun observers() {
+    private fun startObservers() {
         with(viewModel) {
             images.observe(this@AlbumActivity) {
                 adapter.submitList(it)
@@ -63,7 +70,7 @@ class AlbumActivity : BaseActivity() {
                     ActivityOptions.makeSceneTransitionAnimation(
                         this@AlbumActivity,
                         it.second,
-                        getString(R.string.album_transition)
+                        getString(R.string.image_transition)
                     ).toBundle()
                 } else {
                     null
