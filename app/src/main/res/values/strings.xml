@@ -7,4 +7,5 @@
     <string name="title_browser">Internet</string>
 
     <string name="album_transition" translatable="false">email_transition</string>
+    <string name="image_transition" translatable="false">image_transition</string>
 </resources>

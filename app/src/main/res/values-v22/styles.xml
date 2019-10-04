@@ -25,4 +25,16 @@
         </item>
     </style>
 
+    <style name="ImageActivity" parent="BaseActivity">
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/image_open
+        </item>
+
+        <item name="android:windowSharedElementExitTransition">
+            @transition/image_open
+        </item>
+    </style>
+
 </resources>

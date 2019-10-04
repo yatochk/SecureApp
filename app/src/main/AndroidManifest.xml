@@ -29,6 +29,9 @@
         <activity
             android:name=".ui.albums.AlbumActivity"
             android:theme="@style/AlbumActivity" />
+        <activity
+            android:name=".ui.image.ImageActivity"
+            android:theme="@style/ImageActivity" />
     </application>
 
 </manifest>

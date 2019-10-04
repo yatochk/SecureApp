@@ -3,6 +3,7 @@ package com.yatochk.secure.app.ui.albums
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,9 @@ class AlbumViewModel @Inject constructor(
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
 
+    private val mutableOpenImage = LiveEvent<Pair<String, ImageView>>()
+    val openImage: LiveData<Pair<String, ImageView>> = mutableOpenImage
+
     private val compositeDisposable = CompositeDisposable()
 
     private fun decryptImage(images: List<Image>) {
@@ -35,7 +39,7 @@ class AlbumViewModel @Inject constructor(
             Observable.fromIterable(images)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    val decryptedBytes = imageSecureController.decryptImage(it)
+                    val decryptedBytes = imageSecureController.decryptImage(it.path)
                     val bitmap = BitmapFactory.decodeByteArray(
                         decryptedBytes,
                         0,
@@ -64,6 +68,10 @@ class AlbumViewModel @Inject constructor(
         mediatorImages.addSource(imagesDao.getImages(albumName)) { images ->
             decryptImage(images)
         }
+    }
+
+    fun clickImage(path: String, imageView: ImageView) {
+        mutableOpenImage.value = Pair(path, imageView)
     }
 
     override fun onCleared() {

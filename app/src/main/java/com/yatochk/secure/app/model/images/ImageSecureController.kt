@@ -28,8 +28,8 @@ class ImageSecureController @Inject constructor(
         }
     }
 
-    fun decryptImage(image: Image): ByteArray {
-        val imageFile = File(image.path)
+    fun decryptImage(path: String): ByteArray {
+        val imageFile = File(path)
         require(imageFile.exists()) { "this file is not exist" }
         val imageBytes = imageFile.readBytes()
         return cypher.decrypt(imageBytes)

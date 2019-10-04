@@ -13,6 +13,9 @@ interface ImagesDao {
     @Query("SELECT * FROM Image WHERE album = :albumName")
     fun getImages(albumName: String): LiveData<List<Image>>
 
+    @Query("SELECT * FROM Image WHERE path = :path")
+    fun getImage(path: String): LiveData<Image>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addImage(image: Image)
 

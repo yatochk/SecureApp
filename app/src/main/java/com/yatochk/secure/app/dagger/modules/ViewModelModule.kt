@@ -5,6 +5,7 @@ import com.yatochk.secure.app.dagger.ViewModelKey
 import com.yatochk.secure.app.ui.albums.AlbumViewModel
 import com.yatochk.secure.app.ui.browser.BrowserViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryViewModel
+import com.yatochk.secure.app.ui.image.ImageVIewModel
 import com.yatochk.secure.app.ui.main.MainViewModel
 import dagger.Binds
 import dagger.Module
@@ -32,5 +33,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AlbumViewModel::class)
     internal abstract fun albumViewModel(viewModel: AlbumViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ImageVIewModel::class)
+    internal abstract fun imageVIewModel(viewModel: ImageVIewModel): ViewModel
 
 }

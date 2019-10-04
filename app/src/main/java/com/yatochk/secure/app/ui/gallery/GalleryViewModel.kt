@@ -22,7 +22,7 @@ class GalleryViewModel @Inject constructor(
     val albums: LiveData<List<Album>> = imagesDao.getImages().map { images ->
         images.map { it.album }.toSet().map { name ->
             val imageBytes = imageSecureController.decryptImage(
-                images.last { it.album == name }
+                images.last { it.album == name }.path
             )
             Album(
                 name,
