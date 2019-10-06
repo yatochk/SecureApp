@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(
                 val buffer = ByteArrayOutputStream(photo.width * photo.height)
                 val path = Environment.getExternalStorageDirectory().absolutePath +
                         SECURE_FOLBER
-                photo.compress(CompressFormat.PNG, 100, buffer)
+                photo.compress(CompressFormat.JPEG, 100, buffer)
                 imageSecureController.encryptImage(
                     buffer.toByteArray(),
                     path,

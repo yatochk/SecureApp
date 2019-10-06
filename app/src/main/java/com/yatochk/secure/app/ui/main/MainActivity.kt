@@ -21,6 +21,7 @@ import com.yatochk.secure.app.ui.contact.ContactFragment
 import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import com.yatochk.secure.app.ui.notes.NotesFragment
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -127,26 +128,22 @@ class MainActivity : BaseActivity() {
             }
 
             showError.observe(this@MainActivity) {
-                when (it) {
-                    ErrorType.ADD_IMAGE -> {
-                        //TODO
+                showErrorToast(
+                    this@MainActivity,
+                    when (it) {
+                        ErrorType.ADD_PHOTO -> {
+                            getString(R.string.error_photo)
+                        }
+                        ErrorType.ADD_IMAGE -> {
+                            getString(R.string.error_gallery)
+                        }
+                        ErrorType.ENCRYPT_IMAGE -> {
+                            getString(R.string.error_encrypt)
+                        }
                     }
-                    ErrorType.ADD_PHOTO -> {
-                        //TODO
-                    }
-                }
+                )
             }
 
-            showSuccess.observe(this@MainActivity) {
-                when (it) {
-                    SuccessType.ADD_PHOTO -> {
-                        //TODO
-                    }
-                    SuccessType.ADD_IMAGE -> {
-                        //TODO
-                    }
-                }
-            }
         }
     }
 
