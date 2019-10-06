@@ -2,7 +2,6 @@ package com.yatochk.secure.app.ui.image
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
@@ -40,14 +39,7 @@ class ImageActivity : BaseActivity() {
         setContentView(R.layout.activity_image)
         intent.getStringExtra(IMAGE_PATH)?.also {
             if (savedInstanceState == null) {
-                val decryptedBytes = imageSecureController.decryptImage(it)
-                gallery_image.setImageBitmap(
-                    BitmapFactory.decodeByteArray(
-                        decryptedBytes,
-                        0,
-                        decryptedBytes.size
-                    )
-                )
+                viewModel.initImagePath(it)
             }
         }
         observers()
@@ -56,6 +48,7 @@ class ImageActivity : BaseActivity() {
     private fun observers() {
         with(viewModel) {
             image.observe(this@ImageActivity) {
+                gallery_image.setImageBitmap(it)
             }
         }
     }
