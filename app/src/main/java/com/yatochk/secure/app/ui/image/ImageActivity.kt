@@ -42,6 +42,15 @@ class ImageActivity : BaseActivity() {
                 viewModel.initImagePath(it)
             }
         }
+        button_image_delete.setOnClickListener {
+            viewModel.onDelete()
+        }
+        button_image_rename.setOnClickListener {
+            viewModel.onRename()
+        }
+        button_image_upload.setOnClickListener {
+            viewModel.onToGallery()
+        }
         observers()
     }
 
@@ -50,7 +59,15 @@ class ImageActivity : BaseActivity() {
             image.observe(this@ImageActivity) {
                 gallery_image.setImageBitmap(it)
             }
+            closeWithDelete.observe(this@ImageActivity) {
+                deleteAnimation()
+                finish()
+            }
         }
+    }
+
+    private fun deleteAnimation() {
+
     }
 
 }
