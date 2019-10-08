@@ -30,8 +30,8 @@ class AlbumViewModel @Inject constructor(
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
 
-    private val mutableOpenImage = LiveEvent<Pair<String, ImageView>>()
-    val openImage: LiveData<Pair<String, ImageView>> = mutableOpenImage
+    private val mutableOpenImage = LiveEvent<Pair<Image, ImageView>>()
+    val openImage: LiveData<Pair<Image, ImageView>> = mutableOpenImage
 
     private val mutableStartObserving = MutableLiveData<Void>()
     val startObserving: LiveData<Void> = mutableStartObserving
@@ -42,7 +42,8 @@ class AlbumViewModel @Inject constructor(
         mutableStartObserving.value = null
     }
 
-    private fun decryptImage(images: List<Image>) {
+    private fun decryptImages(images: List<Image>) {
+        mediatorImages.value = emptyList()
         compositeDisposable.add(
             Observable.fromIterable(images)
                 .subscribeOn(Schedulers.io())
@@ -74,12 +75,12 @@ class AlbumViewModel @Inject constructor(
 
     fun initAlbum(albumName: String) {
         mediatorImages.addSource(imagesDao.getImages(albumName)) { images ->
-            decryptImage(images)
+            decryptImages(images)
         }
     }
 
-    fun clickImage(path: String, imageView: ImageView) {
-        mutableOpenImage.value = Pair(path, imageView)
+    fun clickImage(image: Image, imageView: ImageView) {
+        mutableOpenImage.value = Pair(image, imageView)
     }
 
     override fun onCleared() {

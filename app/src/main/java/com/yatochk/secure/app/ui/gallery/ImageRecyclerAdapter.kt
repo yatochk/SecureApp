@@ -13,7 +13,7 @@ import com.yatochk.secure.app.model.images.Image
 import kotlinx.android.synthetic.main.image_item.view.*
 
 class ImageRecyclerAdapter(
-    private val itemClickListener: (String, ImageView) -> Unit
+    private val itemClickListener: (Image, ImageView) -> Unit
 ) : ListAdapter<Pair<Image, Bitmap>, ImageViewHolder>(BitmapDiffUtils()) {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ImageViewHolder = ImageViewHolder(p0)
@@ -24,7 +24,7 @@ class ImageRecyclerAdapter(
             }
 
             override fun click(imageView: ImageView) {
-                itemClickListener(getItem(p1).first.path, imageView)
+                itemClickListener(getItem(p1).first, imageView)
             }
         })
     }

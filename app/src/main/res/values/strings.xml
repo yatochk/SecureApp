@@ -9,6 +9,7 @@
     <string name="error_photo">Error on take photo</string>
     <string name="error_gallery">Error on pick image</string>
     <string name="error_encrypt">Error on encrypting image</string>
+    <string name="error_delete">Error on removing image</string>
 
     <string name="album_transition" translatable="false">email_transition</string>
     <string name="image_transition" translatable="false">image_transition</string>

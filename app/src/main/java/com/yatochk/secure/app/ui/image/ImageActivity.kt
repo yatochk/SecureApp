@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
+import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.utils.observe
@@ -15,12 +16,12 @@ import javax.inject.Inject
 class ImageActivity : BaseActivity() {
 
     companion object {
+        private const val DURATION_END = 300L
+        private const val IMAGE = "opened_image"
 
-        private const val IMAGE_PATH = "opened_image"
-
-        fun intent(context: Context, path: String) =
+        fun intent(context: Context, image: Image) =
             Intent(context, ImageActivity::class.java).apply {
-                putExtra(IMAGE_PATH, path)
+                putExtra(IMAGE, image)
             }
 
     }
@@ -37,9 +38,9 @@ class ImageActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
-        intent.getStringExtra(IMAGE_PATH)?.also {
+        intent.getSerializableExtra(IMAGE)?.also {
             if (savedInstanceState == null) {
-                viewModel.initImagePath(it)
+                viewModel.initImage(it as Image)
             }
         }
         button_image_delete.setOnClickListener {
@@ -59,15 +60,35 @@ class ImageActivity : BaseActivity() {
             image.observe(this@ImageActivity) {
                 gallery_image.setImageBitmap(it)
             }
-            closeWithDelete.observe(this@ImageActivity) {
+            delete.observe(this@ImageActivity) {
                 deleteAnimation()
+            }
+            finish.observe(this@ImageActivity) {
                 finish()
             }
         }
     }
 
     private fun deleteAnimation() {
+        gallery_image.animate()
+            .alpha(0f)
+            .setDuration(DURATION_END)
+            .scaleX(0f)
+            .scaleY(0f)
+            .withEndAction {
+                viewModel.animationEnd()
+            }
+            .start()
 
+        image_deleted.animate()
+            .alpha(1f)
+            .setDuration(DURATION_END)
+            .start()
+
+        container_image_options.animate()
+            .alpha(0f)
+            .setDuration(DURATION_END)
+            .start()
     }
 
 }

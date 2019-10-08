@@ -37,8 +37,8 @@ class AlbumActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album)
-        adapter = ImageRecyclerAdapter { path, imageView ->
-            viewModel.clickImage(path, imageView)
+        adapter = ImageRecyclerAdapter { image, imageView ->
+            viewModel.clickImage(image, imageView)
         }
         recycler_album_photo.layoutManager = GridLayoutManager(this, 4)
         recycler_album_photo.adapter = adapter

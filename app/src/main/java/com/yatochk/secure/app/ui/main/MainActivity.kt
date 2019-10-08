@@ -140,6 +140,9 @@ class MainActivity : BaseActivity() {
                         ErrorType.ENCRYPT_IMAGE -> {
                             getString(R.string.error_encrypt)
                         }
+                        ErrorType.DELETE_IMAGE -> {
+                            getString(R.string.error_delete)
+                        }
                     }
                 )
             }

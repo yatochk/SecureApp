@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,21 +7,34 @@
     android:gravity="bottom"
     android:orientation="vertical">
 
+
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/gallery_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/image_menu_height"
+        android:layout_height="0dp"
         android:scaleType="centerInside"
         android:transitionName="@string/image_transition"
+        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@color/colorAccent"
         tools:targetApi="lollipop" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_deleted"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:alpha="0"
+        android:src="@drawable/ic_deleted"
+        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
+        android:id="@+id/container_image_options"
         android:layout_width="match_parent"
         android:layout_height="@dimen/image_menu_height"
         android:background="@color/navigationBackground"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Space
             android:layout_width="0dp"
@@ -63,4 +76,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
