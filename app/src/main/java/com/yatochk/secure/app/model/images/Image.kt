@@ -8,5 +8,6 @@ import java.io.Serializable
 data class Image(
     @PrimaryKey
     var path: String,
+    var oldPath: String,
     var album: String
 ) : Serializable

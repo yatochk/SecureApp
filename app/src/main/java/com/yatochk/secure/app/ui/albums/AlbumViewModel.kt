@@ -48,7 +48,7 @@ class AlbumViewModel @Inject constructor(
             Observable.fromIterable(images)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    val decryptedBytes = imageSecureController.decryptImage(it.path)
+                    val decryptedBytes = imageSecureController.decryptImageFromFile(it.path)
                     val bitmap = BitmapFactory.decodeByteArray(
                         decryptedBytes,
                         0,

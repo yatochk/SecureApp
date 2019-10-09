@@ -4,5 +4,6 @@ enum class ErrorType {
     ADD_PHOTO,
     ADD_IMAGE,
     ENCRYPT_IMAGE,
-    DELETE_IMAGE
+    DELETE_IMAGE,
+    TO_GALLERY
 }

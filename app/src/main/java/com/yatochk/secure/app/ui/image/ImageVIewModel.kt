@@ -14,6 +14,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 import javax.inject.Inject
 
 class ImageVIewModel @Inject constructor(
@@ -24,18 +25,27 @@ class ImageVIewModel @Inject constructor(
     private val compositeDisposable = CompositeDisposable()
 
     private lateinit var currentImage: Image
+
     private val mediatorImage = MutableLiveData<Bitmap>()
-
     val image: LiveData<Bitmap> = mediatorImage
+
     private val mutableDelete = LiveEvent<Void>()
-
     val delete: LiveData<Void> = mutableDelete
+
+    private val mutableToGallery = LiveEvent<Void>()
+    val toGallery: LiveData<Void> = mutableToGallery
+
+    private val mutableScanImage = LiveEvent<String>()
+    val scanImage: LiveData<String> = mutableScanImage
+
     private val mutableFinish = LiveEvent<Void>()
-
     val finish: LiveData<Void> = mutableFinish
-    private val mutableError = LiveEvent<ErrorType>()
 
+    private val mutableError = LiveEvent<ErrorType>()
     val error: LiveData<ErrorType> = mutableError
+
+    private val mutableOpenRename = MutableLiveData<Boolean>()
+    val openRename: LiveData<Boolean> = mutableOpenRename
 
     fun animationEnd() {
         mutableFinish.value = null
@@ -43,7 +53,7 @@ class ImageVIewModel @Inject constructor(
 
     fun initImage(image: Image) {
         currentImage = image
-        val decryptedBytes = imageSecureController.decryptImage(image.path)
+        val decryptedBytes = imageSecureController.decryptImageFromFile(image.path)
         mediatorImage.value = BitmapFactory.decodeByteArray(
             decryptedBytes,
             0,
@@ -71,12 +81,34 @@ class ImageVIewModel @Inject constructor(
         )
     }
 
-    fun onRename() {
+    fun clickRename() {
+
+    }
+
+    fun onRename(newName: String) {
 
     }
 
     fun onToGallery() {
-        mutableDelete.value = null
+        mutableToGallery.value = null
+        compositeDisposable.add(
+            Observable.just<Image>(currentImage)
+                .subscribeOn(Schedulers.io())
+                .map {
+                    val regularImage = imageSecureController.decryptImageFromFile(it.path)
+                    imagesRepository.deleteImage(it)
+                    File(it.oldPath).apply {
+                        writeBytes(regularImage)
+                    }
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { mutableScanImage.value = it.path },
+                    {
+                        mutableError.value = ErrorType.TO_GALLERY
+                    }
+                )
+        )
     }
 
     override fun onCleared() {

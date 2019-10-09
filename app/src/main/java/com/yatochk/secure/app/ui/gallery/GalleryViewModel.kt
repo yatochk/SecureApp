@@ -21,7 +21,7 @@ class GalleryViewModel @Inject constructor(
 
     val albums: LiveData<List<Album>> = imagesRepository.getImages().map { images ->
         images.map { it.album }.toSet().map { name ->
-            val imageBytes = imageSecureController.decryptImage(
+            val imageBytes = imageSecureController.decryptImageFromFile(
                 images.last { it.album == name }.path
             )
             Album(

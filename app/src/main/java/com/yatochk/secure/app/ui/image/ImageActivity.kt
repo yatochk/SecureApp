@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ImageActivity : BaseActivity() {
 
     companion object {
-        private const val DURATION_END = 300L
+        private const val DURATION_ANIMATION = 300L
         private const val IMAGE = "opened_image"
 
         fun intent(context: Context, image: Image) =
@@ -47,7 +47,7 @@ class ImageActivity : BaseActivity() {
             viewModel.onDelete()
         }
         button_image_rename.setOnClickListener {
-            viewModel.onRename()
+            viewModel.clickRename()
         }
         button_image_upload.setOnClickListener {
             viewModel.onToGallery()
@@ -63,16 +63,51 @@ class ImageActivity : BaseActivity() {
             delete.observe(this@ImageActivity) {
                 deleteAnimation()
             }
+            toGallery.observe(this@ImageActivity) {
+                toGalleryAnimation()
+            }
+            openRename.observe(this@ImageActivity) {
+                openRenameAnimation()
+            }
+            scanImage.observe(this@ImageActivity) {
+                scanMedia(it)
+            }
             finish.observe(this@ImageActivity) {
                 finish()
             }
         }
     }
 
+    private fun openRenameAnimation() {
+
+    }
+
+    private fun toGalleryAnimation() {
+        gallery_image.animate()
+            .alpha(0f)
+            .setDuration(DURATION_ANIMATION)
+            .scaleX(0f)
+            .scaleY(0f)
+            .withEndAction {
+                viewModel.animationEnd()
+            }
+            .start()
+
+        image_to_gallery.animate()
+            .alpha(1f)
+            .setDuration(DURATION_ANIMATION)
+            .start()
+
+        container_image_options.animate()
+            .alpha(0f)
+            .setDuration(DURATION_ANIMATION)
+            .start()
+    }
+
     private fun deleteAnimation() {
         gallery_image.animate()
             .alpha(0f)
-            .setDuration(DURATION_END)
+            .setDuration(DURATION_ANIMATION)
             .scaleX(0f)
             .scaleY(0f)
             .withEndAction {
@@ -82,12 +117,12 @@ class ImageActivity : BaseActivity() {
 
         image_deleted.animate()
             .alpha(1f)
-            .setDuration(DURATION_END)
+            .setDuration(DURATION_ANIMATION)
             .start()
 
         container_image_options.animate()
             .alpha(0f)
-            .setDuration(DURATION_END)
+            .setDuration(DURATION_ANIMATION)
             .start()
     }
 

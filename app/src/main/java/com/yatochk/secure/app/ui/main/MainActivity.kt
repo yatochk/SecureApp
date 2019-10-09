@@ -127,6 +127,10 @@ class MainActivity : BaseActivity() {
                 startActivityForResult(pickPhoto, PICK_IMAGE)
             }
 
+            scanImage.observe(this@MainActivity) {
+                scanMedia(it)
+            }
+
             showError.observe(this@MainActivity) {
                 showErrorToast(
                     this@MainActivity,
@@ -142,6 +146,9 @@ class MainActivity : BaseActivity() {
                         }
                         ErrorType.DELETE_IMAGE -> {
                             getString(R.string.error_delete)
+                        }
+                        ErrorType.TO_GALLERY -> {
+                            getString(R.string.error_gallery)
                         }
                     }
                 )

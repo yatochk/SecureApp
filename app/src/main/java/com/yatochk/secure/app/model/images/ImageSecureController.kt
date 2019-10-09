@@ -10,7 +10,7 @@ class ImageSecureController @Inject constructor(
     private val cypher: Cypher
 ) {
 
-    fun encryptImage(bytes: ByteArray, path: String, name: String): File {
+    fun encryptAndSaveImage(bytes: ByteArray, path: String, name: String): File {
         val directory = File(path)
         directory.mkdirs()
         return File(path + name).apply {
@@ -18,7 +18,7 @@ class ImageSecureController @Inject constructor(
         }
     }
 
-    fun encryptImage(path: String): File {
+    fun encryptAndSaveImage(path: String, newName: String): File {
         val imageFile = File(path)
         require(imageFile.exists()) { "this file is not exist" }
         val imageBytes = imageFile.readBytes()
@@ -28,7 +28,7 @@ class ImageSecureController @Inject constructor(
         }
     }
 
-    fun decryptImage(path: String): ByteArray {
+    fun decryptImageFromFile(path: String): ByteArray {
         val imageFile = File(path)
         require(imageFile.exists()) { "this file is not exist" }
         val imageBytes = imageFile.readBytes()
