@@ -30,6 +30,9 @@ class AlbumViewModel @Inject constructor(
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
 
+    private val mutableFinish = LiveEvent<Void>()
+    val finish: LiveData<Void> = mutableFinish
+
     private val mutableOpenImage = LiveEvent<Pair<Image, ImageView>>()
     val openImage: LiveData<Pair<Image, ImageView>> = mutableOpenImage
 
@@ -48,7 +51,7 @@ class AlbumViewModel @Inject constructor(
             Observable.fromIterable(images)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    val decryptedBytes = imageSecureController.decryptImageFromFile(it.path)
+                    val decryptedBytes = imageSecureController.decryptImageFromFile(it.securePath)
                     val bitmap = BitmapFactory.decodeByteArray(
                         decryptedBytes,
                         0,
@@ -75,7 +78,11 @@ class AlbumViewModel @Inject constructor(
 
     fun initAlbum(albumName: String) {
         mediatorImages.addSource(imagesDao.getImages(albumName)) { images ->
-            decryptImages(images)
+            if (images.isNullOrEmpty()) {
+                mutableFinish.value = null
+            } else {
+                decryptImages(images)
+            }
         }
     }
 

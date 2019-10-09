@@ -10,7 +10,7 @@ class ImagesRepository @Inject constructor(
 ) {
 
     fun deleteImage(image: Image) {
-        File(image.path).delete()
+        File(image.securePath).delete()
         imagesDao.deleteImage(image)
     }
 

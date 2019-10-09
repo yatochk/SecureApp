@@ -7,7 +7,7 @@ import java.io.Serializable
 @Entity
 data class Image(
     @PrimaryKey
-    var path: String,
-    var oldPath: String,
+    var securePath: String,
+    var regularPath: String,
     var album: String
 ) : Serializable

@@ -10,6 +10,7 @@ import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
+import com.yatochk.secure.app.utils.REGULAR_FOLBER
 import com.yatochk.secure.app.utils.SECURE_FOLBER
 import com.yatochk.secure.app.utils.toTimeString
 import io.reactivex.Observable
@@ -42,34 +43,38 @@ class MainViewModel @Inject constructor(
     val openGallery: LiveData<Void> = mutableOpenGallery
 
     fun receivedPhoto(photo: Bitmap) {
+        val securePath = Environment.getExternalStorageDirectory().absolutePath +
+                SECURE_FOLBER
+        val regularPath = Environment.getExternalStorageDirectory().absolutePath +
+                REGULAR_FOLBER
         compositeDisposable.add(Observable.just(1)
             .subscribeOn(Schedulers.io())
             .map {
-                val photoName = "Photo_${Date().toTimeString()}"
+                val photoName = "Photo_${Date().toTimeString()}.jpg"
                 val buffer = ByteArrayOutputStream(photo.width * photo.height)
-                val path = Environment.getExternalStorageDirectory().absolutePath +
-                        SECURE_FOLBER
                 photo.compress(CompressFormat.JPEG, 100, buffer)
                 imageSecureController.encryptAndSaveImage(
                     buffer.toByteArray(),
-                    path,
+                    securePath,
                     photoName
                 )
-                path + photoName
+                photoName
             }
-            .map {
+            .map { name ->
                 imagesDao.addImage(
                     Image(
-                        it,
-                        it,
+                        securePath + name,
+                        regularPath + name,
                         "main"
                     )
                 )
-                it
+                regularPath + name
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { mutableScanImage.value = it },
+                {
+                    Log.i(MainViewModel::class.java.name, "Photo encrypt and saved")
+                },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
                     mutableShowError.value = ErrorType.ADD_PHOTO
@@ -78,20 +83,20 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    fun receivedGalleryImage(path: String) {
+    fun receivedGalleryImage(regularPath: String) {
         compositeDisposable.add(Observable.just(1)
             .subscribeOn(Schedulers.io())
             .map {
-                val imageName = "Photo_${Date().toTimeString()}"
-                val newPath = Environment.getExternalStorageDirectory().absolutePath +
+                val imageName = regularPath.substring(regularPath.lastIndexOf("/") + 1)
+                val securePath = Environment.getExternalStorageDirectory().absolutePath +
                         SECURE_FOLBER
-                val imageFile = File(path)
+                val imageFile = File(regularPath)
                 require(imageFile.exists()) { "this file is not exist" }
                 val imageBytes = imageFile.readBytes()
                 imageFile.delete()
                 imageSecureController.encryptAndSaveImage(
                     imageBytes,
-                    newPath,
+                    securePath,
                     imageName
                 )
             }
@@ -99,11 +104,11 @@ class MainViewModel @Inject constructor(
                 imagesDao.addImage(
                     Image(
                         it.path,
-                        path,
+                        regularPath,
                         "main"
                     )
                 )
-                path
+                regularPath
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

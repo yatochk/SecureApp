@@ -53,7 +53,7 @@ class ImageVIewModel @Inject constructor(
 
     fun initImage(image: Image) {
         currentImage = image
-        val decryptedBytes = imageSecureController.decryptImageFromFile(image.path)
+        val decryptedBytes = imageSecureController.decryptImageFromFile(image.securePath)
         mediatorImage.value = BitmapFactory.decodeByteArray(
             decryptedBytes,
             0,
@@ -95,15 +95,20 @@ class ImageVIewModel @Inject constructor(
             Observable.just<Image>(currentImage)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    val regularImage = imageSecureController.decryptImageFromFile(it.path)
+                    val regularImage = imageSecureController.decryptImageFromFile(it.securePath)
+                    val imageFile = File(it.regularPath)
+                    val imageDirectory =
+                        File(it.regularPath.substring(0, it.regularPath.lastIndexOf("/")))
+                    imageDirectory.mkdirs()
+                    imageFile.writeBytes(regularImage)
                     imagesRepository.deleteImage(it)
-                    File(it.oldPath).apply {
-                        writeBytes(regularImage)
-                    }
+                    imageFile
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { mutableScanImage.value = it.path },
+                    {
+                        mutableScanImage.value = it.path
+                    },
                     {
                         mutableError.value = ErrorType.TO_GALLERY
                     }

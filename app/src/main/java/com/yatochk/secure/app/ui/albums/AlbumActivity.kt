@@ -77,6 +77,9 @@ class AlbumActivity : BaseActivity() {
                 }
                 startActivity(ImageActivity.intent(this@AlbumActivity, it.first), bundle)
             }
+            finish.observe(this@AlbumActivity) {
+                finish()
+            }
             showError.observe(this@AlbumActivity) {
                 //TODO
             }

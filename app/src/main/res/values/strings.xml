@@ -8,6 +8,7 @@
 
     <string name="error_photo">Error on take photo</string>
     <string name="error_gallery">Error on pick image</string>
+    <string name="error_to_gallery">Error on pick image</string>
     <string name="error_encrypt">Error on encrypting image</string>
     <string name="error_delete">Error on removing image</string>
 

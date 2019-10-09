@@ -148,7 +148,7 @@ class MainActivity : BaseActivity() {
                             getString(R.string.error_delete)
                         }
                         ErrorType.TO_GALLERY -> {
-                            getString(R.string.error_gallery)
+                            getString(R.string.error_to_gallery)
                         }
                     }
                 )

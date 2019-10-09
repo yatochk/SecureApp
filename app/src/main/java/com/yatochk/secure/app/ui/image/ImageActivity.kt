@@ -9,7 +9,9 @@ import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
+import com.yatochk.secure.app.ui.main.ErrorType
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_image.*
 import javax.inject.Inject
 
@@ -74,6 +76,11 @@ class ImageActivity : BaseActivity() {
             }
             finish.observe(this@ImageActivity) {
                 finish()
+            }
+            error.observe(this@ImageActivity) {
+                if (it == ErrorType.TO_GALLERY) {
+                    showErrorToast(this@ImageActivity, getString(R.string.error_to_gallery))
+                }
             }
         }
     }
