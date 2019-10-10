@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import com.google.android.flexbox.FlexboxLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseFragment
@@ -31,7 +31,7 @@ class GalleryFragment : BaseFragment() {
         adapter = AlbumRecyclerAdapter { album, textView ->
             viewModel.clickAlbum(album, textView)
         }
-        recycler_gallery.layoutManager = FlexboxLayoutManager(activity!!)
+        recycler_gallery.layoutManager = GridLayoutManager(activity!!, 2)
         recycler_gallery.adapter = adapter
         observers()
     }

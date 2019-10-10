@@ -3,6 +3,7 @@ package com.yatochk.secure.app.ui.albums
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -62,8 +63,18 @@ class AlbumActivity : BaseActivity() {
 
     private fun startObservers() {
         with(viewModel) {
-            images.observe(this@AlbumActivity) {
-                adapter.submitList(it)
+            images.observe(this@AlbumActivity) { imageList ->
+                adapter.submitList(
+                    imageList.map {
+                        Pair(
+                            it.first,
+                            BitmapFactory.decodeByteArray(
+                                it.second,
+                                0,
+                                it.second.size
+                            )
+                        )
+                    })
             }
             openImage.observe(this@AlbumActivity) {
                 val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

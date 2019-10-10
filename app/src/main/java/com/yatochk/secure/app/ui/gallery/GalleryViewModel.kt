@@ -1,6 +1,5 @@
 package com.yatochk.secure.app.ui.gallery
 
-import android.graphics.BitmapFactory
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -26,11 +25,7 @@ class GalleryViewModel @Inject constructor(
             )
             Album(
                 name,
-                BitmapFactory.decodeByteArray(
-                    imageBytes,
-                    0,
-                    imageBytes.size
-                )
+                imageBytes
             )
         }
     }

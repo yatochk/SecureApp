@@ -1,8 +1,5 @@
 package com.yatochk.secure.app.ui.albums
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -24,8 +21,8 @@ class AlbumViewModel @Inject constructor(
     private val imagesDao: ImagesDao
 ) : ViewModel() {
 
-    private val mediatorImages = MediatorLiveData<List<Pair<Image, Bitmap>>>()
-    val images: LiveData<List<Pair<Image, Bitmap>>> = mediatorImages
+    private val mediatorImages = MediatorLiveData<List<Pair<Image, ByteArray>>>()
+    val images: LiveData<List<Pair<Image, ByteArray>>> = mediatorImages
 
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
@@ -52,24 +49,18 @@ class AlbumViewModel @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .map {
                     val decryptedBytes = imageSecureController.decryptImageFromFile(it.securePath)
-                    val bitmap = BitmapFactory.decodeByteArray(
-                        decryptedBytes,
-                        0,
-                        decryptedBytes.size
-                    )
-                    Pair(it, bitmap)
+                    Pair(it, decryptedBytes)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { newImage ->
-                        val newImages = mutableListOf<Pair<Image, Bitmap>>().apply {
+                        val newImages = mutableListOf<Pair<Image, ByteArray>>().apply {
                             mediatorImages.value?.also { addAll(it) }
                             add(newImage)
                         }
                         mediatorImages.value = newImages
                     },
                     {
-                        Log.e("On encrypting images", it.localizedMessage, it)
                         mutableShowError.value = ErrorType.ENCRYPT_IMAGE
                     }
                 )

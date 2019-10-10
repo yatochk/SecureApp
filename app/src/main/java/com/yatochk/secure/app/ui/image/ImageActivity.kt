@@ -2,6 +2,8 @@ package com.yatochk.secure.app.ui.image
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Point
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
@@ -11,9 +13,11 @@ import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.main.ErrorType
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.scaleDown
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_image.*
 import javax.inject.Inject
+import kotlin.math.min
 
 class ImageActivity : BaseActivity() {
 
@@ -60,7 +64,16 @@ class ImageActivity : BaseActivity() {
     private fun observers() {
         with(viewModel) {
             image.observe(this@ImageActivity) {
-                gallery_image.setImageBitmap(it)
+                val fullSizeBitmap = BitmapFactory.decodeByteArray(
+                    it,
+                    0,
+                    it.size
+                )
+                val displaySize = Point()
+                windowManager.defaultDisplay.getSize(displaySize)
+                gallery_image.setImageBitmap(
+                    fullSizeBitmap.scaleDown(min(displaySize.x, displaySize.y).toFloat(), true)
+                )
             }
             delete.observe(this@ImageActivity) {
                 deleteAnimation()

@@ -1,7 +1,5 @@
 package com.yatochk.secure.app.ui.image
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +15,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Inject
 
+
 class ImageVIewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
     private val imagesRepository: ImagesRepository
@@ -26,8 +25,8 @@ class ImageVIewModel @Inject constructor(
 
     private lateinit var currentImage: Image
 
-    private val mediatorImage = MutableLiveData<Bitmap>()
-    val image: LiveData<Bitmap> = mediatorImage
+    private val mediatorImage = MutableLiveData<ByteArray>()
+    val image: LiveData<ByteArray> = mediatorImage
 
     private val mutableDelete = LiveEvent<Void>()
     val delete: LiveData<Void> = mutableDelete
@@ -53,12 +52,7 @@ class ImageVIewModel @Inject constructor(
 
     fun initImage(image: Image) {
         currentImage = image
-        val decryptedBytes = imageSecureController.decryptImageFromFile(image.securePath)
-        mediatorImage.value = BitmapFactory.decodeByteArray(
-            decryptedBytes,
-            0,
-            decryptedBytes.size
-        )
+        mediatorImage.value = imageSecureController.decryptImageFromFile(image.securePath)
     }
 
     fun onDelete() {
@@ -82,10 +76,6 @@ class ImageVIewModel @Inject constructor(
     }
 
     fun clickRename() {
-
-    }
-
-    fun onRename(newName: String) {
 
     }
 
