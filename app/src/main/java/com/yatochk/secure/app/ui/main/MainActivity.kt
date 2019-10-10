@@ -3,18 +3,19 @@ package com.yatochk.secure.app.ui.main
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.getbase.floatingactionbutton.FloatingActionButton
+import com.yatochk.secure.app.BuildConfig
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
+import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.browser.BrowserFragment
 import com.yatochk.secure.app.ui.contact.ContactFragment
@@ -22,7 +23,11 @@ import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import com.yatochk.secure.app.ui.notes.NotesFragment
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.showErrorToast
+import com.yatochk.secure.app.utils.toPath
+import com.yatochk.secure.app.utils.toTimeString
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+import java.util.*
 
 
 class MainActivity : BaseActivity() {
@@ -112,10 +117,24 @@ class MainActivity : BaseActivity() {
         floating_menu.addButton(photoButton)
     }
 
+    private lateinit var imageName: String
+
     private fun initObservers() {
         with(viewModel) {
             openCamera.observe(this@MainActivity) {
-                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val imagePath = File(ImageSecureController.regularPath)
+                imagePath.mkdirs()
+                imageName = "Photo_${Date().toTimeString()}.jpg"
+
+                val photoUri = FileProvider.getUriForFile(
+                    this@MainActivity,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    File(imagePath, imageName)
+                )
+                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                    putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
                 startActivityForResult(takePicture, TAKE_PHOTO)
             }
 
@@ -173,31 +192,17 @@ class MainActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_OK || data == null) return
+        if (resultCode != RESULT_OK) return
         when (requestCode) {
             TAKE_PHOTO -> {
-                (data.extras?.get("data") as? Bitmap)?.also {
-                    viewModel.receivedPhoto(it)
-                }
+                viewModel.receivedPhoto(imageName)
             }
             PICK_IMAGE -> {
-                val selectedImage = data.data as Uri
-                val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-                val cursor = contentResolver.query(
-                    selectedImage,
-                    filePathColumn,
-                    null,
-                    null,
-                    null
-                )
-                if (cursor != null) {
-                    cursor.moveToFirst()
-                    val columnIndex = cursor.getColumnIndex(filePathColumn[0])
-                    val picturePath = cursor.getString(columnIndex)
-                    cursor.close()
-                    viewModel.receivedGalleryImage(picturePath)
+                data?.data?.toPath(this)?.also {
+                    viewModel.receivedGalleryImage(it)
                 }
             }
         }
     }
 }
+

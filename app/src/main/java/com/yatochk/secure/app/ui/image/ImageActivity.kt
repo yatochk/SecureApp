@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ImageActivity : BaseActivity() {
 
     companion object {
-        private const val DURATION_ANIMATION = 300L
+        private const val DURATION_ANIMATION = 500L
         private const val IMAGE = "opened_image"
 
         fun intent(context: Context, image: Image) =
