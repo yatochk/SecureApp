@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import com.yatochk.secure.app.dagger.ViewModelKey
 import com.yatochk.secure.app.ui.albums.AlbumViewModel
 import com.yatochk.secure.app.ui.browser.BrowserViewModel
+import com.yatochk.secure.app.ui.contact.ContactMenuViewModel
+import com.yatochk.secure.app.ui.contact.ContactViewModel
+import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryViewModel
 import com.yatochk.secure.app.ui.image.ImageVIewModel
 import com.yatochk.secure.app.ui.main.MainViewModel
@@ -37,6 +40,21 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(ImageVIewModel::class)
-    internal abstract fun imageVIewModel(viewModel: ImageVIewModel): ViewModel
+    internal abstract fun imageViewModel(viewModel: ImageVIewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactViewModel::class)
+    internal abstract fun contactViewModel(viewModel: ContactViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactMenuViewModel::class)
+    internal abstract fun contactMenuViewModel(viewModel: ContactMenuViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GalleryMenuViewModel::class)
+    internal abstract fun galleryMenuViewModel(viewModel: GalleryMenuViewModel): ViewModel
 
 }

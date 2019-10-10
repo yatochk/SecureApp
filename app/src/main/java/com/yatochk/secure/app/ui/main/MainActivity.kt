@@ -19,7 +19,9 @@ import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.browser.BrowserFragment
 import com.yatochk.secure.app.ui.contact.ContactFragment
+import com.yatochk.secure.app.ui.contact.ContactMenuViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryFragment
+import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.notes.NotesFragment
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.showErrorToast
@@ -37,12 +39,16 @@ class MainActivity : BaseActivity() {
         private const val PICK_IMAGE = 1
     }
 
-    private val viewModel: MainViewModel by viewModels { viewModelFactory }
+    private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
+    private val contactMenuViewModel: ContactMenuViewModel by viewModels { viewModelFactory }
+    private val galleryMenuViewModel: GalleryMenuViewModel by viewModels { viewModelFactory }
+
     private val galleryFragment by lazy { GalleryFragment() }
     private val contactFragment by lazy { ContactFragment() }
     private val notesFragment by lazy { NotesFragment() }
-
     private val browserFragment by lazy { BrowserFragment() }
+
+    private lateinit var imageName: String
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -53,8 +59,8 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         goToFragment(galleryFragment)
         galleryFloatingMenu()
+        contactFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
-            floating_menu.isVisible = it.itemId != R.id.navigation_internet
             goToFragment(
                 when (it.itemId) {
                     R.id.navigation_gallery -> {
@@ -77,6 +83,15 @@ class MainActivity : BaseActivity() {
         initObservers()
     }
 
+    private fun replaceFloatingMenu(fragment: Fragment) {
+        floating_menu_gallery.isVisible = false
+        floating_menu_contact.isVisible = false
+        when (fragment) {
+            is GalleryFragment -> floating_menu_gallery.isVisible = true
+            is ContactFragment -> floating_menu_contact.isVisible = true
+        }
+    }
+
     private fun goToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(
@@ -84,6 +99,7 @@ class MainActivity : BaseActivity() {
                 fragment
             )
             .commit()
+        replaceFloatingMenu(fragment)
     }
 
     override fun onResume() {
@@ -95,7 +111,7 @@ class MainActivity : BaseActivity() {
         FloatingActionButton(this).apply {
             setIcon(R.drawable.ic_camera)
             setOnClickListener {
-                viewModel.clickPhoto()
+                galleryMenuViewModel.clickPhoto()
             }
             colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
             colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
@@ -105,7 +121,26 @@ class MainActivity : BaseActivity() {
         FloatingActionButton(this).apply {
             setIcon(R.drawable.ic_gallery_locale)
             setOnClickListener {
-                viewModel.clickGallery()
+                galleryMenuViewModel.clickGallery()
+            }
+            colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+            colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+        }
+    }
+
+    private val newContactButton by lazy {
+        FloatingActionButton(this).apply {
+            setOnClickListener {
+                contactMenuViewModel.clickNewContact()
+            }
+            colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+            colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+        }
+    }
+    private val importContactButton by lazy {
+        FloatingActionButton(this).apply {
+            setOnClickListener {
+                contactMenuViewModel.clickImportContact()
             }
             colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
             colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
@@ -113,14 +148,23 @@ class MainActivity : BaseActivity() {
     }
 
     private fun galleryFloatingMenu() {
-        floating_menu.addButton(galleryButton)
-        floating_menu.addButton(photoButton)
+        floating_menu_gallery.addButton(galleryButton)
+        floating_menu_gallery.addButton(photoButton)
     }
 
-    private lateinit var imageName: String
+    private fun contactFloatingMenu() {
+        floating_menu_contact.addButton(importContactButton)
+        floating_menu_contact.addButton(newContactButton)
+    }
 
     private fun initObservers() {
-        with(viewModel) {
+        initMainObservers()
+        initGalleryMenuObservers()
+        initContactMenuObservers()
+    }
+
+    private fun initGalleryMenuObservers() {
+        with(galleryMenuViewModel) {
             openCamera.observe(this@MainActivity) {
                 val imagePath = File(ImageSecureController.regularPath)
                 imagePath.mkdirs()
@@ -145,7 +189,22 @@ class MainActivity : BaseActivity() {
                 )
                 startActivityForResult(pickPhoto, PICK_IMAGE)
             }
+        }
+    }
 
+    private fun initContactMenuObservers() {
+        with(contactMenuViewModel) {
+            openContacts.observe(this@MainActivity) {
+
+            }
+            openCreateContact.observe(this@MainActivity) {
+
+            }
+        }
+    }
+
+    private fun initMainObservers() {
+        with(mainViewModel) {
             scanImage.observe(this@MainActivity) {
                 scanMedia(it)
             }
@@ -195,11 +254,11 @@ class MainActivity : BaseActivity() {
         if (resultCode != RESULT_OK) return
         when (requestCode) {
             TAKE_PHOTO -> {
-                viewModel.receivedPhoto(imageName)
+                mainViewModel.receivedPhoto(imageName)
             }
             PICK_IMAGE -> {
                 data?.data?.toPath(this)?.also {
-                    viewModel.receivedGalleryImage(it)
+                    mainViewModel.receivedGalleryImage(it)
                 }
             }
         }

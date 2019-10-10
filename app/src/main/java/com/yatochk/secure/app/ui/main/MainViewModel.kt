@@ -24,17 +24,11 @@ class MainViewModel @Inject constructor(
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val mutableOpenCamera = LiveEvent<Void>()
-    val openCamera: LiveData<Void> = mutableOpenCamera
-
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
 
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
-
-    private val mutableOpenGallery = LiveEvent<Void>()
-    val openGallery: LiveData<Void> = mutableOpenGallery
 
     fun receivedPhoto(receivedName: String) {
         compositeDisposable.add(Observable.just(1)
@@ -105,14 +99,6 @@ class MainViewModel @Inject constructor(
                 }
             )
         )
-    }
-
-    fun clickPhoto() {
-        mutableOpenCamera.value = null
-    }
-
-    fun clickGallery() {
-        mutableOpenGallery.value = null
     }
 
     override fun onCleared() {

@@ -5,6 +5,7 @@ import com.yatochk.secure.app.dagger.modules.AppModule
 import com.yatochk.secure.app.dagger.modules.ViewModelModule
 import com.yatochk.secure.app.ui.albums.AlbumActivity
 import com.yatochk.secure.app.ui.browser.BrowserFragment
+import com.yatochk.secure.app.ui.contact.ContactFragment
 import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import com.yatochk.secure.app.ui.image.ImageActivity
 import com.yatochk.secure.app.ui.main.MainActivity
@@ -26,5 +27,6 @@ interface AppComponent {
     fun inject(viewModelFactory: ViewModelFactory)
     fun inject(browserFragment: BrowserFragment)
     fun inject(galleryFragment: GalleryFragment)
+    fun inject(contactFragment: ContactFragment)
 
 }
