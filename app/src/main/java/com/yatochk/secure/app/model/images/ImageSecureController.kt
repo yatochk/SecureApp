@@ -1,5 +1,6 @@
 package com.yatochk.secure.app.model.images
 
+import android.os.Environment
 import com.yatochk.secure.app.model.Cypher
 import java.io.File
 import javax.inject.Inject
@@ -10,26 +11,28 @@ class ImageSecureController @Inject constructor(
     private val cypher: Cypher
 ) {
 
-    fun encryptImage(bytes: ByteArray, path: String, name: String): File {
-        val directory = File(path)
+    companion object {
+        private const val SECURE_FOLDER = "/calculator_need_container/"
+        private const val REGULAR_FOLDER = "/photo/"
+
+        val regularPath = Environment.getExternalStorageDirectory().absolutePath +
+                REGULAR_FOLDER
+
+        val securePath = Environment.getExternalStorageDirectory().absolutePath +
+                SECURE_FOLDER
+
+    }
+
+    fun encryptAndSaveImage(bytes: ByteArray, name: String): File {
+        val directory = File(securePath)
         directory.mkdirs()
-        return File(path + name).apply {
+        return File(securePath + name).apply {
             writeBytes(cypher.encrypt(bytes))
         }
     }
 
-    fun encryptImage(path: String): File {
+    fun decryptImageFromFile(path: String): ByteArray {
         val imageFile = File(path)
-        require(imageFile.exists()) { "this file is not exist" }
-        val imageBytes = imageFile.readBytes()
-        imageFile.delete()
-        return File(path).apply {
-            writeBytes(cypher.encrypt(imageBytes))
-        }
-    }
-
-    fun decryptImage(image: Image): ByteArray {
-        val imageFile = File(image.path)
         require(imageFile.exists()) { "this file is not exist" }
         val imageBytes = imageFile.readBytes()
         return cypher.decrypt(imageBytes)

@@ -1,10 +1,9 @@
 package com.yatochk.secure.app.ui.albums
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Log
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.database.dao.ImagesDao
@@ -22,38 +21,46 @@ class AlbumViewModel @Inject constructor(
     private val imagesDao: ImagesDao
 ) : ViewModel() {
 
-    private val mediatorImages = MediatorLiveData<List<Pair<Image, Bitmap>>>()
-    val images: LiveData<List<Pair<Image, Bitmap>>> = mediatorImages
+    private val mediatorImages = MediatorLiveData<List<Pair<Image, ByteArray>>>()
+    val images: LiveData<List<Pair<Image, ByteArray>>> = mediatorImages
 
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
 
+    private val mutableFinish = LiveEvent<Void>()
+    val finish: LiveData<Void> = mutableFinish
+
+    private val mutableOpenImage = LiveEvent<Pair<Image, ImageView>>()
+    val openImage: LiveData<Pair<Image, ImageView>> = mutableOpenImage
+
+    private val mutableStartObserving = MutableLiveData<Void>()
+    val startObserving: LiveData<Void> = mutableStartObserving
+
     private val compositeDisposable = CompositeDisposable()
 
-    private fun decryptImage(images: List<Image>) {
+    fun screenOpened() {
+        mutableStartObserving.value = null
+    }
+
+    private fun decryptImages(images: List<Image>) {
+        mediatorImages.value = emptyList()
         compositeDisposable.add(
             Observable.fromIterable(images)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    val decryptedBytes = imageSecureController.decryptImage(it)
-                    val bitmap = BitmapFactory.decodeByteArray(
-                        decryptedBytes,
-                        0,
-                        decryptedBytes.size
-                    )
-                    Pair(it, bitmap)
+                    val decryptedBytes = imageSecureController.decryptImageFromFile(it.securePath)
+                    Pair(it, decryptedBytes)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { newImage ->
-                        val newImages = mutableListOf<Pair<Image, Bitmap>>().apply {
+                        val newImages = mutableListOf<Pair<Image, ByteArray>>().apply {
                             mediatorImages.value?.also { addAll(it) }
                             add(newImage)
                         }
                         mediatorImages.value = newImages
                     },
                     {
-                        Log.e("On encrypting images", it.localizedMessage, it)
                         mutableShowError.value = ErrorType.ENCRYPT_IMAGE
                     }
                 )
@@ -62,8 +69,16 @@ class AlbumViewModel @Inject constructor(
 
     fun initAlbum(albumName: String) {
         mediatorImages.addSource(imagesDao.getImages(albumName)) { images ->
-            decryptImage(images)
+            if (images.isNullOrEmpty()) {
+                mutableFinish.value = null
+            } else {
+                decryptImages(images)
+            }
         }
+    }
+
+    fun clickImage(image: Image, imageView: ImageView) {
+        mutableOpenImage.value = Pair(image, imageView)
     }
 
     override fun onCleared() {

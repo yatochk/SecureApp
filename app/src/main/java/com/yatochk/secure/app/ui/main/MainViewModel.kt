@@ -1,8 +1,5 @@
 package com.yatochk.secure.app.ui.main
 
-import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat
-import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -10,14 +7,13 @@ import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
-import com.yatochk.secure.app.utils.SECURE_FOLBER
-import com.yatochk.secure.app.utils.toTimeString
+import com.yatochk.secure.app.utils.DEFAULT_IMAGE_ALBUM
+import com.yatochk.secure.app.utils.DEFAULT_PHOTO_ALBUM
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.ByteArrayOutputStream
-import java.util.*
+import java.io.File
 import javax.inject.Inject
 
 
@@ -27,46 +23,47 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val mutableOpenCamera = LiveEvent<Void>()
 
-    private val mutableOpenGallery = LiveEvent<Void>()
+    private val mutableOpenCamera = LiveEvent<Void>()
     val openCamera: LiveData<Void> = mutableOpenCamera
 
     private val mutableShowError = LiveEvent<ErrorType>()
     val showError: LiveData<ErrorType> = mutableShowError
 
-    private val mutableShowSuccess = LiveEvent<SuccessType>()
-    val showSuccess: LiveData<SuccessType> = mutableShowSuccess
+    private val mutableScanImage = LiveEvent<String>()
+    val scanImage: LiveData<String> = mutableScanImage
 
+    private val mutableOpenGallery = LiveEvent<Void>()
     val openGallery: LiveData<Void> = mutableOpenGallery
 
-    fun receivedPhoto(photo: Bitmap) {
+    fun receivedPhoto(receivedName: String) {
         compositeDisposable.add(Observable.just(1)
             .subscribeOn(Schedulers.io())
             .map {
-                val photoName = "Photo_${Date().toTimeString()}"
-                val buffer = ByteArrayOutputStream(photo.width * photo.height)
-                val path = Environment.getExternalStorageDirectory().absolutePath +
-                        SECURE_FOLBER
-                photo.compress(CompressFormat.PNG, 100, buffer)
-                imageSecureController.encryptImage(
-                    buffer.toByteArray(),
-                    path,
+                val imageFile = File(ImageSecureController.regularPath + receivedName)
+                val imageBytes = imageFile.readBytes()
+                val photoName = imageFile.name
+                imageSecureController.encryptAndSaveImage(
+                    imageBytes,
                     photoName
                 )
-                path + photoName
+                imageFile.delete()
+                photoName
             }
-            .map {
+            .map { name ->
                 imagesDao.addImage(
                     Image(
-                        it,
-                        "main"
+                        ImageSecureController.securePath + name,
+                        ImageSecureController.regularPath + name,
+                        DEFAULT_PHOTO_ALBUM
                     )
                 )
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { mutableShowSuccess.value = SuccessType.ADD_PHOTO },
+                {
+                    Log.i(MainViewModel::class.java.name, "Photo encrypt and saved")
+                },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
                     mutableShowError.value = ErrorType.ADD_PHOTO
@@ -75,23 +72,33 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    fun receivedGalleryImage(path: String) {
+    fun receivedGalleryImage(regularPath: String) {
         compositeDisposable.add(Observable.just(1)
             .subscribeOn(Schedulers.io())
             .map {
-                imageSecureController.encryptImage(path)
+                val imageName = regularPath.substring(regularPath.lastIndexOf("/") + 1)
+                val imageFile = File(regularPath)
+                require(imageFile.exists()) { "this file is not exist" }
+                val imageBytes = imageFile.readBytes()
+                imageFile.delete()
+                imageSecureController.encryptAndSaveImage(
+                    imageBytes,
+                    imageName
+                )
             }
             .map {
                 imagesDao.addImage(
                     Image(
-                        path,
-                        "main"
+                        it.path,
+                        regularPath,
+                        DEFAULT_IMAGE_ALBUM
                     )
                 )
+                regularPath
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { mutableShowSuccess.value = SuccessType.ADD_IMAGE },
+                { mutableScanImage.value = it },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
                     mutableShowError.value = ErrorType.ADD_IMAGE

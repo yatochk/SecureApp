@@ -1,3 +1,4 @@
 package com.yatochk.secure.app.utils
 
-const val SECURE_FOLBER = "/calculator_need_container/"
+const val DEFAULT_PHOTO_ALBUM = "photo"
+const val DEFAULT_IMAGE_ALBUM = "images"
