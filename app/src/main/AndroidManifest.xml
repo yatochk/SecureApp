@@ -48,6 +48,9 @@
         <activity
             android:name=".ui.image.ImageActivity"
             android:theme="@style/ImageActivity" />
+        <activity
+            android:name=".ui.contact.ContactActivity"
+            android:theme="@style/ContactActivity" />
     </application>
 
 </manifest>

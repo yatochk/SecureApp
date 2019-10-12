@@ -1,5 +1,7 @@
 package com.yatochk.secure.app.ui.contact
 
+import android.app.ActivityOptions
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -24,7 +26,9 @@ class ContactFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = ContactRecyclerAdapter()
+        adapter = ContactRecyclerAdapter { card, contact ->
+            viewModel.clickContact(card, contact)
+        }
         recycler_contact.layoutManager = LinearLayoutManager(activity!!)
         recycler_contact.adapter = adapter
         observers()
@@ -34,6 +38,18 @@ class ContactFragment : BaseFragment() {
         with(viewModel) {
             contacts.observe(this@ContactFragment) {
                 adapter.submitList(it)
+            }
+            openContact.observe(this@ContactFragment) {
+                val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ActivityOptions.makeSceneTransitionAnimation(
+                        activity,
+                        it.first,
+                        getString(R.string.contact_transition)
+                    ).toBundle()
+                } else {
+                    null
+                }
+                startActivity(ContactActivity.intent(activity!!, it.second), bundle)
             }
         }
     }

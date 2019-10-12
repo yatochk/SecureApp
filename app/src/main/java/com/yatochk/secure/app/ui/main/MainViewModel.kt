@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.hadilq.liveevent.LiveEvent
+import com.yatochk.secure.app.model.contact.Contact
+import com.yatochk.secure.app.model.database.dao.ContactDao
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
@@ -19,13 +21,14 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
-    private val imagesDao: ImagesDao
+    private val imagesDao: ImagesDao,
+    private val contactDao: ContactDao
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val mutableShowError = LiveEvent<ErrorType>()
-    val showError: LiveData<ErrorType> = mutableShowError
+    private val mutableShowError = LiveEvent<ImageErrorType>()
+    val showImageError: LiveData<ImageErrorType> = mutableShowError
 
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
@@ -60,9 +63,20 @@ class MainViewModel @Inject constructor(
                 },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
-                    mutableShowError.value = ErrorType.ADD_PHOTO
+                    mutableShowError.value = ImageErrorType.ADD_PHOTO
                 }
             )
+        )
+    }
+
+    fun receivedContact(contact: Contact) {
+        compositeDisposable.add(Observable.just(1)
+            .subscribeOn(Schedulers.io())
+            .map {
+                contactDao.addContact(contact)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
         )
     }
 
@@ -95,7 +109,7 @@ class MainViewModel @Inject constructor(
                 { mutableScanImage.value = it },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
-                    mutableShowError.value = ErrorType.ADD_IMAGE
+                    mutableShowError.value = ImageErrorType.ADD_IMAGE
                 }
             )
         )

@@ -91,7 +91,7 @@ class AlbumActivity : BaseActivity() {
             finish.observe(this@AlbumActivity) {
                 finish()
             }
-            showError.observe(this@AlbumActivity) {
+            showImageError.observe(this@AlbumActivity) {
                 //TODO
             }
         }

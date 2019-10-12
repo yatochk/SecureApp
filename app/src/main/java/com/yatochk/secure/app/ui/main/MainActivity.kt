@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.provider.MediaStore
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -23,10 +24,7 @@ import com.yatochk.secure.app.ui.contact.ContactMenuViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.notes.NotesFragment
-import com.yatochk.secure.app.utils.observe
-import com.yatochk.secure.app.utils.showErrorToast
-import com.yatochk.secure.app.utils.toPath
-import com.yatochk.secure.app.utils.toTimeString
+import com.yatochk.secure.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.*
@@ -37,6 +35,7 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val TAKE_PHOTO = 0
         private const val PICK_IMAGE = 1
+        private const val PICK_CONTACT = 2
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
@@ -130,6 +129,7 @@ class MainActivity : BaseActivity() {
 
     private val newContactButton by lazy {
         FloatingActionButton(this).apply {
+            setIcon(R.drawable.ic_new_contact)
             setOnClickListener {
                 contactMenuViewModel.clickNewContact()
             }
@@ -195,7 +195,10 @@ class MainActivity : BaseActivity() {
     private fun initContactMenuObservers() {
         with(contactMenuViewModel) {
             openContacts.observe(this@MainActivity) {
-
+                val intent = Intent(Intent.ACTION_PICK).apply {
+                    type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+                }
+                startActivityForResult(intent, PICK_CONTACT)
             }
             openCreateContact.observe(this@MainActivity) {
 
@@ -209,23 +212,23 @@ class MainActivity : BaseActivity() {
                 scanMedia(it)
             }
 
-            showError.observe(this@MainActivity) {
+            showImageError.observe(this@MainActivity) {
                 showErrorToast(
                     this@MainActivity,
                     when (it) {
-                        ErrorType.ADD_PHOTO -> {
+                        ImageErrorType.ADD_PHOTO -> {
                             getString(R.string.error_photo)
                         }
-                        ErrorType.ADD_IMAGE -> {
+                        ImageErrorType.ADD_IMAGE -> {
                             getString(R.string.error_gallery)
                         }
-                        ErrorType.ENCRYPT_IMAGE -> {
-                            getString(R.string.error_encrypt)
+                        ImageErrorType.ENCRYPT_IMAGE -> {
+                            getString(R.string.error_encrypt_image)
                         }
-                        ErrorType.DELETE_IMAGE -> {
-                            getString(R.string.error_delete)
+                        ImageErrorType.DELETE_IMAGE -> {
+                            getString(R.string.error_delete_image)
                         }
-                        ErrorType.TO_GALLERY -> {
+                        ImageErrorType.TO_GALLERY -> {
                             getString(R.string.error_to_gallery)
                         }
                     }
@@ -259,6 +262,11 @@ class MainActivity : BaseActivity() {
             PICK_IMAGE -> {
                 data?.data?.toPath(this)?.also {
                     mainViewModel.receivedGalleryImage(it)
+                }
+            }
+            PICK_CONTACT -> {
+                data?.data?.toContact(this)?.also {
+                    mainViewModel.receivedContact(it)
                 }
             }
         }
