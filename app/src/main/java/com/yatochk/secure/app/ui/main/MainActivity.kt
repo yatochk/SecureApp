@@ -139,6 +139,7 @@ class MainActivity : BaseActivity() {
     }
     private val importContactButton by lazy {
         FloatingActionButton(this).apply {
+            setIcon(R.drawable.ic_agenda)
             setOnClickListener {
                 contactMenuViewModel.clickImportContact()
             }
