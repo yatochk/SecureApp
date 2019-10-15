@@ -11,6 +11,7 @@ import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.main.ContactErrorType
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.onDone
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_contact.*
 
@@ -46,6 +47,18 @@ class ContactActivity : BaseActivity() {
         button_delete_contact.setOnClickListener {
             viewModel.delete()
         }
+        text_contact_name.setOnFocusChangeListener { _, b ->
+            text_contact_name.isCursorVisible = b
+        }
+        text_contact_number.setOnFocusChangeListener { _, b ->
+            text_contact_number.isCursorVisible = b
+        }
+        text_contact_number.onDone {
+            viewModel.editNumber(it)
+        }
+        text_contact_name.onDone {
+            viewModel.editName(it)
+        }
         observers()
     }
 
@@ -60,8 +73,8 @@ class ContactActivity : BaseActivity() {
                 )
             }
             contact.observe(this@ContactActivity) {
-                text_contact_name.text = it.name
-                text_contact_number.text = it.number
+                text_contact_name.setText(it.name)
+                text_contact_number.setText(it.number)
             }
             error.observe(this@ContactActivity) {
                 showErrorToast(

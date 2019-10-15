@@ -40,6 +40,20 @@ class EditContactViewModel @Inject constructor(
         eventCall.value = contact.value!!.number
     }
 
+    fun editName(name: String) {
+        val updated = contact.value!!.apply {
+            this.name = name
+        }
+        contactDao.updateContact(updated)
+    }
+
+    fun editNumber(number: String) {
+        val updated = contact.value!!.apply {
+            this.number = number
+        }
+        contactDao.updateContact(updated)
+    }
+
     fun delete() {
         compositeDisposable.add(Observable.just(1)
             .subscribeOn(Schedulers.io())
