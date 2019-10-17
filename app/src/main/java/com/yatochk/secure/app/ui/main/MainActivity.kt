@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.provider.MediaStore
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -20,11 +19,13 @@ import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.browser.BrowserFragment
 import com.yatochk.secure.app.ui.contact.ContactFragment
-import com.yatochk.secure.app.ui.contact.ContactMenuViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.notes.NotesFragment
-import com.yatochk.secure.app.utils.*
+import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.showErrorToast
+import com.yatochk.secure.app.utils.toPath
+import com.yatochk.secure.app.utils.toTimeString
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.*
@@ -35,11 +36,9 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val TAKE_PHOTO = 0
         private const val PICK_IMAGE = 1
-        private const val PICK_CONTACT = 2
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
-    private val contactMenuViewModel: ContactMenuViewModel by viewModels { viewModelFactory }
     private val galleryMenuViewModel: GalleryMenuViewModel by viewModels { viewModelFactory }
 
     private val galleryFragment by lazy { GalleryFragment() }
@@ -58,7 +57,6 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         goToFragment(galleryFragment)
         galleryFloatingMenu()
-        contactFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
             goToFragment(
                 when (it.itemId) {
@@ -66,7 +64,7 @@ class MainActivity : BaseActivity() {
                         galleryFragment
                     }
                     R.id.navigation_contact -> {
-                        contactFragment
+                        ContactFragment()
                     }
                     R.id.navigation_notes -> {
                         notesFragment
@@ -84,10 +82,8 @@ class MainActivity : BaseActivity() {
 
     private fun replaceFloatingMenu(fragment: Fragment) {
         floating_menu_gallery.isVisible = false
-        floating_menu_contact.isVisible = false
         when (fragment) {
             is GalleryFragment -> floating_menu_gallery.isVisible = true
-            is ContactFragment -> floating_menu_contact.isVisible = true
         }
     }
 
@@ -127,41 +123,14 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private val newContactButton by lazy {
-        FloatingActionButton(this).apply {
-            setIcon(R.drawable.ic_new_contact)
-            setOnClickListener {
-                contactMenuViewModel.clickNewContact()
-            }
-            colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
-            colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
-        }
-    }
-    private val importContactButton by lazy {
-        FloatingActionButton(this).apply {
-            setIcon(R.drawable.ic_agenda)
-            setOnClickListener {
-                contactMenuViewModel.clickImportContact()
-            }
-            colorNormal = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
-            colorPressed = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
-        }
-    }
-
     private fun galleryFloatingMenu() {
         floating_menu_gallery.addButton(galleryButton)
         floating_menu_gallery.addButton(photoButton)
     }
 
-    private fun contactFloatingMenu() {
-        floating_menu_contact.addButton(importContactButton)
-        floating_menu_contact.addButton(newContactButton)
-    }
-
     private fun initObservers() {
         initMainObservers()
         initGalleryMenuObservers()
-        initContactMenuObservers()
     }
 
     private fun initGalleryMenuObservers() {
@@ -189,20 +158,6 @@ class MainActivity : BaseActivity() {
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
                 startActivityForResult(pickPhoto, PICK_IMAGE)
-            }
-        }
-    }
-
-    private fun initContactMenuObservers() {
-        with(contactMenuViewModel) {
-            openContacts.observe(this@MainActivity) {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
-                }
-                startActivityForResult(intent, PICK_CONTACT)
-            }
-            openCreateContact.observe(this@MainActivity) {
-
             }
         }
     }
@@ -263,11 +218,6 @@ class MainActivity : BaseActivity() {
             PICK_IMAGE -> {
                 data?.data?.toPath(this)?.also {
                     mainViewModel.receivedGalleryImage(it)
-                }
-            }
-            PICK_CONTACT -> {
-                data?.data?.toContact(this)?.also {
-                    mainViewModel.receivedContact(it)
                 }
             }
         }

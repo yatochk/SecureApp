@@ -3,10 +3,7 @@ package com.yatochk.secure.app.ui.main
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
-import com.yatochk.secure.app.model.contact.Contact
-import com.yatochk.secure.app.model.database.dao.ContactDao
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
@@ -16,15 +13,13 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 
 class MainViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
-    private val imagesDao: ImagesDao,
-    private val contactDao: ContactDao
+    private val imagesDao: ImagesDao
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -69,12 +64,6 @@ class MainViewModel @Inject constructor(
                 }
             )
         )
-    }
-
-    fun receivedContact(contact: Contact) {
-        viewModelScope.launch {
-            contactDao.addContact(contact)
-        }
     }
 
     fun receivedGalleryImage(regularPath: String) {

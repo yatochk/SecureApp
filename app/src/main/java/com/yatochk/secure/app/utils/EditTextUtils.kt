@@ -22,3 +22,6 @@ inline fun EditText.onDone(crossinline listener: (String) -> Unit) {
         }
     }
 }
+
+fun EditText.clear() =
+    setText("")
