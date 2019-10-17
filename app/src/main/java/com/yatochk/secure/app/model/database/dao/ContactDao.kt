@@ -11,12 +11,12 @@ interface ContactDao {
     fun getContacts(): LiveData<List<Contact>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addContact(contact: Contact)
+    suspend fun addContact(contact: Contact)
 
     @Update
-    fun updateContact(contact: Contact)
+    suspend fun updateContact(contact: Contact)
 
     @Delete
-    fun deleteContact(contact: Contact)
+    suspend fun deleteContact(contact: Contact)
 
 }

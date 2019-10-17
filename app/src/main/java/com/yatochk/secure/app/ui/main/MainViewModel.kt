@@ -3,6 +3,7 @@ package com.yatochk.secure.app.ui.main
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.model.database.dao.ContactDao
@@ -15,6 +16,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -70,14 +72,9 @@ class MainViewModel @Inject constructor(
     }
 
     fun receivedContact(contact: Contact) {
-        compositeDisposable.add(Observable.just(1)
-            .subscribeOn(Schedulers.io())
-            .map {
-                contactDao.addContact(contact)
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-        )
+        viewModelScope.launch {
+            contactDao.addContact(contact)
+        }
     }
 
     fun receivedGalleryImage(regularPath: String) {

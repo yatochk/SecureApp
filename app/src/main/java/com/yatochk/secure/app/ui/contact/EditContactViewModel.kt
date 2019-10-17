@@ -3,15 +3,14 @@ package com.yatochk.secure.app.ui.contact
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.model.database.dao.ContactDao
 import com.yatochk.secure.app.ui.main.ContactErrorType
 import com.yatochk.secure.app.utils.postEvent
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EditContactViewModel @Inject constructor(
@@ -44,32 +43,26 @@ class EditContactViewModel @Inject constructor(
         val updated = contact.value!!.apply {
             this.name = name
         }
-        contactDao.updateContact(updated)
+        updateContact(updated)
     }
 
     fun editNumber(number: String) {
         val updated = contact.value!!.apply {
             this.number = number
         }
-        contactDao.updateContact(updated)
+        updateContact(updated)
     }
 
+    private fun updateContact(updated: Contact) =
+        viewModelScope.launch {
+            contactDao.updateContact(updated)
+        }
+
     fun delete() {
-        compositeDisposable.add(Observable.just(1)
-            .subscribeOn(Schedulers.io())
-            .map {
-                contactDao.deleteContact(contact.value!!)
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    eventFinish.postEvent()
-                },
-                {
-                    eventError.value = ContactErrorType.DELETE_CONTACT
-                }
-            )
-        )
+        viewModelScope.launch {
+            contactDao.deleteContact(contact.value!!)
+            eventFinish.postEvent()
+        }
     }
 
     override fun onCleared() {
