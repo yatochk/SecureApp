@@ -9,7 +9,7 @@ import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
-import com.yatochk.secure.app.ui.main.ErrorType
+import com.yatochk.secure.app.ui.main.ImageErrorType
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,8 +24,8 @@ class AlbumViewModel @Inject constructor(
     private val mediatorImages = MediatorLiveData<List<Pair<Image, ByteArray>>>()
     val images: LiveData<List<Pair<Image, ByteArray>>> = mediatorImages
 
-    private val mutableShowError = LiveEvent<ErrorType>()
-    val showError: LiveData<ErrorType> = mutableShowError
+    private val mutableShowError = LiveEvent<ImageErrorType>()
+    val showImageError: LiveData<ImageErrorType> = mutableShowError
 
     private val mutableFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = mutableFinish
@@ -61,7 +61,7 @@ class AlbumViewModel @Inject constructor(
                         mediatorImages.value = newImages
                     },
                     {
-                        mutableShowError.value = ErrorType.ENCRYPT_IMAGE
+                        mutableShowError.value = ImageErrorType.ENCRYPT_IMAGE
                     }
                 )
         )

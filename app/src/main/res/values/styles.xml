@@ -20,4 +20,6 @@
 
     <style name="ImageActivity" parent="BaseActivity" />
 
+    <style name="ContactActivity" parent="BaseActivity" />
+
 </resources>

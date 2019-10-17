@@ -7,7 +7,7 @@ import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
-import com.yatochk.secure.app.ui.main.ErrorType
+import com.yatochk.secure.app.ui.main.ImageErrorType
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -40,8 +40,8 @@ class ImageVIewModel @Inject constructor(
     private val mutableFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = mutableFinish
 
-    private val mutableError = LiveEvent<ErrorType>()
-    val error: LiveData<ErrorType> = mutableError
+    private val mutableError = LiveEvent<ImageErrorType>()
+    val imageError: LiveData<ImageErrorType> = mutableError
 
     private val mutableOpenRename = MutableLiveData<Boolean>()
     val openRename: LiveData<Boolean> = mutableOpenRename
@@ -69,7 +69,7 @@ class ImageVIewModel @Inject constructor(
 
                     },
                     {
-                        mutableError.value = ErrorType.DELETE_IMAGE
+                        mutableError.value = ImageErrorType.DELETE_IMAGE
                     }
                 )
         )
@@ -100,7 +100,7 @@ class ImageVIewModel @Inject constructor(
                         mutableScanImage.value = it.path
                     },
                     {
-                        mutableError.value = ErrorType.TO_GALLERY
+                        mutableError.value = ImageErrorType.TO_GALLERY
                     }
                 )
         )

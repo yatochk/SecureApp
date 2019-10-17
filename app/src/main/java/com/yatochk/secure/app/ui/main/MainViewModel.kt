@@ -24,17 +24,11 @@ class MainViewModel @Inject constructor(
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val mutableOpenCamera = LiveEvent<Void>()
-    val openCamera: LiveData<Void> = mutableOpenCamera
-
-    private val mutableShowError = LiveEvent<ErrorType>()
-    val showError: LiveData<ErrorType> = mutableShowError
+    private val mutableShowError = LiveEvent<ImageErrorType>()
+    val showImageError: LiveData<ImageErrorType> = mutableShowError
 
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
-
-    private val mutableOpenGallery = LiveEvent<Void>()
-    val openGallery: LiveData<Void> = mutableOpenGallery
 
     fun receivedPhoto(receivedName: String) {
         compositeDisposable.add(Observable.just(1)
@@ -66,7 +60,7 @@ class MainViewModel @Inject constructor(
                 },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
-                    mutableShowError.value = ErrorType.ADD_PHOTO
+                    mutableShowError.value = ImageErrorType.ADD_PHOTO
                 }
             )
         )
@@ -101,18 +95,10 @@ class MainViewModel @Inject constructor(
                 { mutableScanImage.value = it },
                 {
                     Log.e("Error on securing", it.localizedMessage, it)
-                    mutableShowError.value = ErrorType.ADD_IMAGE
+                    mutableShowError.value = ImageErrorType.ADD_IMAGE
                 }
             )
         )
-    }
-
-    fun clickPhoto() {
-        mutableOpenCamera.value = null
-    }
-
-    fun clickGallery() {
-        mutableOpenGallery.value = null
     }
 
     override fun onCleared() {

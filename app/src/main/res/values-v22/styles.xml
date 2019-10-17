@@ -37,4 +37,16 @@
         </item>
     </style>
 
+    <style name="ContactActivity" parent="BaseActivity">
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/contact_open
+        </item>
+
+        <item name="android:windowSharedElementExitTransition">
+            @transition/contact_open
+        </item>
+    </style>
+
 </resources>
