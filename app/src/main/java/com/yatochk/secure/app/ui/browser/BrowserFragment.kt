@@ -1,6 +1,5 @@
 package com.yatochk.secure.app.ui.browser
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -20,7 +19,6 @@ class BrowserFragment : BaseFragment() {
         SecureApplication.appComponent.inject(this)
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.loadUrl.observe(this) {

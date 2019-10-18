@@ -8,7 +8,7 @@ import javax.inject.Inject
 class BrowserViewModel @Inject constructor() : ViewModel() {
 
     companion object {
-        private const val START_URL = "www.google.com"
+        private const val START_URL = "https://duckduckgo.com/"
     }
 
     private val mutableLoadUrl = MutableLiveData<String>().apply {
