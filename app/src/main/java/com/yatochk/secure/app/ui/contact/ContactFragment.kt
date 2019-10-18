@@ -133,6 +133,7 @@ class ContactFragment : BaseFragment() {
             }
             openCreateContact.observe(activity!!) {
                 floating_menu_contact.collapse()
+                recycler_contact.scrollToPosition(adapter.itemCount - 1)
                 animateNewContact(true)
             }
         }
@@ -140,7 +141,7 @@ class ContactFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != AppCompatActivity.RESULT_OK && requestCode == PICK_CONTACT) {
+        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_CONTACT) {
             data?.data?.toContact(activity!!)?.also {
                 viewModel.receivedContact(it)
             }
