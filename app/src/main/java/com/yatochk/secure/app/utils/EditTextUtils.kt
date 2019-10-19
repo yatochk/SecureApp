@@ -23,5 +23,21 @@ inline fun EditText.onDone(crossinline listener: (String) -> Unit) {
     }
 }
 
+inline fun EditText.onSearch(crossinline listener: (String) -> Unit) {
+    setOnEditorActionListener { _, keycode, keyEvent ->
+        if (keycode == EditorInfo.IME_ACTION_SEARCH
+            || keyEvent.action == KeyEvent.ACTION_DOWN && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER
+        ) {
+            (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).also {
+                it.hideSoftInputFromWindow(windowToken, 0)
+            }
+            listener(text.toString())
+            true
+        } else {
+            false
+        }
+    }
+}
+
 fun EditText.clear() =
     setText("")
