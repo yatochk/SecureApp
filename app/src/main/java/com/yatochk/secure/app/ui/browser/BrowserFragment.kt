@@ -1,8 +1,11 @@
 package com.yatochk.secure.app.ui.browser
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.viewModels
 import androidx.transition.TransitionManager
@@ -35,8 +38,19 @@ class BrowserFragment : BaseFragment() {
         web_view.webChromeClient = object : WebChromeClient() {
 
         }
-        edit_url.onFocusChangeListener = View.OnFocusChangeListener { _, isFocuse ->
-            viewModel.editFocused(isFocuse)
+        web_view.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                view.loadUrl(url)
+                return true
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                viewModel.startLoadUrl(url ?: "")
+            }
+        }
+        edit_url.onFocusChangeListener = View.OnFocusChangeListener { _, isFocus ->
+            viewModel.editFocused(isFocus)
         }
         edit_url.onSearch {
             viewModel.inputUrl(it)

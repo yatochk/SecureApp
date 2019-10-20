@@ -18,7 +18,10 @@ class BrowserViewModel @Inject constructor() : ViewModel() {
         value = START_URL
     }
     val loadUrl: LiveData<String> = mutableLoadUrl.map {
-        PROTOCOL_PREFIX + it
+        if (it.contains(PROTOCOL_PREFIX))
+            it
+        else
+            PROTOCOL_PREFIX + it
     }
 
     private val eventEditMode = LiveEvent<Boolean>()
@@ -27,7 +30,16 @@ class BrowserViewModel @Inject constructor() : ViewModel() {
     private val mutableShowUrl = MutableLiveData<String>().apply {
         value = START_URL
     }
-    val showUrl: LiveData<String> = mutableShowUrl
+    val showUrl: LiveData<String> = mutableShowUrl.map {
+        if (it.contains(PROTOCOL_PREFIX))
+            it.substringAfter(PROTOCOL_PREFIX)
+        else
+            it
+    }
+
+    fun startLoadUrl(url: String) {
+        mutableShowUrl.value = url
+    }
 
     fun editFocused(isFocused: Boolean) {
         eventEditMode.value = isFocused
