@@ -47,6 +47,11 @@ class BrowserViewModel @Inject constructor() : ViewModel() {
 
     fun inputUrl(url: String) {
         mutableLoadUrl.value = if (url.isBlank()) START_URL else url
+        eventEditMode.value = false
+    }
+
+    fun clickHome() {
+        mutableLoadUrl.value = START_URL
     }
 
 }

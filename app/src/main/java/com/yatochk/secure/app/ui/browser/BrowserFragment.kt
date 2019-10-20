@@ -35,9 +35,7 @@ class BrowserFragment : BaseFragment() {
         urlConstraint.clone(root_browser)
         editUrlConstraint = ConstraintSet()
         editUrlConstraint.clone(activity, R.layout.fragment_browser_edit)
-        web_view.webChromeClient = object : WebChromeClient() {
-
-        }
+        web_view.webChromeClient = WebChromeClient()
         web_view.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)
@@ -54,6 +52,9 @@ class BrowserFragment : BaseFragment() {
         }
         edit_url.onSearch {
             viewModel.inputUrl(it)
+        }
+        button_home.setOnClickListener {
+            viewModel.clickHome()
         }
         observers()
     }
