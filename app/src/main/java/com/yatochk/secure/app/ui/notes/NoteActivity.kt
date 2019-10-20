@@ -1,12 +1,9 @@
 package com.yatochk.secure.app.ui.notes
 
-import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
-import com.yatochk.secure.app.ui.BaseFragment
+import com.yatochk.secure.app.ui.BaseActivity
 
-class NotesFragment : BaseFragment() {
-
-    override val layoutId = R.layout.fragment_notes
+class NoteActivity : BaseActivity() {
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
