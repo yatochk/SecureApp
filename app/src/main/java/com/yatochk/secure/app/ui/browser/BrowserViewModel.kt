@@ -3,6 +3,7 @@ package com.yatochk.secure.app.ui.browser
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hadilq.liveevent.LiveEvent
 import com.snakydesign.livedataextensions.map
 import javax.inject.Inject
 
@@ -20,10 +21,17 @@ class BrowserViewModel @Inject constructor() : ViewModel() {
         PROTOCOL_PREFIX + it
     }
 
+    private val eventEditMode = LiveEvent<Boolean>()
+    val editMode: LiveData<Boolean> = eventEditMode
+
     private val mutableShowUrl = MutableLiveData<String>().apply {
         value = START_URL
     }
     val showUrl: LiveData<String> = mutableShowUrl
+
+    fun editFocused(isFocused: Boolean) {
+        eventEditMode.value = isFocused
+    }
 
     fun inputUrl(url: String) {
         mutableLoadUrl.value = if (url.isBlank()) START_URL else url
