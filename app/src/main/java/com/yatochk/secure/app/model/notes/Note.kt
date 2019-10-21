@@ -6,8 +6,8 @@ import java.io.Serializable
 
 @Entity
 data class Note(
-    @PrimaryKey
-    var id: Int,
+    @PrimaryKey(autoGenerate = true)
+    var id: Int? = null,
     var title: String,
     var body: String
 ) : Serializable

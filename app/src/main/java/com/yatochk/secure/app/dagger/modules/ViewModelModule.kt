@@ -11,6 +11,8 @@ import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryViewModel
 import com.yatochk.secure.app.ui.image.ImageVIewModel
 import com.yatochk.secure.app.ui.main.MainViewModel
+import com.yatochk.secure.app.ui.notes.EditNoteViewModel
+import com.yatochk.secure.app.ui.notes.NotesViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -62,5 +64,15 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(GalleryMenuViewModel::class)
     internal abstract fun galleryMenuViewModel(viewModel: GalleryMenuViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(NotesViewModel::class)
+    internal abstract fun notesViewModel(viewModel: NotesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditNoteViewModel::class)
+    internal abstract fun editNoteViewModel(viewModel: EditNoteViewModel): ViewModel
 
 }

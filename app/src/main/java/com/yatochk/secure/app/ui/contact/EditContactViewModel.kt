@@ -9,15 +9,12 @@ import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.model.database.dao.ContactDao
 import com.yatochk.secure.app.ui.main.ContactErrorType
 import com.yatochk.secure.app.utils.postEvent
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EditContactViewModel @Inject constructor(
     private val contactDao: ContactDao
 ) : ViewModel() {
-
-    private val compositeDisposable = CompositeDisposable()
 
     private val mutableContact = MutableLiveData<Contact>()
     val contact: LiveData<Contact> = mutableContact
@@ -63,11 +60,6 @@ class EditContactViewModel @Inject constructor(
             contactDao.deleteContact(contact.value!!)
             eventFinish.postEvent()
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.dispose()
     }
 
 }

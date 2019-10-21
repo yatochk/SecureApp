@@ -42,6 +42,7 @@ class MainActivity : BaseActivity() {
     private val galleryMenuViewModel: GalleryMenuViewModel by viewModels { viewModelFactory }
 
     private val galleryFragment by lazy { GalleryFragment() }
+    private val notesFragment by lazy { NotesFragment() }
     private val browserFragment by lazy { BrowserFragment() }
 
     private lateinit var imageName: String
@@ -65,7 +66,7 @@ class MainActivity : BaseActivity() {
                         ContactFragment()
                     }
                     R.id.navigation_notes -> {
-                        NotesFragment()
+                        notesFragment
                     }
                     R.id.navigation_internet -> {
                         browserFragment
