@@ -95,7 +95,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
-                android:text="@string/contact_save"
+                android:text="@string/save"
                 android:textAllCaps="false"
                 android:textColor="@color/titleTextColor"
                 android:textSize="20sp"

@@ -1,19 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_note"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_notifications"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_notes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_add_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:fab_colorNormal="@color/colorAccent"
+        app:fab_colorPressed="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/card_new_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/cardBackground"
+        app:cardCornerRadius="12dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintTop_toBottomOf="parent"
+        tools:targetApi="lollipop">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:maxHeight="350dp">
+
+            <EditText
+                android:id="@+id/new_note_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:backgroundTint="@android:color/transparent"
+                android:ellipsize="end"
+                android:hint="@string/note_title"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="18dp"
+                android:textColor="@color/titleTextColor"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/note_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:src="@drawable/divider"
+                app:layout_constraintTop_toBottomOf="@id/new_note_title" />
+
+            <EditText
+                android:id="@+id/new_note_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="@string/new_note_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine"
+                android:paddingStart="12dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="18dp"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="@id/new_note_title"
+                app:layout_constraintStart_toStartOf="@id/new_note_title"
+                app:layout_constraintTop_toBottomOf="@id/note_divider" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_save_note"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:text="@string/save"
+                android:textAllCaps="false"
+                android:textColor="@color/titleTextColor"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_cancel_note"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/new_note_body" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_cancel_note"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/colorPrimaryDark"
+                android:text="@string/contact_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/titleTextColor"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/button_save_note"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/button_save_note"
+                app:layout_constraintTop_toTopOf="@+id/button_save_note" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

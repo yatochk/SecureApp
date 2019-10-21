@@ -53,6 +53,7 @@
             android:name=".ui.contact.ContactActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ContactActivity" />
+        <activity android:name=".ui.notes.NoteActivity" />
     </application>
 
 </manifest>
