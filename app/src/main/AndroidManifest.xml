@@ -54,6 +54,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/ContactActivity" />
         <activity android:name=".ui.notes.NoteActivity" />
+        <activity android:name=".ui.calculator.CalculatorActivity" />
     </application>
 
 </manifest>
