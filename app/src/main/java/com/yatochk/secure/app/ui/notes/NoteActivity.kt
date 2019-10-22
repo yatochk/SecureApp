@@ -52,12 +52,15 @@ class NoteActivity : BaseActivity() {
             text_note_title.setText(it.title)
             text_note_body.setText(it.body)
         }
-        viewModel.finish.observe(this) {
+        viewModel.animationFinish.observe(this) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition()
             } else {
                 finish()
             }
+        }
+        viewModel.finish.observe(this) {
+            finish()
         }
     }
 

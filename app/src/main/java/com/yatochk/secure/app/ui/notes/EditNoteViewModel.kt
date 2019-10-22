@@ -21,6 +21,9 @@ class EditNoteViewModel @Inject constructor(
     private val eventFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = eventFinish
 
+    private val eventAnimationFinish = LiveEvent<Void>()
+    val animationFinish: LiveData<Void> = eventAnimationFinish
+
     fun initNote(note: Note) {
         mutableNote.value = note
     }
@@ -32,7 +35,7 @@ class EditNoteViewModel @Inject constructor(
                 this.body = body
             }
             notesDao.updateNote(updated)
-            eventFinish.postEvent()
+            eventAnimationFinish.postEvent()
         }
     }
 
