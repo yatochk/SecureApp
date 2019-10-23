@@ -47,6 +47,6 @@ class ContactDiff : DiffUtil.ItemCallback<Contact>() {
         oldItem.name == newItem.name
 
     override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean =
-        oldItem.name == newItem.name && oldItem.number == newItem.number
+        false //OutOfBounds потому что после изменения списка не была заново вызвана NoteViewHolder.bind()
 
 }
