@@ -22,4 +22,14 @@
 
     <style name="ContactActivity" parent="BaseActivity" />
 
+    <style name="KeyboardButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/titleTextColor</item>
+        <item name="android:background">@color/cardBackground</item>
+    </style>
+
+    <style name="KeyboardActionButton" parent="KeyboardButton">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
 </resources>
