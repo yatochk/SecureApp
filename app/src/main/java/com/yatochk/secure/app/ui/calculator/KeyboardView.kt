@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.view_keyboard.view.*
 
@@ -52,6 +51,9 @@ class KeyboardView @JvmOverloads constructor(
         button_equals.setOnClickListener {
             onKeyClick(Key.KEY_EQUALS)
         }
+        button_delete.setOnClickListener {
+            onKeyClick(Key.KEY_DELETE)
+        }
     }
 
     private var listener: ((Key) -> Unit)? = null
@@ -60,10 +62,7 @@ class KeyboardView @JvmOverloads constructor(
         this.listener = listener
     }
 
-    lateinit var displayView: TextView
-
     private fun onKeyClick(key: Key) {
-        displayView.append(key.toString())
         listener?.invoke(key)
     }
 
@@ -79,7 +78,8 @@ class KeyboardView @JvmOverloads constructor(
         KEY_9,
         KEY_0,
         KEY_DOT,
-        KEY_EQUALS;
+        KEY_EQUALS,
+        KEY_DELETE;
 
         override fun toString(): String {
             return when (this) {
@@ -95,6 +95,7 @@ class KeyboardView @JvmOverloads constructor(
                 KEY_9 -> "9"
                 KEY_DOT -> "."
                 KEY_EQUALS -> ""
+                KEY_DELETE -> ""
             }
         }
 

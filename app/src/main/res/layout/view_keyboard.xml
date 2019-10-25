@@ -205,12 +205,12 @@
                 app:layout_constraintBottom_toTopOf="@id/button_delete"
                 app:layout_constraintTop_toBottomOf="@id/button_multiplication" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/button_delete"
                 style="@style/KeyboardActionButton"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:text="÷"
+                android:src="@drawable/ic_backstack_delete"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/button_division" />
 
