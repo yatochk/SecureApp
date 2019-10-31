@@ -1,6 +1,7 @@
 package com.yatochk.secure.app.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -36,6 +37,9 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val TAKE_PHOTO = 0
         private const val PICK_IMAGE = 1
+
+        fun intent(context: Context) =
+            Intent(context, MainActivity::class.java)
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }

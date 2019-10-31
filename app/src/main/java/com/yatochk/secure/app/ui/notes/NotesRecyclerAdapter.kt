@@ -45,9 +45,9 @@ class NoteViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 
 class NotesDiffUtils : DiffUtil.ItemCallback<Note>() {
     override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean =
-        oldItem.title == newItem.title
+        oldItem.body == newItem.body && oldItem.title == newItem.title
 
     override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean =
-        oldItem.body == newItem.body
+        false //OutOfBounds потому что после изменения списка не была заново вызвана NoteViewHolder.bind()
 
 }
