@@ -79,6 +79,6 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(CalculatorViewModel::class)
-    internal abstract fun editNoteViewModel(viewModel: CalculatorViewModel): ViewModel
+    internal abstract fun calculatorViewModel(viewModel: CalculatorViewModel): ViewModel
 
 }

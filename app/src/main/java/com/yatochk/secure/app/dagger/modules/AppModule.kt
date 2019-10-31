@@ -2,6 +2,7 @@ package com.yatochk.secure.app.dagger.modules
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.yatochk.secure.app.model.database.SecureDatabase
 import com.yatochk.secure.app.model.database.dao.ContactDao
@@ -19,6 +20,11 @@ class AppModule(private val app: Application) {
     fun provideContext(): Context {
         return app
     }
+
+    @Singleton
+    @Provides
+    fun provideSharedPreerences(): SharedPreferences =
+        app.getSharedPreferences("appPreferences", Context.MODE_PRIVATE)
 
     @Singleton
     @Provides
