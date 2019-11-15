@@ -20,6 +20,9 @@ class CalculatorActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calculator)
+        keyboard.setKeysLongListener {
+            viewModel.inputKey(it)
+        }
         keyboard.setKeysListener {
             viewModel.inputKey(it)
         }

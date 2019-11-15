@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.LinearLayout
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.view_keyboard.view.*
+import net.objecthunter.exp4j.ExpressionBuilder
+
 
 class KeyboardView @JvmOverloads constructor(
     context: Context,
@@ -54,18 +56,45 @@ class KeyboardView @JvmOverloads constructor(
         button_delete.setOnClickListener {
             onKeyClick(Key.KEY_DELETE)
         }
+        button_delete.setOnLongClickListener {
+            onKeyLongClick(Key.KEY_LONG_DELETE)
+        }
+        button_division.setOnClickListener {
+            onKeyClick(Key.KEY_DIVIDE)
+        }
+        button_plus.setOnClickListener {
+            onKeyClick(Key.KEY_PLUS)
+        }
+        button_minus.setOnClickListener {
+            onKeyClick(Key.KEY_MINUS)
+        }
+        button_multiplication.setOnClickListener {
+            onKeyClick(Key.KEY_MULTIPLE)
+        }
+        button_equals.setOnClickListener {
+            onKeyClick(Key.KEY_EQUALS)
+        }
     }
 
     private var listener: ((Key) -> Unit)? = null
+    private var listenerLong: ((Key) -> Unit)? = null
 
     fun setKeysListener(listener: (Key) -> Unit) {
         this.listener = listener
+    }
+
+    fun setKeysLongListener(listener: (Key) -> Unit) {
+        this.listenerLong = listener
     }
 
     private fun onKeyClick(key: Key) {
         listener?.invoke(key)
     }
 
+    private fun onKeyLongClick(key: Key): Boolean {
+        listener?.invoke(key)
+        return true
+    }
 }
 
 enum class Key {
@@ -82,6 +111,7 @@ enum class Key {
     KEY_DOT,
     KEY_EQUALS,
     KEY_DELETE,
+    KEY_LONG_DELETE,
     KEY_PLUS,
     KEY_MULTIPLE,
     KEY_DIVIDE,
@@ -101,19 +131,44 @@ enum class Key {
             KEY_9 -> "9"
             KEY_DOT -> "."
             KEY_PLUS -> "+"
-            KEY_MULTIPLE -> "×"
-            KEY_DIVIDE -> "÷"
+            KEY_MULTIPLE -> "*"//"×"
+            KEY_DIVIDE -> "/"//"÷"
             KEY_MINUS -> "-"
             else -> ""
         }
     }
 
-    fun makeOperation(first: Double, second: Double): Double =
-        when (this) {
-            KEY_PLUS -> first + second
-            KEY_MINUS -> first - second
-            KEY_MULTIPLE -> first * second
-            KEY_DIVIDE -> first / second
-            else -> throw IllegalStateException("Is not a operation")
+    fun makeEquals(expression: String?): String {
+        return try {
+            ExpressionBuilder(expression).build().evaluate().toString()
+        } catch (ex: ArithmeticException) {
+            "wrong operation"
         }
+    }
+
+    fun isOperation(key: Char): Boolean {
+        return when (key.toString()) {
+            toString() -> true
+            toString() -> true
+            toString() -> true
+            toString() -> true
+            else -> false
+        }
+    }
+
+    fun isNumber(): Boolean {
+        return when (this) {
+            KEY_1 -> true
+            KEY_2 -> true
+            KEY_3 -> true
+            KEY_4 -> true
+            KEY_5 -> true
+            KEY_6 -> true
+            KEY_7 -> true
+            KEY_8 -> true
+            KEY_9 -> true
+            KEY_0 -> true
+            else -> false
+        }
+    }
 }
