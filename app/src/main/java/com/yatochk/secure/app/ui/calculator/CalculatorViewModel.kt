@@ -20,7 +20,9 @@ class CalculatorViewModel @Inject constructor(
 
     var isDot = false
 
+
     fun inputKey(key: Key) {
+        contentAccessManager.setAccessKey("32-32+32")
         if (!key.isNumber()) {
             if (key == Key.KEY_DELETE)
                 with(mutableDisplayResult) {
@@ -42,7 +44,6 @@ class CalculatorViewModel @Inject constructor(
                         keyProcessed(key)
                         isDot = true
                     }
-
                 }
             else
                 with(mutableDisplayResult) {

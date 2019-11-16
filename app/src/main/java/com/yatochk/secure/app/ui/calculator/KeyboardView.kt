@@ -143,10 +143,7 @@ enum class Key {
 
     fun isOperation(key: Char): Boolean {
         return when (key.toString()) {
-            toString() -> true
-            toString() -> true
-            toString() -> true
-            toString() -> true
+            KEY_PLUS.toString(), KEY_MULTIPLE.toString(), KEY_DIVIDE.toString(), KEY_MINUS.toString() -> true
             else -> false
         }
     }
