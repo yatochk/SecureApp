@@ -35,7 +35,7 @@ class CalculatorViewModel @Inject constructor(
                 }
             if (key == Key.KEY_EQUALS)
                 with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank())
+                    if (!value.isNullOrBlank()&& !key.isOperation(value!![value!!.length - 1]))
                         value = Key.KEY_EQUALS.makeEquals(value)
                 }
             if (key == Key.KEY_DOT)
@@ -63,7 +63,7 @@ class CalculatorViewModel @Inject constructor(
                 value = key.toString()
             else
                 value += key.toString()
-            if (value?.length == 5 && contentAccessManager.checkAccessKey(value.toString()))
+            if ( contentAccessManager.checkAccessKey(value.toString()))
                 mutableOpenContent.value = null
         }
     }
