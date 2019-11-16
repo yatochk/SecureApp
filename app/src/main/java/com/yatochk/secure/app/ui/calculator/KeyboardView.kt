@@ -153,16 +153,7 @@ enum class Key {
 
     fun isNumber(): Boolean {
         return when (this) {
-            KEY_1 -> true
-            KEY_2 -> true
-            KEY_3 -> true
-            KEY_4 -> true
-            KEY_5 -> true
-            KEY_6 -> true
-            KEY_7 -> true
-            KEY_8 -> true
-            KEY_9 -> true
-            KEY_0 -> true
+            KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0 -> true
             else -> false
         }
     }
