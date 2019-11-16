@@ -57,7 +57,8 @@ class KeyboardView @JvmOverloads constructor(
             onKeyClick(Key.KEY_DELETE)
         }
         button_delete.setOnLongClickListener {
-            onKeyLongClick(Key.KEY_LONG_DELETE)
+            onKeyClick(Key.KEY_LONG_DELETE)
+            return@setOnLongClickListener true
         }
         button_division.setOnClickListener {
             onKeyClick(Key.KEY_DIVIDE)
@@ -77,23 +78,13 @@ class KeyboardView @JvmOverloads constructor(
     }
 
     private var listener: ((Key) -> Unit)? = null
-    private var listenerLong: ((Key) -> Unit)? = null
 
     fun setKeysListener(listener: (Key) -> Unit) {
         this.listener = listener
     }
 
-    fun setKeysLongListener(listener: (Key) -> Unit) {
-        this.listenerLong = listener
-    }
-
     private fun onKeyClick(key: Key) {
         listener?.invoke(key)
-    }
-
-    private fun onKeyLongClick(key: Key): Boolean {
-        listener?.invoke(key)
-        return true
     }
 }
 
@@ -140,14 +131,11 @@ enum class Key {
 
     fun makeEquals(expression: String?): String {
         return try {
-            var resString = ""
             val res = ExpressionBuilder(expression).build().evaluate()
-            if (res % 1 > 0) {
-            resString += res
-            }
+            if (res % 1 > 0)
+                res.toString()
             else
-                resString += res.toInt()
-            resString
+                res.toInt().toString()
         } catch (ex: ArithmeticException) {
             "wrong operation"
         }

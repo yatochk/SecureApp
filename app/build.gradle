@@ -87,7 +87,7 @@ dependencies {
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    //exp4j
+    //calculator lib
     implementation 'net.objecthunter:exp4j:0.4.8'
 
     //inflate dex
