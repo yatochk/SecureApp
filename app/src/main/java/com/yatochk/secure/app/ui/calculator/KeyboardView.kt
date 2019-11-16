@@ -140,7 +140,14 @@ enum class Key {
 
     fun makeEquals(expression: String?): String {
         return try {
-            ExpressionBuilder(expression).build().evaluate().toString()
+            var resString = ""
+            val res = ExpressionBuilder(expression).build().evaluate()
+            if (res % 1 > 0) {
+            resString += res
+            }
+            else
+                resString += res.toInt()
+            resString
         } catch (ex: ArithmeticException) {
             "wrong operation"
         }

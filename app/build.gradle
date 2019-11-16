@@ -89,5 +89,7 @@ dependencies {
 
     //exp4j
     implementation 'net.objecthunter:exp4j:0.4.8'
+
+    //inflate dex
     implementation 'com.android.support:multidex:1.0.3'
 }

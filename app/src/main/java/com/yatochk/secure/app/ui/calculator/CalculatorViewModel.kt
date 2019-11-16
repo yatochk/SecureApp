@@ -18,6 +18,7 @@ class CalculatorViewModel @Inject constructor(
     private val mutableOpenContent = MutableLiveData<Void>()
     val openContent: LiveData<Void> = mutableOpenContent
 
+    var isDot = false
 
     fun inputKey(key: Key) {
         if (!key.isNumber()) {
@@ -37,13 +38,18 @@ class CalculatorViewModel @Inject constructor(
                 }
             if (key == Key.KEY_DOT)
                 with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank() && !value?.contains(".")!!)
+                    if (!value.isNullOrBlank() && (!value?.contains(".")!! || !isDot)) {
                         keyProcessed(key)
+                        isDot = true
+                    }
+
                 }
             else
                 with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1]))
+                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1])) {
                         keyProcessed(key)
+                        isDot = false
+                    }
                 }
         } else
             keyProcessed(key)
@@ -56,7 +62,7 @@ class CalculatorViewModel @Inject constructor(
                 value = key.toString()
             else
                 value += key.toString()
-            if (value?.length == 3)
+            if (value?.length == 5 && contentAccessManager.checkAccessKey(value.toString()))
                 mutableOpenContent.value = null
         }
     }
