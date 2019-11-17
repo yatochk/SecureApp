@@ -35,19 +35,21 @@ class CalculatorViewModel @Inject constructor(
                 }
             if (key == Key.KEY_EQUALS)
                 with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank()&& !key.isOperation(value!![value!!.length - 1]))
+                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
                         value = Key.KEY_EQUALS.makeEquals(value)
+                        isDot = value?.contains(".")!!
+                    }
                 }
             if (key == Key.KEY_DOT)
                 with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank() && (!value?.contains(".")!! || !isDot)) {
+                    if ((!value.isNullOrBlank() && (!value?.contains(".")!!) || !isDot)) {
                         keyProcessed(key)
                         isDot = true
                     }
                 }
             else
                 with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1])) {
+                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
                         keyProcessed(key)
                         isDot = false
                     }
@@ -63,7 +65,7 @@ class CalculatorViewModel @Inject constructor(
                 value = key.toString()
             else
                 value += key.toString()
-            if ( contentAccessManager.checkAccessKey(value.toString()))
+            if (contentAccessManager.checkAccessKey(value.toString()))
                 mutableOpenContent.value = null
         }
     }

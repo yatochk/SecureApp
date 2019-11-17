@@ -137,12 +137,14 @@ enum class Key {
             else
                 res.toInt().toString()
         } catch (ex: ArithmeticException) {
-            "wrong operation"
+            ""
+        } catch (ex: NumberFormatException) {
+            ""
         }
     }
 
-    fun isOperation(key: Char): Boolean {
-        return when (key.toString()) {
+    fun isOperation(key: String): Boolean {
+        return when (key) {
             KEY_PLUS.toString(), KEY_MULTIPLE.toString(), KEY_DIVIDE.toString(), KEY_MINUS.toString() -> true
             else -> false
         }
