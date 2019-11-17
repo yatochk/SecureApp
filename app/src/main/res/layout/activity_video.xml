@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/gallery_image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerInside"
+        android:transitionName="@string/image_transition"
+        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/colorAccent"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_deleted"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="64dp"
+        android:alpha="0"
+        android:src="@drawable/ic_deleted"
+        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_to_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="64dp"
+        android:alpha="0"
+        android:src="@drawable/ic_uploaded"
+        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/container_image_options"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/image_menu_height"
+        android:background="@color/navigationBackground"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_image_rename"
+            android:layout_width="@dimen/image_button_scale"
+            android:layout_height="@dimen/image_button_scale"
+            android:background="@drawable/ic_pencil_edit_button" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_image_upload"
+            android:layout_width="@dimen/image_button_scale"
+            android:layout_height="@dimen/image_button_scale"
+            android:background="@drawable/ic_upload_image" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_image_delete"
+            android:layout_width="@dimen/image_button_scale"
+            android:layout_height="@dimen/image_button_scale"
+            android:background="@drawable/ic_delete" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@ import com.yatochk.secure.app.ui.image.ImageActivity
 import com.yatochk.secure.app.ui.main.MainActivity
 import com.yatochk.secure.app.ui.notes.NoteActivity
 import com.yatochk.secure.app.ui.notes.NotesFragment
+import com.yatochk.secure.app.ui.video.VideoActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -28,6 +29,7 @@ interface AppComponent {
     fun inject(albumActivity: AlbumActivity)
     fun inject(imageActivity: ImageActivity)
     fun inject(contactActivity: ContactActivity)
+    fun inject(videoActivity: VideoActivity)
     fun inject(noteActivity: NoteActivity)
     fun inject(viewModelFactory: ViewModelFactory)
     fun inject(galleryFragment: GalleryFragment)
