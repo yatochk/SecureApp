@@ -132,10 +132,10 @@ enum class Key {
     fun makeEquals(expression: String?): String {
         return try {
             val res = ExpressionBuilder(expression).build().evaluate()
-            if (res % 1 > 0)
-                res.toString()
-            else
+            if (res % 1 == 0.0)
                 res.toInt().toString()
+            else
+                res.toString()
         } catch (ex: ArithmeticException) {
             ""
         } catch (ex: NumberFormatException) {

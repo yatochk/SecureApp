@@ -22,38 +22,39 @@ class CalculatorViewModel @Inject constructor(
 
 
     fun inputKey(key: Key) {
-        contentAccessManager.setAccessKey("32-32+32")
         if (!key.isNumber()) {
-            if (key == Key.KEY_DELETE)
-                with(mutableDisplayResult) {
-                    if (!value.isNullOrEmpty())
-                        value = value?.removeLast()
-                }
-            if (key == Key.KEY_LONG_DELETE)
-                with(mutableDisplayResult) {
-                    value = ""
-                }
-            if (key == Key.KEY_EQUALS)
-                with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
-                        value = Key.KEY_EQUALS.makeEquals(value)
-                        isDot = value?.contains(".")!!
+            when (key) {
+                Key.KEY_DELETE ->
+                    with(mutableDisplayResult) {
+                        if (!value.isNullOrEmpty())
+                            value = value?.removeLast()
                     }
-                }
-            if (key == Key.KEY_DOT)
-                with(mutableDisplayResult) {
-                    if ((!value.isNullOrBlank() && (!value?.contains(".")!!) || !isDot)) {
-                        keyProcessed(key)
-                        isDot = true
+                Key.KEY_LONG_DELETE ->
+                    with(mutableDisplayResult) {
+                        value = ""
                     }
-                }
-            else
-                with(mutableDisplayResult) {
-                    if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
-                        keyProcessed(key)
-                        isDot = false
+                Key.KEY_EQUALS ->
+                    with(mutableDisplayResult) {
+                        if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
+                            value = Key.KEY_EQUALS.makeEquals(value)
+                            isDot = value?.contains(".")!!
+                        }
                     }
-                }
+                Key.KEY_DOT ->
+                    with(mutableDisplayResult) {
+                        if ((!value.isNullOrBlank() && (!value?.contains(".")!!) || !isDot)) {
+                            keyProcessed(key)
+                            isDot = true
+                        }
+                    }
+                else ->
+                    with(mutableDisplayResult) {
+                        if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
+                            keyProcessed(key)
+                            isDot = false
+                        }
+                    }
+            }
         } else
             keyProcessed(key)
     }
