@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.LinearLayout
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.view_keyboard.view.*
+import net.objecthunter.exp4j.ExpressionBuilder
+
 
 class KeyboardView @JvmOverloads constructor(
     context: Context,
@@ -54,6 +56,25 @@ class KeyboardView @JvmOverloads constructor(
         button_delete.setOnClickListener {
             onKeyClick(Key.KEY_DELETE)
         }
+        button_delete.setOnLongClickListener {
+            onKeyClick(Key.KEY_LONG_DELETE)
+            return@setOnLongClickListener true
+        }
+        button_division.setOnClickListener {
+            onKeyClick(Key.KEY_DIVIDE)
+        }
+        button_plus.setOnClickListener {
+            onKeyClick(Key.KEY_PLUS)
+        }
+        button_minus.setOnClickListener {
+            onKeyClick(Key.KEY_MINUS)
+        }
+        button_multiplication.setOnClickListener {
+            onKeyClick(Key.KEY_MULTIPLE)
+        }
+        button_equals.setOnClickListener {
+            onKeyClick(Key.KEY_EQUALS)
+        }
     }
 
     private var listener: ((Key) -> Unit)? = null
@@ -65,7 +86,6 @@ class KeyboardView @JvmOverloads constructor(
     private fun onKeyClick(key: Key) {
         listener?.invoke(key)
     }
-
 }
 
 enum class Key {
@@ -82,6 +102,7 @@ enum class Key {
     KEY_DOT,
     KEY_EQUALS,
     KEY_DELETE,
+    KEY_LONG_DELETE,
     KEY_PLUS,
     KEY_MULTIPLE,
     KEY_DIVIDE,
@@ -101,19 +122,38 @@ enum class Key {
             KEY_9 -> "9"
             KEY_DOT -> "."
             KEY_PLUS -> "+"
-            KEY_MULTIPLE -> "×"
-            KEY_DIVIDE -> "÷"
+            KEY_MULTIPLE -> "*"//"×"
+            KEY_DIVIDE -> "/"//"÷"
             KEY_MINUS -> "-"
             else -> ""
         }
     }
 
-    fun makeOperation(first: Double, second: Double): Double =
-        when (this) {
-            KEY_PLUS -> first + second
-            KEY_MINUS -> first - second
-            KEY_MULTIPLE -> first * second
-            KEY_DIVIDE -> first / second
-            else -> throw IllegalStateException("Is not a operation")
+    fun makeEquals(expression: String?): String {
+        return try {
+            val res = ExpressionBuilder(expression).build().evaluate()
+            if (res % 1 == 0.0)
+                res.toInt().toString()
+            else
+                res.toString()
+        } catch (ex: ArithmeticException) {
+            ""
+        } catch (ex: NumberFormatException) {
+            ""
         }
+    }
+
+    fun isOperation(key: String): Boolean {
+        return when (key) {
+            KEY_PLUS.toString(), KEY_MULTIPLE.toString(), KEY_DIVIDE.toString(), KEY_MINUS.toString() -> true
+            else -> false
+        }
+    }
+
+    fun isNumber(): Boolean {
+        return when (this) {
+            KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0 -> true
+            else -> false
+        }
+    }
 }
