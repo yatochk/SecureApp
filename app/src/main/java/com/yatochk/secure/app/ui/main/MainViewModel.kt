@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
 
-    fun receivedPhoto(receivedName: String) {
+    fun receivedMedia(receivedName: String) {
         compositeDisposable.add(Observable.just(1)
             .subscribeOn(Schedulers.io())
             .map {

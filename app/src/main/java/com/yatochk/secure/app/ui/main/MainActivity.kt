@@ -35,7 +35,9 @@ class MainActivity : BaseActivity() {
 
     companion object {
         private const val TAKE_PHOTO = 0
-        private const val PICK_IMAGE = 1
+        private const val TAKE_VIDEO = 1
+        private const val PICK_PHOTO = 2
+        private const val PICK_VIDEO = 3
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
@@ -46,6 +48,7 @@ class MainActivity : BaseActivity() {
     private val browserFragment by lazy { BrowserFragment() }
 
     private lateinit var imageName: String
+    private lateinit var videoName: String
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -144,6 +147,7 @@ class MainActivity : BaseActivity() {
                     BuildConfig.APPLICATION_ID + ".provider",
                     File(imagePath, imageName)
                 )
+
                 val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                     putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -151,12 +155,38 @@ class MainActivity : BaseActivity() {
                 startActivityForResult(takePicture, TAKE_PHOTO)
             }
 
+            openVideoCamera.observe(this@MainActivity) {
+                val videoPath = File(ImageSecureController.regularPath)
+                videoPath.mkdirs()
+                videoName = "Video_${Date().toTimeString()}.mp4"
+
+                val videoUri = FileProvider.getUriForFile(
+                    this@MainActivity,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    File(videoPath, videoName)
+                )
+
+                val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).apply {
+                    putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivityForResult(takeVideoIntent, TAKE_VIDEO)
+            }
+
             openGallery.observe(this@MainActivity) {
                 val pickPhoto = Intent(
                     Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
-                startActivityForResult(pickPhoto, PICK_IMAGE)
+                startActivityForResult(pickPhoto, PICK_PHOTO)
+            }
+
+            openVideoGallery.observe(this@MainActivity) {
+                val pickPhoto = Intent(
+                    Intent.ACTION_PICK,
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                )
+                startActivityForResult(pickPhoto, PICK_VIDEO)
             }
         }
     }
@@ -212,12 +242,18 @@ class MainActivity : BaseActivity() {
         if (resultCode != RESULT_OK) return
         when (requestCode) {
             TAKE_PHOTO -> {
-                mainViewModel.receivedPhoto(imageName)
+                mainViewModel.receivedMedia(imageName)
             }
-            PICK_IMAGE -> {
+            TAKE_VIDEO -> {
+                mainViewModel.receivedMedia(videoName)
+            }
+            PICK_PHOTO -> {
                 data?.data?.toPath(this)?.also {
                     mainViewModel.receivedGalleryImage(it)
                 }
+            }
+            PICK_VIDEO -> {
+
             }
         }
     }

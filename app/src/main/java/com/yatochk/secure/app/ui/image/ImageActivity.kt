@@ -10,7 +10,7 @@ import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
-import com.yatochk.secure.app.ui.BaseActivity
+import com.yatochk.secure.app.ui.MediaActivity
 import com.yatochk.secure.app.ui.main.ImageErrorType
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
@@ -19,10 +19,9 @@ import kotlinx.android.synthetic.main.activity_image.*
 import javax.inject.Inject
 import kotlin.math.min
 
-class ImageActivity : BaseActivity() {
+class ImageActivity : MediaActivity() {
 
     companion object {
-        private const val DURATION_ANIMATION = 500L
         private const val IMAGE = "opened_image"
 
         fun intent(context: Context, image: Image) =
@@ -32,7 +31,7 @@ class ImageActivity : BaseActivity() {
 
     }
 
-    private val viewModel: ImageVIewModel by viewModels { viewModelFactory }
+    private val viewModel: ImageViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var imageSecureController: ImageSecureController
@@ -46,7 +45,7 @@ class ImageActivity : BaseActivity() {
         setContentView(R.layout.activity_image)
         intent.getSerializableExtra(IMAGE)?.also {
             if (savedInstanceState == null) {
-                viewModel.initImage(it as Image)
+                viewModel.initMedia(it as Image)
             }
         }
         button_image_delete.setOnClickListener {
@@ -98,52 +97,8 @@ class ImageActivity : BaseActivity() {
         }
     }
 
-    private fun openRenameAnimation() {
-
-    }
-
-    private fun toGalleryAnimation() {
-        gallery_image.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .scaleX(0f)
-            .scaleY(0f)
-            .withEndAction {
-                viewModel.animationEnd()
-            }
-            .start()
-
-        image_to_gallery.animate()
-            .alpha(1f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
-
-        container_image_options.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
-    }
-
-    private fun deleteAnimation() {
-        gallery_image.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .scaleX(0f)
-            .scaleY(0f)
-            .withEndAction {
-                viewModel.animationEnd()
-            }
-            .start()
-
-        image_deleted.animate()
-            .alpha(1f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
-
-        container_image_options.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
+    override fun onAnimationEnd() {
+        viewModel.animationEnd()
     }
 
 }

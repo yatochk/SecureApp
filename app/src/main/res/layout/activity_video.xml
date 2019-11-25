@@ -7,8 +7,8 @@
     android:gravity="bottom"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/gallery_image"
+    <VideoView
+        android:id="@+id/gallery_video"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerInside"

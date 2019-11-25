@@ -33,6 +33,9 @@ class AlbumViewModel @Inject constructor(
     private val mutableOpenImage = LiveEvent<Pair<Image, ImageView>>()
     val openImage: LiveData<Pair<Image, ImageView>> = mutableOpenImage
 
+    private val mutableOpenVideo = LiveEvent<Image>()
+    val openVideo: LiveData<Image> = mutableOpenVideo
+
     private val mutableStartObserving = MutableLiveData<Void>()
     val startObserving: LiveData<Void> = mutableStartObserving
 
@@ -78,7 +81,11 @@ class AlbumViewModel @Inject constructor(
     }
 
     fun clickImage(image: Image, imageView: ImageView) {
-        mutableOpenImage.value = Pair(image, imageView)
+        if (image.regularPath.contains("mp4")) {
+            mutableOpenVideo.value = image
+        } else {
+            mutableOpenImage.value = Pair(image, imageView)
+        }
     }
 
     override fun onCleared() {

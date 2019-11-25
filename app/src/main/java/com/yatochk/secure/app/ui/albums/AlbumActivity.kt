@@ -14,6 +14,7 @@ import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.gallery.ImageRecyclerAdapter
 import com.yatochk.secure.app.ui.image.ImageActivity
+import com.yatochk.secure.app.ui.video.VideoActivity
 import com.yatochk.secure.app.utils.observe
 import kotlinx.android.synthetic.main.activity_album.*
 
@@ -87,6 +88,9 @@ class AlbumActivity : BaseActivity() {
                     null
                 }
                 startActivity(ImageActivity.intent(this@AlbumActivity, it.first), bundle)
+            }
+            openVideo.observe(this@AlbumActivity) {
+                startActivity(VideoActivity.intent(this@AlbumActivity, it))
             }
             finish.observe(this@AlbumActivity) {
                 finish()
