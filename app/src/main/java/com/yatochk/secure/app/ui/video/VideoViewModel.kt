@@ -17,17 +17,27 @@ class VideoViewModel @Inject constructor(
     imagesRepository: ImagesRepository
 ) : ImageViewModel(imageSecureController, imagesRepository) {
 
+    private var videoFile: File? = null
+
     private val mediatorVideo = MediatorLiveData<File>().apply {
         addSource(mutableMedia) {
             Single.just(it)
-                .observeOn(Schedulers.io())
-                .map {
-                    File(currentMedia.securePath).also { file ->
-                        file.mkdirs()
-                        file.writeBytes(it)
-                    }
+                .subscribeOn(Schedulers.io())
+                .map { bytes ->
+                    val imageFile = File(currentMedia.regularPath)
+                    val imageDirectory =
+                        File(
+                            currentMedia.regularPath.substring(
+                                0,
+                                currentMedia.regularPath.lastIndexOf("/")
+                            )
+                        )
+                    imageDirectory.mkdirs()
+                    imageFile.writeBytes(bytes)
+                    videoFile = imageFile
+                    videoFile
                 }
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { videoFile -> value = videoFile },
                     { mutableFinish.postEvent() }
@@ -36,5 +46,10 @@ class VideoViewModel @Inject constructor(
     }
 
     val video: LiveData<File> = mediatorVideo
+
+    override fun onCleared() {
+        super.onCleared()
+        videoFile?.delete()
+    }
 
 }
