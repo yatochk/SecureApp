@@ -9,7 +9,7 @@ class ImagesRepository @Inject constructor(
     private val imagesDao: ImagesDao
 ) {
 
-    fun deleteImage(image: Image) {
+    suspend fun deleteImage(image: Image) {
         File(image.securePath).delete()
         imagesDao.deleteImage(image)
     }

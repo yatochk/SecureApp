@@ -1,17 +1,19 @@
 package com.yatochk.secure.app
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
 import com.yatochk.secure.app.ui.main.ImageErrorType
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 open class MediaViewModel(
@@ -53,54 +55,40 @@ open class MediaViewModel(
     }
 
     fun onDelete() {
-        mutableDelete.value = null
-        compositeDisposable.add(
-            Observable.just<Image>(currentMedia)
-                .subscribeOn(Schedulers.io())
-                .map {
-                    imagesRepository.deleteImage(it)
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-
-                    },
-                    {
-                        mutableError.value = ImageErrorType.DELETE_IMAGE
-                    }
-                )
-        )
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
+            mutableError.value = ImageErrorType.DELETE_IMAGE
+        }) {
+            mutableDelete.value = null
+            imagesRepository.deleteImage(currentMedia)
+        }
     }
 
     fun clickRename() {
 
     }
 
+    private suspend fun mediaToGallery(media: Image) =
+        coroutineScope {
+            val regularImage = imageSecureController.decryptImageFromFile(media.securePath)
+            val imageFile = File(media.regularPath)
+            val imageDirectory =
+                File(media.regularPath.substring(0, media.regularPath.lastIndexOf("/")))
+            imageDirectory.mkdirs()
+            imageFile.writeBytes(regularImage)
+            imageFile
+        }
+
     fun onToGallery() {
         mutableToGallery.value = null
-        compositeDisposable.add(
-            Observable.just<Image>(currentMedia)
-                .subscribeOn(Schedulers.io())
-                .map {
-                    val regularImage = imageSecureController.decryptImageFromFile(it.securePath)
-                    val imageFile = File(it.regularPath)
-                    val imageDirectory =
-                        File(it.regularPath.substring(0, it.regularPath.lastIndexOf("/")))
-                    imageDirectory.mkdirs()
-                    imageFile.writeBytes(regularImage)
-                    imagesRepository.deleteImage(it)
-                    imageFile
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        mutableScanImage.value = it.path
-                    },
-                    {
-                        mutableError.value = ImageErrorType.TO_GALLERY
-                    }
-                )
-        )
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
+            mutableError.value = ImageErrorType.TO_GALLERY
+        }) {
+            val mediaFile = mediaToGallery(currentMedia)
+            imagesRepository.deleteImage(currentMedia)
+            mutableScanImage.value = mediaFile.path
+        }
     }
 
     override fun onCleared() {

@@ -2,9 +2,9 @@ package com.yatochk.secure.app.ui.gallery
 
 import android.view.View
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import com.hadilq.liveevent.LiveEvent
-import com.snakydesign.livedataextensions.map
 import com.yatochk.secure.app.model.images.Album
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
@@ -18,15 +18,25 @@ class GalleryViewModel @Inject constructor(
     private val mutableOpenAlbum = LiveEvent<Pair<String, View>>()
     val openAlbum: LiveData<Pair<String, View>> = mutableOpenAlbum
 
-    val albums: LiveData<List<Album>> = imagesRepository.getImages().map { images ->
-        images.map { it.album }.toSet().map { name ->
-            val imageBytes = imageSecureController.decryptImageFromFile(
-                images.last { it.album == name }.securePath
-            )
-            Album(
-                name,
-                imageBytes
-            )
+    val albums: LiveData<List<Album>> = MediatorLiveData<List<Album>>().apply {
+        addSource(imagesRepository.getImages()) { images ->
+            val displayImages = arrayListOf<Album>()
+            images.map { it.album }.toSet().forEach { name ->
+                try {
+                    val imageBytes = imageSecureController.decryptImageFromFile(
+                        images.last { it.album == name }.securePath
+                    )
+                    displayImages.add(
+                        Album(
+                            name,
+                            imageBytes
+                        )
+                    )
+                } catch (e: Throwable) {
+
+                }
+            }
+            value = displayImages
         }
     }
 

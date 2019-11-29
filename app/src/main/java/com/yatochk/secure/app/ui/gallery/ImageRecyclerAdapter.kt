@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.image_item.view.*
 
 class ImageRecyclerAdapter(
     private val itemClickListener: (Image, ImageView) -> Unit
-) : ListAdapter<Pair<Image, Bitmap>, ImageViewHolder>(BitmapDiffUtils()) {
+) : ListAdapter<Pair<Image, Bitmap?>, ImageViewHolder>(BitmapDiffUtils()) {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ImageViewHolder = ImageViewHolder(p0)
 
@@ -37,12 +37,13 @@ class ImageViewHolder(parent: ViewGroup) :
 
     private val image = itemView.gallery_image
 
-    fun bind(pair: Pair<Image, Bitmap>, clickListener: ItemClickListener) {
+    fun bind(pair: Pair<Image, Bitmap?>, clickListener: ItemClickListener) {
         with(itemView) {
-            Glide.with(context)
-                .load(pair.second)
-                .into(image)
-
+            pair.second?.also {
+                Glide.with(context)
+                    .load(it)
+                    .into(image)
+            }
             setOnClickListener {
                 clickListener.click(image)
             }
@@ -59,17 +60,17 @@ class ImageViewHolder(parent: ViewGroup) :
     }
 }
 
-class BitmapDiffUtils : DiffUtil.ItemCallback<Pair<Image, Bitmap>>() {
+class BitmapDiffUtils : DiffUtil.ItemCallback<Pair<Image, Bitmap?>>() {
     override fun areItemsTheSame(
-        oldItem: Pair<Image, Bitmap>,
-        newItem: Pair<Image, Bitmap>
+        oldItem: Pair<Image, Bitmap?>,
+        newItem: Pair<Image, Bitmap?>
     ): Boolean =
         oldItem.first == newItem.first
 
     override fun areContentsTheSame(
-        oldItem: Pair<Image, Bitmap>,
-        newItem: Pair<Image, Bitmap>
+        oldItem: Pair<Image, Bitmap?>,
+        newItem: Pair<Image, Bitmap?>
     ): Boolean =
-        oldItem.second.rowBytes == newItem.second.rowBytes
+        oldItem.second?.rowBytes == newItem.second?.rowBytes
 
 }

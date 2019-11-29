@@ -58,6 +58,10 @@ class VideoActivity : MediaActivity() {
             video.observe(this@VideoActivity) {
                 gallery_video.setVideoPath(it.path)
                 gallery_video.start()
+                TODO(
+                    "файл корректно сохраняется, но videoView не хавает" +
+                            "нужен ContentProvider"
+                )
             }
             delete.observe(this@VideoActivity) {
                 deleteAnimation()

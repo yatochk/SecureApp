@@ -2,9 +2,9 @@ package com.yatochk.secure.app.ui.video
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
-import com.yatochk.secure.app.ui.image.ImageViewModel
 import com.yatochk.secure.app.utils.postEvent
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class VideoViewModel @Inject constructor(
     imageSecureController: ImageSecureController,
     imagesRepository: ImagesRepository
-) : ImageViewModel(imageSecureController, imagesRepository) {
+) : MediaViewModel(imageSecureController, imagesRepository) {
 
     private var videoFile: File? = null
 
@@ -24,18 +24,18 @@ class VideoViewModel @Inject constructor(
             Single.just(it)
                 .subscribeOn(Schedulers.io())
                 .map { bytes ->
-                    val imageFile = File(currentMedia.regularPath)
-                    val imageDirectory =
+                    val videoDirectory =
                         File(
                             currentMedia.regularPath.substring(
                                 0,
                                 currentMedia.regularPath.lastIndexOf("/")
                             )
                         )
-                    imageDirectory.mkdirs()
-                    imageFile.writeBytes(bytes)
-                    videoFile = imageFile
-                    videoFile
+                    videoDirectory.mkdirs()
+                    val videoFile = File(currentMedia.regularPath)
+                    videoFile.writeBytes(bytes)
+                    this@VideoViewModel.videoFile = videoFile
+                    this@VideoViewModel.videoFile
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
