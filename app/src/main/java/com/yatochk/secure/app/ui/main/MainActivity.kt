@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.transition.TransitionManager
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -50,6 +52,20 @@ class MainActivity : BaseActivity() {
     private lateinit var imageName: String
     private lateinit var videoName: String
 
+    private val mainSet = ConstraintSet()
+    private val pickerSet = ConstraintSet()
+    private var isPickerOpened = false
+
+    private fun initSets() {
+        mainSet.clone(container)
+        pickerSet.clone(this, R.layout.main_pick_media_type)
+    }
+
+    private fun animatePicker(open: Boolean) {
+        TransitionManager.beginDelayedTransition(container)
+        (if (open) pickerSet else mainSet).applyTo(container)
+    }
+
     override fun inject() {
         SecureApplication.appComponent.inject(this)
     }
@@ -57,6 +73,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initSets()
         goToFragment(galleryFragment)
         galleryFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
@@ -137,6 +154,11 @@ class MainActivity : BaseActivity() {
 
     private fun initGalleryMenuObservers() {
         with(galleryMenuViewModel) {
+            openTypePicker.observe(this@MainActivity) {
+                animatePicker(!isPickerOpened)
+                isPickerOpened = !isPickerOpened
+            }
+
             openCamera.observe(this@MainActivity) {
                 val imagePath = File(ImageSecureController.regularPath)
                 imagePath.mkdirs()

@@ -24,11 +24,11 @@ class GalleryMenuViewModel @Inject constructor() : ViewModel() {
     val openTypePicker: LiveData<Void> = eventTypePicker
 
     fun clickPhoto() {
-        mutableOpenCamera.postEvent()
+        eventTypePicker.postEvent()
     }
 
     fun clickGallery() {
-        mutableOpenGallery.postEvent()
+        eventTypePicker.postEvent()
     }
 
 }
