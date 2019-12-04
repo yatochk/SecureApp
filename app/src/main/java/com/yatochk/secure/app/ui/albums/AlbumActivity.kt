@@ -16,6 +16,7 @@ import com.yatochk.secure.app.ui.gallery.ImageRecyclerAdapter
 import com.yatochk.secure.app.ui.image.ImageActivity
 import com.yatochk.secure.app.ui.video.VideoActivity
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_album.*
 
 class AlbumActivity : BaseActivity() {
@@ -96,7 +97,7 @@ class AlbumActivity : BaseActivity() {
                 finish()
             }
             showImageError.observe(this@AlbumActivity) {
-                //TODO
+                showErrorToast(this@AlbumActivity, it)
             }
         }
     }

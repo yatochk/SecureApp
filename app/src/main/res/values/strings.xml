@@ -7,11 +7,14 @@
     <string name="title_browser">Internet</string>
 
     <string name="error_photo">Error on take photo</string>
+    <string name="some_error">Something do wrong</string>
     <string name="error_gallery">Error on pick image</string>
     <string name="error_to_gallery">Error on pick image</string>
     <string name="error_encrypt_image">Error on encrypting image</string>
+    <string name="error_display_image">Error on try displaying image</string>
     <string name="error_delete_image">Error on removing image</string>
     <string name="error_delete_contact">Error on removing contact</string>
+    <string name="error_update_contact">Error on updating contact</string>
 
     <string name="album_transition" translatable="false">email_transition</string>
     <string name="image_transition" translatable="false">image_transition</string>

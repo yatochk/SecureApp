@@ -6,6 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hadilq.liveevent.LiveEvent
+import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
@@ -18,14 +19,15 @@ import javax.inject.Inject
 
 class AlbumViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
-    private val imagesDao: ImagesDao
+    private val imagesDao: ImagesDao,
+    private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
     private val mediatorImages = MediatorLiveData<List<Pair<Image, ByteArray>>>()
     val images: LiveData<List<Pair<Image, ByteArray>>> = mediatorImages
 
-    private val mutableShowError = LiveEvent<ImageErrorType>()
-    val showImageError: LiveData<ImageErrorType> = mutableShowError
+    private val mutableShowError = LiveEvent<String>()
+    val showImageError: LiveData<String> = mutableShowError
 
     private val mutableFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = mutableFinish
@@ -64,7 +66,8 @@ class AlbumViewModel @Inject constructor(
                         mediatorImages.value = newImages
                     },
                     {
-                        mutableShowError.value = ImageErrorType.ENCRYPT_IMAGE
+                        mutableShowError.value =
+                            localizationManager.getErrorString(ImageErrorType.ENCRYPT_IMAGE)
                     }
                 )
         )
@@ -81,7 +84,7 @@ class AlbumViewModel @Inject constructor(
     }
 
     fun clickImage(image: Image, imageView: ImageView) {
-        if (image.regularPath.contains("mp4")) {
+        if (image.regularPath.contains("MPEG_4")) {
             mutableOpenVideo.value = image
         } else {
             mutableOpenImage.value = Pair(image, imageView)

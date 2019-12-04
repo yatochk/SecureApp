@@ -9,7 +9,6 @@ import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.ui.BaseActivity
-import com.yatochk.secure.app.ui.main.ContactErrorType
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.onDone
 import com.yatochk.secure.app.utils.showErrorToast
@@ -77,14 +76,7 @@ class ContactActivity : BaseActivity() {
                 text_contact_number.setText(it.number)
             }
             error.observe(this@ContactActivity) {
-                showErrorToast(
-                    this@ContactActivity,
-                    when (it) {
-                        ContactErrorType.DELETE_CONTACT -> {
-                            getString(R.string.error_delete_contact)
-                        }
-                    }
-                )
+                showErrorToast(this@ContactActivity, it)
             }
         }
     }

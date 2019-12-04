@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
+import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
@@ -19,11 +20,12 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
-    private val imagesDao: ImagesDao
+    private val imagesDao: ImagesDao,
+    private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
-    private val mutableShowError = LiveEvent<ImageErrorType>()
-    val showImageError: LiveData<ImageErrorType> = mutableShowError
+    private val mutableShowError = LiveEvent<String>()
+    val showImageError: LiveData<String> = mutableShowError
 
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
@@ -31,7 +33,7 @@ class MainViewModel @Inject constructor(
     fun receivedMedia(receivedName: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = ImageErrorType.ADD_PHOTO
+            mutableShowError.value = localizationManager.getErrorString(ImageErrorType.ADD_PHOTO)
         }) {
             val name = encryptMedia(receivedName)
             imagesDao.addImage(
@@ -74,7 +76,7 @@ class MainViewModel @Inject constructor(
     fun receivedGalleryImage(regularPath: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = ImageErrorType.ADD_IMAGE
+            mutableShowError.value = localizationManager.getErrorString(ImageErrorType.ADD_IMAGE)
         }) {
             val file = encryptGalleryMedia(regularPath)
             imagesDao.addImage(

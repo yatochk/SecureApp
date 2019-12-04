@@ -11,7 +11,6 @@ import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.MediaActivity
-import com.yatochk.secure.app.ui.main.ImageErrorType
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
 import com.yatochk.secure.app.utils.showErrorToast
@@ -63,16 +62,20 @@ class ImageActivity : MediaActivity() {
     private fun observers() {
         with(viewModel) {
             image.observe(this@ImageActivity) {
-                val fullSizeBitmap = BitmapFactory.decodeByteArray(
-                    it,
-                    0,
-                    it.size
-                )
-                val displaySize = Point()
-                windowManager.defaultDisplay.getSize(displaySize)
-                gallery_image.setImageBitmap(
-                    fullSizeBitmap.scaleDown(min(displaySize.x, displaySize.y).toFloat(), true)
-                )
+                try {
+                    val fullSizeBitmap = BitmapFactory.decodeByteArray(
+                        it,
+                        0,
+                        it.size
+                    )
+                    val displaySize = Point()
+                    windowManager.defaultDisplay.getSize(displaySize)
+                    gallery_image.setImageBitmap(
+                        fullSizeBitmap.scaleDown(min(displaySize.x, displaySize.y).toFloat(), true)
+                    )
+                } catch (e: Throwable) {
+                    showErrorToast(this@ImageActivity, getString(R.string.error_display_image))
+                }
             }
             delete.observe(this@ImageActivity) {
                 deleteAnimation()
@@ -89,10 +92,8 @@ class ImageActivity : MediaActivity() {
             finish.observe(this@ImageActivity) {
                 finish()
             }
-            imageError.observe(this@ImageActivity) {
-                if (it == ImageErrorType.TO_GALLERY) {
-                    showErrorToast(this@ImageActivity, getString(R.string.error_to_gallery))
-                }
+            mediaError.observe(this@ImageActivity) {
+                showErrorToast(this@ImageActivity, it)
             }
         }
     }

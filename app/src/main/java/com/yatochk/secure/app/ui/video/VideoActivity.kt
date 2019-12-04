@@ -3,12 +3,12 @@ package com.yatochk.secure.app.ui.video
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.MediaController
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.ui.MediaActivity
-import com.yatochk.secure.app.ui.main.ImageErrorType
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_video.*
@@ -57,11 +57,9 @@ class VideoActivity : MediaActivity() {
         with(viewModel) {
             video.observe(this@VideoActivity) {
                 gallery_video.setVideoPath(it.path)
+                gallery_video.setMediaController(MediaController(this@VideoActivity))
+                gallery_video.requestFocus()
                 gallery_video.start()
-                TODO(
-                    "файл корректно сохраняется, но videoView не хавает" +
-                            "нужен ContentProvider"
-                )
             }
             delete.observe(this@VideoActivity) {
                 deleteAnimation()
@@ -78,10 +76,8 @@ class VideoActivity : MediaActivity() {
             finish.observe(this@VideoActivity) {
                 finish()
             }
-            imageError.observe(this@VideoActivity) {
-                if (it == ImageErrorType.TO_GALLERY) {
-                    showErrorToast(this@VideoActivity, getString(R.string.error_to_gallery))
-                }
+            mediaError.observe(this@VideoActivity) {
+                showErrorToast(this@VideoActivity, it)
             }
         }
     }

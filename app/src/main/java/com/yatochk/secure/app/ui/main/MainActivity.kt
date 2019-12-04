@@ -1,6 +1,7 @@
 package com.yatochk.secure.app.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -40,6 +41,9 @@ class MainActivity : BaseActivity() {
         private const val TAKE_VIDEO = 1
         private const val PICK_PHOTO = 2
         private const val PICK_VIDEO = 3
+
+        fun intent(context: Context) =
+            Intent(context, MainActivity::class.java)
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
@@ -194,7 +198,7 @@ class MainActivity : BaseActivity() {
             openVideoCamera.observe(this@MainActivity) {
                 val videoPath = File(ImageSecureController.regularPath)
                 videoPath.mkdirs()
-                videoName = "Video_${Date().toTimeString()}.mp4"
+                videoName = "Video_${Date().toTimeString()}.MPEG_4"
 
                 val videoUri = FileProvider.getUriForFile(
                     this@MainActivity,
@@ -204,6 +208,7 @@ class MainActivity : BaseActivity() {
 
                 val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).apply {
                     putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
+                    putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 startActivityForResult(takeVideoIntent, TAKE_VIDEO)
@@ -234,26 +239,7 @@ class MainActivity : BaseActivity() {
             }
 
             showImageError.observe(this@MainActivity) {
-                showErrorToast(
-                    this@MainActivity,
-                    when (it) {
-                        ImageErrorType.ADD_PHOTO -> {
-                            getString(R.string.error_photo)
-                        }
-                        ImageErrorType.ADD_IMAGE -> {
-                            getString(R.string.error_gallery)
-                        }
-                        ImageErrorType.ENCRYPT_IMAGE -> {
-                            getString(R.string.error_encrypt_image)
-                        }
-                        ImageErrorType.DELETE_IMAGE -> {
-                            getString(R.string.error_delete_image)
-                        }
-                        ImageErrorType.TO_GALLERY -> {
-                            getString(R.string.error_to_gallery)
-                        }
-                    }
-                )
+                showErrorToast(this@MainActivity, it)
             }
 
         }

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
+import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
@@ -18,7 +19,8 @@ import java.io.File
 
 open class MediaViewModel(
     private val imageSecureController: ImageSecureController,
-    private val imagesRepository: ImagesRepository
+    private val imagesRepository: ImagesRepository,
+    private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
     protected lateinit var currentMedia: Image
@@ -37,8 +39,8 @@ open class MediaViewModel(
     protected val mutableFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = mutableFinish
 
-    private val mutableError = LiveEvent<ImageErrorType>()
-    val imageError: LiveData<ImageErrorType> = mutableError
+    private val mutableError = LiveEvent<String>()
+    val mediaError: LiveData<String> = mutableError
 
     private val mutableOpenRename = MutableLiveData<Boolean>()
     val openRename: LiveData<Boolean> = mutableOpenRename
@@ -57,7 +59,7 @@ open class MediaViewModel(
     fun onDelete() {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
-            mutableError.value = ImageErrorType.DELETE_IMAGE
+            mutableError.value = localizationManager.getErrorString(ImageErrorType.DELETE_IMAGE)
         }) {
             mutableDelete.value = null
             imagesRepository.deleteImage(currentMedia)
@@ -83,7 +85,7 @@ open class MediaViewModel(
         mutableToGallery.value = null
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
-            mutableError.value = ImageErrorType.TO_GALLERY
+            mutableError.value = localizationManager.getErrorString(ImageErrorType.TO_GALLERY)
         }) {
             val mediaFile = mediaToGallery(currentMedia)
             imagesRepository.deleteImage(currentMedia)

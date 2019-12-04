@@ -9,5 +9,6 @@ enum class ImageErrorType {
 }
 
 enum class ContactErrorType {
-    DELETE_CONTACT
+    DELETE_CONTACT,
+    UPDATE_CONTACT
 }
