@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FapApp</string>
+    <string name="app_name">SecureApp</string>
 
     <string name="title_gallery">Photo</string>
     <string name="title_contacts">Contact</string>
@@ -27,5 +27,8 @@
     <string name="https">https://</string>
     <string name="note_title">Title</string>
     <string name="new_note_hint">Note</string>
+
+    <string name="ok">OK</string>
+    <string name="enter_code">Enter code and press equals</string>
     <string name="pick_media_title">Pick type of media</string>
 </resources>
