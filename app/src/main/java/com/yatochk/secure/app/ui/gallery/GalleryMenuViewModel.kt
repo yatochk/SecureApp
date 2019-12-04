@@ -8,27 +8,56 @@ import javax.inject.Inject
 
 class GalleryMenuViewModel @Inject constructor() : ViewModel() {
 
-    private val mutableOpenCamera = LiveEvent<Void>()
-    val openCamera: LiveData<Void> = mutableOpenCamera
+    private var fromGallery = false
 
-    private val mutableOpenVideoCamera = LiveEvent<Void>()
-    val openVideoCamera: LiveData<Void> = mutableOpenVideoCamera
+    private val eventOpenCamera = LiveEvent<Void>()
+    val openCamera: LiveData<Void> = eventOpenCamera
 
-    private val mutableOpenGallery = LiveEvent<Void>()
-    val openGallery: LiveData<Void> = mutableOpenGallery
+    private val eventOpenVideoCamera = LiveEvent<Void>()
+    val openVideoCamera: LiveData<Void> = eventOpenVideoCamera
 
-    private val mutableOpenVideoGallery = LiveEvent<Void>()
-    val openVideoGallery: LiveData<Void> = mutableOpenVideoGallery
+    private val eventOpenGallery = LiveEvent<Void>()
+    val openGallery: LiveData<Void> = eventOpenGallery
 
-    private val eventTypePicker = LiveEvent<Void>()
-    val openTypePicker: LiveData<Void> = eventTypePicker
+    private val eventOpenVideoGallery = LiveEvent<Void>()
+    val openVideoGallery: LiveData<Void> = eventOpenVideoGallery
+
+    private val eventOpenTypePicker = LiveEvent<Void>()
+    val openTypePicker: LiveData<Void> = eventOpenTypePicker
+
+    private val eventHideTypePicker = LiveEvent<Void>()
+    val hideTypePicker: LiveData<Void> = eventHideTypePicker
 
     fun clickPhoto() {
-        eventTypePicker.postEvent()
+        fromGallery = false
+        eventOpenTypePicker.postEvent()
     }
 
     fun clickGallery() {
-        eventTypePicker.postEvent()
+        fromGallery = true
+        eventOpenTypePicker.postEvent()
+    }
+
+    fun onPickerCancel() {
+        eventHideTypePicker.postEvent()
+    }
+
+    fun onPickVideo() {
+        eventHideTypePicker.postEvent()
+        if (fromGallery) {
+            eventOpenVideoGallery.postEvent()
+        } else {
+            eventOpenVideoCamera.postEvent()
+        }
+    }
+
+    fun onPickImage() {
+        eventHideTypePicker.postEvent()
+        if (fromGallery) {
+            eventOpenGallery.postEvent()
+        } else {
+            eventOpenCamera.postEvent()
+        }
     }
 
 }

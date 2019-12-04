@@ -54,9 +54,17 @@ class MainActivity : BaseActivity() {
 
     private val mainSet = ConstraintSet()
     private val pickerSet = ConstraintSet()
-    private var isPickerOpened = false
 
-    private fun initSets() {
+    private fun initPicker() {
+        button_cancel_pick.setOnClickListener {
+            galleryMenuViewModel.onPickerCancel()
+        }
+        btn_pick_image.setOnClickListener {
+            galleryMenuViewModel.onPickImage()
+        }
+        btn_pick_video.setOnClickListener {
+            galleryMenuViewModel.onPickVideo()
+        }
         mainSet.clone(container)
         pickerSet.clone(this, R.layout.main_pick_media_type)
     }
@@ -64,6 +72,9 @@ class MainActivity : BaseActivity() {
     private fun animatePicker(open: Boolean) {
         TransitionManager.beginDelayedTransition(container)
         (if (open) pickerSet else mainSet).applyTo(container)
+        floating_menu_gallery.apply {
+            collapse()
+        }
     }
 
     override fun inject() {
@@ -73,7 +84,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initSets()
+        initPicker()
         goToFragment(galleryFragment)
         galleryFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
@@ -155,8 +166,11 @@ class MainActivity : BaseActivity() {
     private fun initGalleryMenuObservers() {
         with(galleryMenuViewModel) {
             openTypePicker.observe(this@MainActivity) {
-                animatePicker(!isPickerOpened)
-                isPickerOpened = !isPickerOpened
+                animatePicker(true)
+            }
+
+            hideTypePicker.observe(this@MainActivity) {
+                animatePicker(false)
             }
 
             openCamera.observe(this@MainActivity) {
