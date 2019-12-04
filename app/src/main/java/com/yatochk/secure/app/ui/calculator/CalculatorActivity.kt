@@ -1,5 +1,6 @@
 package com.yatochk.secure.app.ui.calculator
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
@@ -8,6 +9,7 @@ import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.main.MainActivity
 import com.yatochk.secure.app.utils.observe
 import kotlinx.android.synthetic.main.activity_calculator.*
+
 
 class CalculatorActivity : BaseActivity() {
 
@@ -23,8 +25,14 @@ class CalculatorActivity : BaseActivity() {
         keyboard.setKeysListener {
             viewModel.inputKey(it)
         }
-        if (!viewModel.isAuthorized())
-            keyboard.showSnack()
+        if (!viewModel.isAuthorized()) {
+            AlertDialog.Builder(this)
+                .setMessage(R.string.enter_code)
+                .setPositiveButton(R.string.ok) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
         observers()
     }
 

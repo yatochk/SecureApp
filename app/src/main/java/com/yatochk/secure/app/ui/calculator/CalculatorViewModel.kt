@@ -20,7 +20,6 @@ class CalculatorViewModel @Inject constructor(
 
     var isDot = false
 
-
     fun inputKey(key: Key) {
         if (!key.isNumber()) {
             when (key) {
@@ -35,9 +34,10 @@ class CalculatorViewModel @Inject constructor(
                     }
                 Key.KEY_EQUALS ->
                     with(mutableDisplayResult) {
-                        if (!contentAccessManager.isAuthorized()) {
+                        if (!contentAccessManager.isKeyExist) {
                             contentAccessManager.setAccessKey(value.toString())
                             mutableOpenContent.value = null
+                            return
                         }
                         if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
                             value = Key.KEY_EQUALS.makeEquals(value)
@@ -69,11 +69,11 @@ class CalculatorViewModel @Inject constructor(
                 value = key.toString()
             else
                 value += key.toString()
-            if (contentAccessManager.isAuthorized() && contentAccessManager.checkAccessKey(value.toString()))
+            if (contentAccessManager.checkAccessKey(value.toString()))
                 mutableOpenContent.value = null
         }
     }
 
-    fun isAuthorized(): Boolean = contentAccessManager.isAuthorized()
+    fun isAuthorized(): Boolean = contentAccessManager.isKeyExist
 
 }

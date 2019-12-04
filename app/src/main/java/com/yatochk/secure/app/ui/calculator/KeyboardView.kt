@@ -3,8 +3,7 @@ package com.yatochk.secure.app.ui.calculator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.LinearLayout
-import com.google.android.material.snackbar.Snackbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.view_keyboard.view.*
 import net.objecthunter.exp4j.ExpressionBuilder
@@ -14,7 +13,7 @@ class KeyboardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : CoordinatorLayout(context, attrs, defStyleAttr) {
 
     init {
         View.inflate(context, R.layout.view_keyboard, this)
@@ -88,9 +87,6 @@ class KeyboardView @JvmOverloads constructor(
         listener?.invoke(key)
     }
 
-    fun showSnack() {
-        Snackbar.make(this, R.string.enter_code, Snackbar.LENGTH_LONG).show()
-    }
 }
 
 enum class Key {
