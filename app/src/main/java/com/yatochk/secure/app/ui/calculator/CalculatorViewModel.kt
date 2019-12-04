@@ -3,7 +3,9 @@ package com.yatochk.secure.app.ui.calculator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.ContentAccessManager
+import com.yatochk.secure.app.utils.postEvent
 import com.yatochk.secure.app.utils.removeLast
 import javax.inject.Inject
 
@@ -18,15 +20,17 @@ class CalculatorViewModel @Inject constructor(
     private val mutableOpenContent = MutableLiveData<Void>()
     val openContent: LiveData<Void> = mutableOpenContent
 
-    private val eventOpenDialog = MutableLiveData<Void>()
+    private val eventOpenDialog = LiveEvent<Void>()
     val openDialog: LiveData<Void> = eventOpenDialog
 
-    init {
-        if (!contentAccessManager.isKeyExist)
-            eventOpenDialog.value = null
+    private var isDot = false
+
+    fun onViewReady() {
+        if (!contentAccessManager.isKeyExist) {
+            eventOpenDialog.postEvent()
+        }
     }
 
-    var isDot = false
 
     fun inputKey(key: Key) {
         if (!key.isNumber()) {
@@ -44,6 +48,9 @@ class CalculatorViewModel @Inject constructor(
                     with(mutableDisplayResult) {
                         if (!contentAccessManager.isKeyExist) {
                             contentAccessManager.setAccessKey(value.toString())
+                            mutableOpenContent.value = null
+                            return
+                        } else if (contentAccessManager.checkAccessKey(value.toString())) {
                             mutableOpenContent.value = null
                             return
                         }
@@ -77,8 +84,6 @@ class CalculatorViewModel @Inject constructor(
                 value = key.toString()
             else
                 value += key.toString()
-            if (contentAccessManager.checkAccessKey(value.toString()))
-                mutableOpenContent.value = null
         }
     }
 

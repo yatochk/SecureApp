@@ -25,8 +25,9 @@ class CalculatorActivity : BaseActivity() {
         keyboard.setKeysListener {
             viewModel.inputKey(it)
         }
-
         observers()
+        if (savedInstanceState == null)
+            viewModel.onViewReady()
     }
 
     private fun observers() {
