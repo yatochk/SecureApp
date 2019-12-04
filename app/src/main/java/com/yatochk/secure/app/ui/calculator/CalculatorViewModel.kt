@@ -35,6 +35,10 @@ class CalculatorViewModel @Inject constructor(
                     }
                 Key.KEY_EQUALS ->
                     with(mutableDisplayResult) {
+                        if (!contentAccessManager.isAuthorized()) {
+                            contentAccessManager.setAccessKey(value.toString())
+                            mutableOpenContent.value = null
+                        }
                         if (!value.isNullOrBlank() && !key.isOperation(value!![value!!.length - 1].toString())) {
                             value = Key.KEY_EQUALS.makeEquals(value)
                             isDot = value?.contains(".")!!
@@ -59,17 +63,17 @@ class CalculatorViewModel @Inject constructor(
             keyProcessed(key)
     }
 
-
     private fun keyProcessed(key: Key) {
         with(mutableDisplayResult) {
             if (value.isNullOrBlank())
                 value = key.toString()
             else
                 value += key.toString()
-            if (contentAccessManager.checkAccessKey(value.toString()))
+            if (contentAccessManager.isAuthorized() && contentAccessManager.checkAccessKey(value.toString()))
                 mutableOpenContent.value = null
         }
     }
 
+    fun isAuthorized(): Boolean = contentAccessManager.isAuthorized()
 
 }

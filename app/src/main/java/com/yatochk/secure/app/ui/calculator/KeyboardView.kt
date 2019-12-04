@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
+import com.google.android.material.snackbar.Snackbar
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.view_keyboard.view.*
 import net.objecthunter.exp4j.ExpressionBuilder
@@ -86,6 +87,10 @@ class KeyboardView @JvmOverloads constructor(
     private fun onKeyClick(key: Key) {
         listener?.invoke(key)
     }
+
+    fun showSnack() {
+        Snackbar.make(this, R.string.enter_code, Snackbar.LENGTH_LONG).show()
+    }
 }
 
 enum class Key {
@@ -156,4 +161,6 @@ enum class Key {
             else -> false
         }
     }
+
+
 }

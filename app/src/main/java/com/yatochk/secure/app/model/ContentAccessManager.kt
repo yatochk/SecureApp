@@ -1,6 +1,7 @@
 package com.yatochk.secure.app.model
 
 import android.content.SharedPreferences
+import android.text.TextUtils
 import javax.inject.Inject
 
 class ContentAccessManager @Inject constructor(
@@ -32,4 +33,6 @@ class ContentAccessManager @Inject constructor(
     fun checkAccessKey(key: String) =
         isKeyExist && key == accessKey
 
+    fun isAuthorized(): Boolean =
+        !TextUtils.isEmpty(sharedPreferences.getString(ACCESS_KEY, null))
 }

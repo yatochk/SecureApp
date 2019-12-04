@@ -23,6 +23,8 @@ class CalculatorActivity : BaseActivity() {
         keyboard.setKeysListener {
             viewModel.inputKey(it)
         }
+        if (!viewModel.isAuthorized())
+            keyboard.showSnack()
         observers()
     }
 
@@ -36,5 +38,4 @@ class CalculatorActivity : BaseActivity() {
             }
         }
     }
-
 }
