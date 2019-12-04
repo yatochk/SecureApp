@@ -26,7 +26,7 @@ class ContentAccessManager @Inject constructor(
             return ""
         }
 
-    private val isKeyExist: Boolean
+    val isKeyExist: Boolean
         get() = accessKey.isNotBlank()
 
     fun checkAccessKey(key: String) =

@@ -86,6 +86,7 @@ class KeyboardView @JvmOverloads constructor(
     private fun onKeyClick(key: Key) {
         listener?.invoke(key)
     }
+
 }
 
 enum class Key {
@@ -156,4 +157,6 @@ enum class Key {
             else -> false
         }
     }
+
+
 }

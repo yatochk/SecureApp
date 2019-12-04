@@ -27,4 +27,7 @@
     <string name="https">https://</string>
     <string name="note_title">Title</string>
     <string name="new_note_hint">Note</string>
+
+    <string name="ok">OK</string>
+    <string name="enter_code">Enter code and press equals</string>
 </resources>
