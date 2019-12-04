@@ -25,14 +25,7 @@ class CalculatorActivity : BaseActivity() {
         keyboard.setKeysListener {
             viewModel.inputKey(it)
         }
-        if (!viewModel.isAuthorized()) {
-            AlertDialog.Builder(this)
-                .setMessage(R.string.enter_code)
-                .setPositiveButton(R.string.ok) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create().show()
-        }
+
         observers()
     }
 
@@ -43,6 +36,14 @@ class CalculatorActivity : BaseActivity() {
             }
             openContent.observe(this@CalculatorActivity) {
                 startActivity(MainActivity.intent(this@CalculatorActivity))
+            }
+            openDialog.observe(this@CalculatorActivity) {
+                AlertDialog.Builder(this@CalculatorActivity)
+                    .setMessage(R.string.enter_code)
+                    .setPositiveButton(R.string.ok) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create().show()
             }
         }
     }

@@ -18,6 +18,14 @@ class CalculatorViewModel @Inject constructor(
     private val mutableOpenContent = MutableLiveData<Void>()
     val openContent: LiveData<Void> = mutableOpenContent
 
+    private val eventOpenDialog = MutableLiveData<Void>()
+    val openDialog: LiveData<Void> = eventOpenDialog
+
+    init {
+        if (!contentAccessManager.isKeyExist)
+            eventOpenDialog.value = null
+    }
+
     var isDot = false
 
     fun inputKey(key: Key) {
@@ -73,7 +81,5 @@ class CalculatorViewModel @Inject constructor(
                 mutableOpenContent.value = null
         }
     }
-
-    fun isAuthorized(): Boolean = contentAccessManager.isKeyExist
 
 }

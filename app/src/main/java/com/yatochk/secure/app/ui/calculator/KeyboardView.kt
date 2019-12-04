@@ -3,7 +3,7 @@ package com.yatochk.secure.app.ui.calculator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import android.widget.LinearLayout
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.view_keyboard.view.*
 import net.objecthunter.exp4j.ExpressionBuilder
@@ -13,7 +13,7 @@ class KeyboardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : CoordinatorLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     init {
         View.inflate(context, R.layout.view_keyboard, this)
