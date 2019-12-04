@@ -10,7 +10,7 @@ import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
-import com.yatochk.secure.app.ui.main.ImageErrorType
+import com.yatochk.secure.app.ui.main.MediaErrorType
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.coroutineScope
@@ -59,7 +59,7 @@ open class MediaViewModel(
     fun onDelete() {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
-            mutableError.value = localizationManager.getErrorString(ImageErrorType.DELETE_IMAGE)
+            mutableError.value = localizationManager.getErrorString(MediaErrorType.DELETE_IMAGE)
         }) {
             mutableDelete.value = null
             imagesRepository.deleteImage(currentMedia)
@@ -85,7 +85,7 @@ open class MediaViewModel(
         mutableToGallery.value = null
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
-            mutableError.value = localizationManager.getErrorString(ImageErrorType.TO_GALLERY)
+            mutableError.value = localizationManager.getErrorString(MediaErrorType.TO_GALLERY)
         }) {
             val mediaFile = mediaToGallery(currentMedia)
             imagesRepository.deleteImage(currentMedia)

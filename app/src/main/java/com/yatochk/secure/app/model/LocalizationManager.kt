@@ -3,28 +3,28 @@ package com.yatochk.secure.app.model
 import android.content.Context
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.ui.main.ContactErrorType
-import com.yatochk.secure.app.ui.main.ImageErrorType
+import com.yatochk.secure.app.ui.main.MediaErrorType
 import javax.inject.Inject
 
 class LocalizationManager @Inject constructor(
     private val context: Context
 ) {
 
-    fun getErrorString(errorType: ImageErrorType) =
+    fun getErrorString(errorType: MediaErrorType) =
         when (errorType) {
-            ImageErrorType.ADD_PHOTO -> {
+            MediaErrorType.ADD_PHOTO -> {
                 context.getString(R.string.error_photo)
             }
-            ImageErrorType.ADD_IMAGE -> {
+            MediaErrorType.ADD_IMAGE -> {
                 context.getString(R.string.error_gallery)
             }
-            ImageErrorType.ENCRYPT_IMAGE -> {
+            MediaErrorType.ENCRYPT_MEDIA -> {
                 context.getString(R.string.error_encrypt_image)
             }
-            ImageErrorType.DELETE_IMAGE -> {
+            MediaErrorType.DELETE_IMAGE -> {
                 context.getString(R.string.error_delete_image)
             }
-            ImageErrorType.TO_GALLERY -> {
+            MediaErrorType.TO_GALLERY -> {
                 context.getString(R.string.error_to_gallery)
             }
         }

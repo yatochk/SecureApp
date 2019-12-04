@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
     fun receivedMedia(receivedName: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = localizationManager.getErrorString(ImageErrorType.ADD_PHOTO)
+            mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_PHOTO)
         }) {
             val name = encryptMedia(receivedName)
             imagesDao.addImage(
@@ -76,7 +76,7 @@ class MainViewModel @Inject constructor(
     fun receivedGalleryImage(regularPath: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = localizationManager.getErrorString(ImageErrorType.ADD_IMAGE)
+            mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_IMAGE)
         }) {
             val file = encryptGalleryMedia(regularPath)
             imagesDao.addImage(

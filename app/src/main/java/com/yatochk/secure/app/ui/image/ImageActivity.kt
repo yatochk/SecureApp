@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
@@ -101,5 +102,8 @@ class ImageActivity : MediaActivity() {
     override fun onAnimationEnd() {
         viewModel.animationEnd()
     }
+
+    override val mediaView: View?
+        get() = gallery_image
 
 }

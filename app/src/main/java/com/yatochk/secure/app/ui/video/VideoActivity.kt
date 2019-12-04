@@ -2,7 +2,9 @@ package com.yatochk.secure.app.ui.video
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.MediaController
 import androidx.activity.viewModels
 import com.yatochk.secure.app.R
@@ -56,7 +58,7 @@ class VideoActivity : MediaActivity() {
     private fun observers() {
         with(viewModel) {
             video.observe(this@VideoActivity) {
-                gallery_video.setVideoPath(it.path)
+                gallery_video.setVideoURI(Uri.fromFile(it))
                 gallery_video.setMediaController(MediaController(this@VideoActivity))
                 gallery_video.requestFocus()
                 gallery_video.start()
@@ -85,5 +87,8 @@ class VideoActivity : MediaActivity() {
     override fun onAnimationEnd() {
         viewModel.animationEnd()
     }
+
+    override val mediaView: View?
+        get() = gallery_video
 
 }

@@ -1,9 +1,9 @@
 package com.yatochk.secure.app.ui.main
 
-enum class ImageErrorType {
+enum class MediaErrorType {
     ADD_PHOTO,
     ADD_IMAGE,
-    ENCRYPT_IMAGE,
+    ENCRYPT_MEDIA,
     DELETE_IMAGE,
     TO_GALLERY
 }

@@ -30,7 +30,11 @@ class VideoViewModel @Inject constructor(
                     )
                 )
             videoDirectory.mkdirs()
-            val videoFile = File(currentMedia.regularPath)
+            val path = currentMedia.regularPath.substring(
+                0,
+                currentMedia.regularPath.lastIndexOf(".")
+            )
+            val videoFile = File("${path}.mp4")
             videoFile.writeBytes(bytes)
             this@VideoViewModel.videoFile = videoFile
             this@VideoViewModel.videoFile
