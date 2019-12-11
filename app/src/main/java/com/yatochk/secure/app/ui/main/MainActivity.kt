@@ -264,10 +264,10 @@ class MainActivity : BaseActivity() {
         if (resultCode != RESULT_OK) return
         when (requestCode) {
             TAKE_PHOTO -> {
-                mainViewModel.receivedMedia(imageName)
+                mainViewModel.receivedPhoto(imageName)
             }
             TAKE_VIDEO -> {
-                mainViewModel.receivedMedia(videoName)
+                mainViewModel.receivedVideo(videoName)
             }
             PICK_PHOTO -> {
                 data?.data?.toPath(this)?.also {

@@ -30,7 +30,19 @@ class MainViewModel @Inject constructor(
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
 
-    fun receivedMedia(receivedName: String) {
+    fun receivedPhoto(receivedName: String) {
+        receivedMedia(receivedName, receivedName)
+    }
+
+    fun receivedVideo(receivedName: String) {
+        val nameForSave = "${receivedName.substring(0, receivedName.lastIndexOf("."))}.mp4"
+        receivedMedia(
+            receivedName,
+            nameForSave
+        )
+    }
+
+    private fun receivedMedia(receivedName: String, saveName: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e("Error on securing", throwable.localizedMessage, throwable)
             mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_PHOTO)
@@ -39,7 +51,7 @@ class MainViewModel @Inject constructor(
             imagesDao.addImage(
                 Image(
                     ImageSecureController.securePath + name,
-                    ImageSecureController.regularPath + name,
+                    ImageSecureController.regularPath + saveName,
                     DEFAULT_PHOTO_ALBUM
                 )
             )
