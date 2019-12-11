@@ -52,6 +52,13 @@ class Cypher @Inject constructor(private val context: Context) {
         return c.doFinal(Base64.decode(bytes, Base64.DEFAULT))
     }
 
+    @Throws(IllegalBlockSizeException::class)
+    fun decrypt(bytes: ByteArray, start: Int, read: Int): ByteArray {
+        val c = Cipher.getInstance(AES_MODE, "BC")
+        c.init(Cipher.DECRYPT_MODE, secretKey)
+        return c.doFinal(Base64.decode(bytes, Base64.DEFAULT), start, read)
+    }
+
     private fun getRSAKey(): KeyStore.PrivateKeyEntry {
         if (!keyStore.containsAlias(RSA_ALIAS)) {
             RSA_ALIAS.createRSAKey()

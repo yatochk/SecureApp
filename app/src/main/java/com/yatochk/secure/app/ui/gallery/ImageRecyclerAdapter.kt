@@ -65,12 +65,12 @@ class BitmapDiffUtils : DiffUtil.ItemCallback<Pair<Image, Bitmap?>>() {
         oldItem: Pair<Image, Bitmap?>,
         newItem: Pair<Image, Bitmap?>
     ): Boolean =
-        oldItem.first == newItem.first
+        oldItem.first.securePath == newItem.first.securePath
 
     override fun areContentsTheSame(
         oldItem: Pair<Image, Bitmap?>,
         newItem: Pair<Image, Bitmap?>
     ): Boolean =
-        oldItem.second?.rowBytes == newItem.second?.rowBytes
+        oldItem.first.securePath == newItem.first.securePath
 
 }

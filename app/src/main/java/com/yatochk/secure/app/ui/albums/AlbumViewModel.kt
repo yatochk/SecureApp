@@ -1,5 +1,9 @@
 package com.yatochk.secure.app.ui.albums
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.ThumbnailUtils
+import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.lifecycle.*
 import com.hadilq.liveevent.LiveEvent
@@ -8,8 +12,10 @@ import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.main.MediaErrorType
+import com.yatochk.secure.app.utils.isVideoPath
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,8 +25,8 @@ class AlbumViewModel @Inject constructor(
     private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
-    private val mediatorImages = MediatorLiveData<List<Pair<Image, ByteArray>>>()
-    val images: LiveData<List<Pair<Image, ByteArray>>> = mediatorImages
+    private val mediatorImages = MediatorLiveData<List<Pair<Image, Bitmap>>>()
+    val images: LiveData<List<Pair<Image, Bitmap>>> = mediatorImages
 
     private val mutableShowError = LiveEvent<String>()
     val showImageError: LiveData<String> = mutableShowError
@@ -41,22 +47,47 @@ class AlbumViewModel @Inject constructor(
         mutableStartObserving.value = null
     }
 
+    private val chanel = Channel<Pair<Image, Bitmap>>()
+
+    override fun onCleared() {
+        super.onCleared()
+        chanel.close()
+    }
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+        mutableShowError.postValue(localizationManager.getErrorString(MediaErrorType.ENCRYPT_MEDIA))
+    }
+
     private fun decryptImages(images: List<Image>) {
         mediatorImages.value = emptyList()
-        viewModelScope.launch(CoroutineExceptionHandler { _, _ ->
-            mutableShowError.value =
-                localizationManager.getErrorString(MediaErrorType.ENCRYPT_MEDIA)
-        }) {
-            images.forEach {
-                launch(Dispatchers.IO) {
-                    val decryptedBytes = imageSecureController.decryptImageFromFile(it.securePath)
-                    val newImage = Pair(it, decryptedBytes)
-                    val newImages = mutableListOf<Pair<Image, ByteArray>>().apply {
-                        mediatorImages.value?.also { addAll(it) }
-                        add(newImage)
-                    }
-                    mediatorImages.postValue(newImages)
+        images.forEach {
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+                val bitmap = if (it.regularPath.isVideoPath()) {
+                    ThumbnailUtils.createVideoThumbnail(
+                        imageSecureController.decryptVideo(it).absolutePath,
+                        MediaStore.Images.Thumbnails.MINI_KIND
+                    )
+                } else {
+                    val decryptedBytes =
+                        imageSecureController.decryptImageFromFile(it.securePath)
+                    BitmapFactory.decodeByteArray(
+                        decryptedBytes,
+                        0,
+                        decryptedBytes.size
+                    )
                 }
+                val newImage = Pair(it, bitmap)
+                chanel.send(newImage)
+            }
+        }
+        viewModelScope.launch(exceptionHandler) {
+            for (image in chanel) {
+                val newImages =
+                    mutableListOf<Pair<Image, Bitmap>>().apply {
+                        mediatorImages.value?.also { addAll(it) }
+                        add(image)
+                    }
+                mediatorImages.value = newImages
             }
         }
     }
@@ -72,7 +103,7 @@ class AlbumViewModel @Inject constructor(
     }
 
     fun clickImage(image: Image, imageView: ImageView) {
-        if (image.regularPath.contains("MPEG_4")) {
+        if (image.regularPath.isVideoPath()) {
             mutableOpenVideo.value = image
         } else {
             mutableOpenImage.value = Pair(image, imageView)
