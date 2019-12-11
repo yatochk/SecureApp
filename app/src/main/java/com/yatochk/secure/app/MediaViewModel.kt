@@ -16,8 +16,9 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-open class MediaViewModel(
+open class MediaViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
     private val imagesRepository: ImagesRepository,
     private val localizationManager: LocalizationManager
