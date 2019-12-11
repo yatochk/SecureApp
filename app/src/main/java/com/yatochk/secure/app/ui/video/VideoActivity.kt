@@ -2,18 +2,22 @@ package com.yatochk.secure.app.ui.video
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.SurfaceHolder
 import android.view.View
-import android.widget.MediaController
 import androidx.activity.viewModels
+import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
-import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.ui.MediaActivity
+import com.yatochk.secure.app.utils.SurfaceHolderCallback
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_video.*
+import java.io.File
+import java.io.FileInputStream
+
 
 class VideoActivity : MediaActivity() {
 
@@ -24,23 +28,30 @@ class VideoActivity : MediaActivity() {
     companion object {
         private const val VIDEO = "opened_video"
 
-        fun intent(context: Context, image: Image) =
+        fun intent(context: Context, videoPath: String) =
             Intent(context, VideoActivity::class.java).apply {
-                putExtra(VIDEO, image)
+                putExtra(VIDEO, videoPath)
             }
 
     }
 
-    private val viewModel: VideoViewModel by viewModels { viewModelFactory }
-    private lateinit var video: Image
+    private val viewModel: MediaViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        intent.getSerializableExtra(VIDEO)?.also {
-            if (savedInstanceState == null) {
-                video = it as Image
-                viewModel.initMedia(video)
+        intent.getStringExtra(VIDEO)?.also { path ->
+            val fi = FileInputStream(File(path))
+            val videoPlayer = MediaPlayer()
+            videoPlayer.setDataSource(fi.fd)
+            surface_view.holder.addCallback(object : SurfaceHolderCallback() {
+                override fun surfaceCreated(p0: SurfaceHolder?) {
+                    videoPlayer.setDisplay(p0)
+                }
+            })
+            videoPlayer.prepare()
+            videoPlayer.setOnPreparedListener {
+                it.start()
             }
         }
         button_image_delete.setOnClickListener {
@@ -57,12 +68,6 @@ class VideoActivity : MediaActivity() {
 
     private fun observers() {
         with(viewModel) {
-            video.observe(this@VideoActivity) {
-                gallery_video.setVideoURI(Uri.fromFile(it))
-                gallery_video.setMediaController(MediaController(this@VideoActivity))
-                gallery_video.requestFocus()
-                gallery_video.start()
-            }
             delete.observe(this@VideoActivity) {
                 deleteAnimation()
             }
@@ -89,6 +94,5 @@ class VideoActivity : MediaActivity() {
     }
 
     override val mediaView: View?
-        get() = gallery_video
-
+        get() = surface_view
 }

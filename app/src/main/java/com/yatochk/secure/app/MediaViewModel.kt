@@ -23,7 +23,7 @@ open class MediaViewModel(
     private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
-    protected lateinit var currentMedia: Image
+    private lateinit var currentMedia: Image
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -36,7 +36,7 @@ open class MediaViewModel(
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
 
-    protected val mutableFinish = LiveEvent<Void>()
+    private val mutableFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = mutableFinish
 
     private val mutableError = LiveEvent<String>()
