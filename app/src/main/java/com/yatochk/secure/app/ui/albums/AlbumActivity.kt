@@ -1,5 +1,6 @@
 package com.yatochk.secure.app.ui.albums
 
+import android.animation.ObjectAnimator
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
@@ -15,6 +16,7 @@ import com.yatochk.secure.app.ui.gallery.ImageRecyclerAdapter
 import com.yatochk.secure.app.ui.image.ImageActivity
 import com.yatochk.secure.app.ui.video.VideoActivity
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.setCompleteListener
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_album.*
 
@@ -88,7 +90,25 @@ class AlbumActivity : BaseActivity() {
             showImageError.observe(this@AlbumActivity) {
                 showErrorToast(this@AlbumActivity, it)
             }
+            decryptionSeek.observe(this@AlbumActivity) {
+                showDecryptingProgress(it)
+            }
         }
+    }
+
+    private fun showDecryptingProgress(data: DecryptionSeek) {
+        val progress = (100 * data.decryptedCount.toDouble() / data.count).toInt()
+        ObjectAnimator.ofInt(progress_decrypt, "progress", progress)
+            .setDuration(500)
+            .setCompleteListener {
+                if (!data.needShow) {
+                    progress_decrypt.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .start()
+                }
+            }
+            .start()
     }
 
 }

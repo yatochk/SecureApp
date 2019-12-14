@@ -43,6 +43,9 @@ class AlbumViewModel @Inject constructor(
     private val mutableStartObserving = MutableLiveData<Void>()
     val startObserving: LiveData<Void> = mutableStartObserving
 
+    private val mutableDecryptionSeek = MutableLiveData<DecryptionSeek>()
+    val decryptionSeek: LiveData<DecryptionSeek> = mutableDecryptionSeek
+
     fun screenOpened() {
         mutableStartObserving.value = null
     }
@@ -59,6 +62,7 @@ class AlbumViewModel @Inject constructor(
     }
 
     private fun decryptImages(images: List<Image>) {
+        mutableDecryptionSeek.value = DecryptionSeek(images.size, 0, true)
         mediatorImages.value = emptyList()
         images.forEach {
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
@@ -88,6 +92,13 @@ class AlbumViewModel @Inject constructor(
                         add(image)
                     }
                 mediatorImages.value = newImages
+                val decryptedCount = newImages.size
+                mutableDecryptionSeek.value =
+                    DecryptionSeek(
+                        images.size,
+                        decryptedCount,
+                        decryptedCount != images.size
+                    )
             }
         }
     }
