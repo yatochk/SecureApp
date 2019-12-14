@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.View
+import android.widget.MediaController
 import androidx.activity.viewModels
 import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.R
@@ -19,7 +21,7 @@ import java.io.File
 import java.io.FileInputStream
 
 
-class VideoActivity : MediaActivity() {
+class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -35,24 +37,37 @@ class VideoActivity : MediaActivity() {
 
     }
 
+    private val videoPlayer = MediaPlayer()
+    private lateinit var videoController: MediaController
     private val viewModel: MediaViewModel by viewModels { viewModelFactory }
+
+    private fun initPlayer(path: String) {
+        videoController = MediaController(this)
+        val fi = FileInputStream(File(path))
+        videoPlayer.setDataSource(fi.fd)
+        surface_view.holder.addCallback(object : SurfaceHolderCallback() {
+            override fun surfaceCreated(p0: SurfaceHolder?) {
+                videoPlayer.setDisplay(p0)
+            }
+        })
+        videoPlayer.prepare()
+        videoPlayer.setOnPreparedListener {
+            videoController.setMediaPlayer(this)
+            videoController.setAnchorView(surface_view)
+            it.start()
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        videoController.show()
+        return false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
         intent.getStringExtra(VIDEO)?.also { path ->
-            val fi = FileInputStream(File(path))
-            val videoPlayer = MediaPlayer()
-            videoPlayer.setDataSource(fi.fd)
-            surface_view.holder.addCallback(object : SurfaceHolderCallback() {
-                override fun surfaceCreated(p0: SurfaceHolder?) {
-                    videoPlayer.setDisplay(p0)
-                }
-            })
-            videoPlayer.prepare()
-            videoPlayer.setOnPreparedListener {
-                it.start()
-            }
+            initPlayer(path)
         }
         button_image_delete.setOnClickListener {
             viewModel.onDelete()
@@ -89,10 +104,49 @@ class VideoActivity : MediaActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        videoPlayer.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        videoPlayer.reset()
+    }
+
     override fun onAnimationEnd() {
         viewModel.animationEnd()
     }
 
     override val mediaView: View?
         get() = surface_view
+
+    override fun isPlaying(): Boolean = videoPlayer.isPlaying
+
+    override fun canSeekForward(): Boolean = true
+
+    override fun getDuration(): Int = videoPlayer.duration
+
+    override fun pause() {
+        videoPlayer.pause()
+    }
+
+    override fun getBufferPercentage(): Int = 0
+
+    override fun seekTo(p0: Int) {
+        videoPlayer.seekTo(p0)
+    }
+
+    override fun getCurrentPosition(): Int = videoPlayer.currentPosition
+
+    override fun canSeekBackward(): Boolean = true
+
+    override fun start() {
+        videoPlayer.start()
+    }
+
+    override fun getAudioSessionId(): Int = videoPlayer.audioSessionId
+
+    override fun canPause(): Boolean = true
+
 }
