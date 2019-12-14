@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 class AlbumViewModel @Inject constructor(
@@ -46,6 +47,8 @@ class AlbumViewModel @Inject constructor(
     private val mutableDecryptionSeek = MutableLiveData<DecryptionSeek>()
     val decryptionSeek: LiveData<DecryptionSeek> = mutableDecryptionSeek
 
+    private val decryptedVideos = arrayListOf<String>()
+
     fun screenOpened() {
         mutableStartObserving.value = null
     }
@@ -55,6 +58,12 @@ class AlbumViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         chanel.close()
+        decryptedVideos.forEach { path ->
+            File(path).also {
+                if (it.exists())
+                    it.delete()
+            }
+        }
     }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
@@ -67,6 +76,7 @@ class AlbumViewModel @Inject constructor(
         images.forEach {
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 val bitmap = if (it.regularPath.isVideoPath()) {
+                    decryptedVideos.add(it.regularPath)
                     ThumbnailUtils.createVideoThumbnail(
                         imageSecureController.decryptVideo(it).absolutePath,
                         MediaStore.Images.Thumbnails.MINI_KIND
