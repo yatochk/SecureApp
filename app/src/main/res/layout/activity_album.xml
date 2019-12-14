@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
         android:progressDrawable="@drawable/seek_progress"
-        app:layout_constraintBottom_toBottomOf="@id/text_album_name"
+        app:layout_constraintBottom_toTopOf="@id/recycler_album_photo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -20,7 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:paddingBottom="16dp"
         android:textColor="@color/titleTextColor"
         android:textSize="25sp"
         android:transitionName="@string/album_transition"
@@ -34,7 +33,8 @@
         android:id="@+id/recycler_album_photo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progress_decrypt" />
+        app:layout_constraintTop_toBottomOf="@id/text_album_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
