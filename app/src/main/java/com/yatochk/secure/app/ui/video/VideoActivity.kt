@@ -17,6 +17,7 @@ import com.yatochk.secure.app.utils.SurfaceHolderCallback
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_video.*
+import kotlinx.android.synthetic.main.media_bar.*
 import java.io.File
 import java.io.FileInputStream
 

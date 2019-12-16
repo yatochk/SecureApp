@@ -2,7 +2,6 @@ package com.yatochk.secure.app
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
@@ -44,7 +43,7 @@ open class MediaViewModel @Inject constructor(
     private val mutableError = LiveEvent<String>()
     val mediaError: LiveData<String> = mutableError
 
-    private val mutableOpenRename = MutableLiveData<Boolean>()
+    private val mutableOpenRename = LiveEvent<Boolean>()
     val openRename: LiveData<Boolean> = mutableOpenRename
 
 
@@ -67,7 +66,7 @@ open class MediaViewModel @Inject constructor(
     }
 
     fun clickRename() {
-
+        mutableOpenRename.value = true
     }
 
     protected open suspend fun mediaToGallery(media: Image) =

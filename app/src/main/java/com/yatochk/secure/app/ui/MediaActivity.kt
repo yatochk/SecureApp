@@ -2,6 +2,7 @@ package com.yatochk.secure.app.ui
 
 import android.view.View
 import kotlinx.android.synthetic.main.activity_image.*
+import kotlinx.android.synthetic.main.media_bar.*
 
 abstract class MediaActivity : BaseActivity() {
 

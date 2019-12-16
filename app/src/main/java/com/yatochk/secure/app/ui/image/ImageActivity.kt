@@ -16,6 +16,7 @@ import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_image.*
+import kotlinx.android.synthetic.main.media_bar.*
 import javax.inject.Inject
 import kotlin.math.min
 
