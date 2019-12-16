@@ -9,8 +9,8 @@ import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
-import com.yatochk.secure.app.utils.DEFAULT_IMAGE_ALBUM
-import com.yatochk.secure.app.utils.DEFAULT_PHOTO_ALBUM
+import com.yatochk.secure.app.utils.DEFAULT_CAMERA_ALBUM
+import com.yatochk.secure.app.utils.DEFAULT_GALLERY_ALBUM
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
                 Image(
                     ImageSecureController.securePath + name,
                     ImageSecureController.regularPath + saveName,
-                    DEFAULT_PHOTO_ALBUM
+                    DEFAULT_CAMERA_ALBUM
                 )
             )
             Log.i(MainViewModel::class.java.name, "Photo encrypt and saved")
@@ -95,7 +95,7 @@ class MainViewModel @Inject constructor(
                 Image(
                     file.path,
                     regularPath,
-                    DEFAULT_IMAGE_ALBUM
+                    DEFAULT_GALLERY_ALBUM
                 )
             )
             mutableScanImage.value = regularPath
