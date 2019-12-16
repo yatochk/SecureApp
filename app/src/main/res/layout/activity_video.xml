@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container_video"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -10,7 +11,8 @@
         android:id="@+id/surface_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        android:layout_marginBottom="@dimen/image_menu_height"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -18,9 +20,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="64dp"
+        android:layout_marginBottom="@dimen/image_menu_height"
         android:alpha="0"
         android:src="@drawable/ic_deleted"
-        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -28,11 +31,94 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="64dp"
+        android:layout_marginBottom="@dimen/image_menu_height"
         android:alpha="0"
         android:src="@drawable/ic_uploaded"
-        app:layout_constraintBottom_toTopOf="@id/container_image_options"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include layout="@layout/media_bar" />
+    <LinearLayout
+        android:id="@+id/container_media_options"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/image_menu_height"
+        android:background="@color/navigationBackground"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_image_rename"
+            android:layout_width="@dimen/image_button_scale"
+            android:layout_height="@dimen/image_button_scale"
+            android:background="@drawable/ic_pencil_edit_button" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_image_upload"
+            android:layout_width="@dimen/image_button_scale"
+            android:layout_height="@dimen/image_button_scale"
+            android:background="@drawable/ic_upload_image" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_image_delete"
+            android:layout_width="@dimen/image_button_scale"
+            android:layout_height="@dimen/image_button_scale"
+            android:background="@drawable/ic_delete" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_albums"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/cardBackground"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:cardMaxElevation="6dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintTop_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_albums"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                app:layout_constraintBottom_toTopOf="@id/btn_album_cancel" />
+
+            <Button
+                android:id="@+id/btn_album_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:text="@string/contact_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/titleTextColor"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

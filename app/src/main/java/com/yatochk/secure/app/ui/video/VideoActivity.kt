@@ -9,6 +9,8 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.widget.MediaController
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
@@ -17,7 +19,6 @@ import com.yatochk.secure.app.utils.SurfaceHolderCallback
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_video.*
-import kotlinx.android.synthetic.main.media_bar.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -80,6 +81,9 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
         button_image_upload.setOnClickListener {
             viewModel.onToGallery()
         }
+        btn_album_cancel.setOnClickListener {
+            viewModel.onAlbumsPickCancel()
+        }
         observers()
     }
 
@@ -91,8 +95,8 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
             toGallery.observe(this@VideoActivity) {
                 toGalleryAnimation()
             }
-            openRename.observe(this@VideoActivity) {
-                openRenameAnimation()
+            openAlbumPicker.observe(this@VideoActivity) {
+                animateAlbumPicker(it)
             }
             scanImage.observe(this@VideoActivity) {
                 scanMedia(it)
@@ -122,6 +126,21 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
 
     override val mediaView: View?
         get() = surface_view
+
+    override val globalContainer: ConstraintLayout
+        get() = container_video
+
+    override val openedAlbumPicker: ConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(this@VideoActivity, R.layout.video_opened_albums)
+        }
+    }
+
+    override val closedAlbumPicker: ConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(this@VideoActivity, R.layout.activity_video)
+        }
+    }
 
     override fun isPlaying(): Boolean = videoPlayer.isPlaying
 

@@ -13,6 +13,9 @@ interface ImagesDao {
     @Query("SELECT * FROM Image WHERE album = :albumName")
     fun getImages(albumName: String): LiveData<List<Image>>
 
+    @Query("SELECT DISTINCT album FROM Image")
+    fun getAlbums(): LiveData<List<String>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addImage(image: Image)
 

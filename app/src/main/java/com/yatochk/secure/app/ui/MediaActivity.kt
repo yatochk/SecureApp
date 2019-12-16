@@ -1,8 +1,10 @@
 package com.yatochk.secure.app.ui
 
+import android.transition.TransitionManager
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import kotlinx.android.synthetic.main.activity_image.*
-import kotlinx.android.synthetic.main.media_bar.*
 
 abstract class MediaActivity : BaseActivity() {
 
@@ -12,9 +14,13 @@ abstract class MediaActivity : BaseActivity() {
 
     abstract fun onAnimationEnd()
     abstract val mediaView: View?
+    abstract val globalContainer: ConstraintLayout
+    abstract val openedAlbumPicker: ConstraintSet
+    abstract val closedAlbumPicker: ConstraintSet
 
-    protected fun openRenameAnimation() {
-
+    protected fun animateAlbumPicker(needOpen: Boolean) {
+        TransitionManager.beginDelayedTransition(globalContainer)
+        (if (needOpen) openedAlbumPicker else closedAlbumPicker).applyTo(globalContainer)
     }
 
     protected fun toGalleryAnimation() {
@@ -35,7 +41,7 @@ abstract class MediaActivity : BaseActivity() {
             .setDuration(DURATION_ANIMATION)
             .start()
 
-        container_image_options.animate()
+        container_media_options.animate()
             .alpha(0f)
             .setDuration(DURATION_ANIMATION)
             .start()
@@ -59,7 +65,7 @@ abstract class MediaActivity : BaseActivity() {
             .setDuration(DURATION_ANIMATION)
             .start()
 
-        container_image_options.animate()
+        container_media_options.animate()
             .alpha(0f)
             .setDuration(DURATION_ANIMATION)
             .start()

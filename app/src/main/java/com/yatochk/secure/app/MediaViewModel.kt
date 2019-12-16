@@ -43,8 +43,8 @@ open class MediaViewModel @Inject constructor(
     private val mutableError = LiveEvent<String>()
     val mediaError: LiveData<String> = mutableError
 
-    private val mutableOpenRename = LiveEvent<Boolean>()
-    val openRename: LiveData<Boolean> = mutableOpenRename
+    private val mutableOpenAlbumPicker = LiveEvent<Boolean>()
+    val openAlbumPicker: LiveData<Boolean> = mutableOpenAlbumPicker
 
 
     open fun initMedia(image: Image) {
@@ -53,6 +53,10 @@ open class MediaViewModel @Inject constructor(
 
     fun animationEnd() {
         mutableFinish.value = null
+    }
+
+    fun onAlbumsPickCancel() {
+        mutableOpenAlbumPicker.value = false
     }
 
     fun onDelete() {
@@ -66,7 +70,7 @@ open class MediaViewModel @Inject constructor(
     }
 
     fun clickRename() {
-        mutableOpenRename.value = true
+        mutableOpenAlbumPicker.value = true
     }
 
     protected open suspend fun mediaToGallery(media: Image) =

@@ -7,6 +7,8 @@ import android.graphics.Point
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
@@ -16,7 +18,6 @@ import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
 import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_image.*
-import kotlinx.android.synthetic.main.media_bar.*
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -58,6 +59,9 @@ class ImageActivity : MediaActivity() {
         button_image_upload.setOnClickListener {
             viewModel.onToGallery()
         }
+        btn_album_cancel.setOnClickListener {
+            viewModel.onAlbumsPickCancel()
+        }
         observers()
     }
 
@@ -85,8 +89,8 @@ class ImageActivity : MediaActivity() {
             toGallery.observe(this@ImageActivity) {
                 toGalleryAnimation()
             }
-            openRename.observe(this@ImageActivity) {
-                openRenameAnimation()
+            openAlbumPicker.observe(this@ImageActivity) {
+                animateAlbumPicker(it)
             }
             scanImage.observe(this@ImageActivity) {
                 scanMedia(it)
@@ -106,5 +110,19 @@ class ImageActivity : MediaActivity() {
 
     override val mediaView: View?
         get() = gallery_image
+
+    override val globalContainer: ConstraintLayout
+        get() = container_image
+
+    override val openedAlbumPicker: ConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(this@ImageActivity, R.layout.image_opened_albums)
+        }
+    }
+    override val closedAlbumPicker: ConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(this@ImageActivity, R.layout.activity_image)
+        }
+    }
 
 }
