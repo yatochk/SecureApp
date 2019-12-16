@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
+import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.ui.MediaActivity
 import com.yatochk.secure.app.utils.SurfaceHolderCallback
 import com.yatochk.secure.app.utils.observe
@@ -30,9 +31,9 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
     companion object {
         private const val VIDEO = "opened_video"
 
-        fun intent(context: Context, videoPath: String) =
+        fun intent(context: Context, video: Image) =
             Intent(context, VideoActivity::class.java).apply {
-                putExtra(VIDEO, videoPath)
+                putExtra(VIDEO, video)
             }
 
     }
@@ -66,8 +67,9 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        intent.getStringExtra(VIDEO)?.also { path ->
-            initPlayer(path)
+        (intent.getSerializableExtra(VIDEO) as? Image)?.also { video ->
+            viewModel.initMedia(video)
+            initPlayer(video.regularPath)
         }
         button_image_delete.setOnClickListener {
             viewModel.onDelete()

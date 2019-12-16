@@ -46,11 +46,9 @@ open class MediaViewModel @Inject constructor(
     private val mutableOpenRename = MutableLiveData<Boolean>()
     val openRename: LiveData<Boolean> = mutableOpenRename
 
-    protected val mutableMedia = MutableLiveData<ByteArray>()
 
-    fun initMedia(image: Image) {
+    open fun initMedia(image: Image) {
         currentMedia = image
-        mutableMedia.value = imageSecureController.decryptImageFromFile(image.securePath)
     }
 
     fun animationEnd() {
@@ -74,7 +72,7 @@ open class MediaViewModel @Inject constructor(
     private suspend fun mediaToGallery(media: Image) =
         coroutineScope {
             val regularImage = imageSecureController.decryptImageFromFile(media.securePath)
-            val imageFile = File(media.regularPath)
+            val imageFile = File("${media.regularPath}-decrypt")
             val imageDirectory =
                 File(media.regularPath.substring(0, media.regularPath.lastIndexOf("/")))
             imageDirectory.mkdirs()
@@ -88,9 +86,8 @@ open class MediaViewModel @Inject constructor(
             Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
             mutableError.value = localizationManager.getErrorString(MediaErrorType.TO_GALLERY)
         }) {
-            val mediaFile = mediaToGallery(currentMedia)
             imagesRepository.deleteImage(currentMedia)
-            mutableScanImage.value = mediaFile.path
+            mutableScanImage.value = mediaToGallery(currentMedia).path
         }
     }
 
