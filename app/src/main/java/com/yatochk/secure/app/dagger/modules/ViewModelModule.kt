@@ -15,6 +15,7 @@ import com.yatochk.secure.app.ui.image.ImageViewModel
 import com.yatochk.secure.app.ui.main.MainViewModel
 import com.yatochk.secure.app.ui.notes.EditNoteViewModel
 import com.yatochk.secure.app.ui.notes.NotesViewModel
+import com.yatochk.secure.app.ui.video.VideoViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -81,6 +82,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MediaViewModel::class)
     internal abstract fun mediaViewModel(viewModel: MediaViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(VideoViewModel::class)
+    internal abstract fun videoViewModel(viewModel: VideoViewModel): ViewModel
 
     @Binds
     @IntoMap

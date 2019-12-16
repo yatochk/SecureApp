@@ -10,7 +10,7 @@ import com.yatochk.secure.app.model.repository.ImagesRepository
 import javax.inject.Inject
 
 
-open class ImageViewModel @Inject constructor(
+class ImageViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
     imagesRepository: ImagesRepository,
     localizationManager: LocalizationManager

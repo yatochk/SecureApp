@@ -11,6 +11,7 @@ import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
 import com.yatochk.secure.app.ui.main.MediaErrorType
+import com.yatochk.secure.app.utils.DECRYPTED_POSTFIX
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.coroutineScope
@@ -69,10 +70,10 @@ open class MediaViewModel @Inject constructor(
 
     }
 
-    private suspend fun mediaToGallery(media: Image) =
+    protected open suspend fun mediaToGallery(media: Image) =
         coroutineScope {
             val regularImage = imageSecureController.decryptImageFromFile(media.securePath)
-            val imageFile = File("${media.regularPath}-decrypt")
+            val imageFile = File("${media.regularPath}$DECRYPTED_POSTFIX")
             val imageDirectory =
                 File(media.regularPath.substring(0, media.regularPath.lastIndexOf("/")))
             imageDirectory.mkdirs()

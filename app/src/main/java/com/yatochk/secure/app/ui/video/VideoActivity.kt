@@ -9,7 +9,6 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.widget.MediaController
 import androidx.activity.viewModels
-import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
@@ -40,7 +39,7 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
 
     private val videoPlayer = MediaPlayer()
     private lateinit var videoController: MediaController
-    private val viewModel: MediaViewModel by viewModels { viewModelFactory }
+    private val viewModel: VideoViewModel by viewModels { viewModelFactory }
 
     private fun initPlayer(path: String) {
         videoController = MediaController(this)

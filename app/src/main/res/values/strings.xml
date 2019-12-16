@@ -9,7 +9,7 @@
     <string name="error_photo">Error on take photo</string>
     <string name="some_error">Something do wrong</string>
     <string name="error_gallery">Error on pick image</string>
-    <string name="error_to_gallery">Error on pick image</string>
+    <string name="error_to_gallery">Error on move to gallery</string>
     <string name="error_encrypt_image">Error on encrypting media</string>
     <string name="error_display_image">Error on try displaying image</string>
     <string name="error_delete_image">Error on removing image</string>
