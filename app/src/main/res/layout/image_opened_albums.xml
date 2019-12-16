@@ -114,6 +114,7 @@
                 android:id="@+id/recycler_albums"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
+                android:layout_marginTop="6dp"
                 app:layout_constraintBottom_toTopOf="@id/btn_album_cancel" />
 
             <Button

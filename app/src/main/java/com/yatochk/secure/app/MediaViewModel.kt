@@ -46,6 +46,7 @@ open class MediaViewModel @Inject constructor(
     private val mutableOpenAlbumPicker = LiveEvent<Boolean>()
     val openAlbumPicker: LiveData<Boolean> = mutableOpenAlbumPicker
 
+    val albums = imagesRepository.getAlbums()
 
     open fun initMedia(image: Image) {
         currentMedia = image

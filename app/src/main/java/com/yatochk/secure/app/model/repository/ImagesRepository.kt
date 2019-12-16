@@ -19,4 +19,6 @@ class ImagesRepository @Inject constructor(
 
     fun getImages() = imagesDao.getImages()
 
+    fun getAlbums() = imagesDao.getAlbums()
+
 }

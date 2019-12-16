@@ -9,10 +9,13 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
+import com.yatochk.secure.app.ui.AlbumsAdapter
 import com.yatochk.secure.app.ui.MediaActivity
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
@@ -37,6 +40,7 @@ class ImageActivity : MediaActivity() {
 
     @Inject
     lateinit var imageSecureController: ImageSecureController
+    private lateinit var albumsAdapter: AlbumsAdapter
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -62,7 +66,16 @@ class ImageActivity : MediaActivity() {
         btn_album_cancel.setOnClickListener {
             viewModel.onAlbumsPickCancel()
         }
+        initAlbumsRecycler()
         observers()
+    }
+
+    private fun initAlbumsRecycler() {
+        albumsAdapter = AlbumsAdapter()
+        recycler_albums.layoutManager = FlexboxLayoutManager(this).apply {
+            justifyContent = JustifyContent.FLEX_START
+        }
+        recycler_albums.adapter = albumsAdapter
     }
 
     private fun observers() {
@@ -91,6 +104,9 @@ class ImageActivity : MediaActivity() {
             }
             openAlbumPicker.observe(this@ImageActivity) {
                 animateAlbumPicker(it)
+            }
+            albums.observe(this@ImageActivity) {
+                albumsAdapter.submitList(it)
             }
             scanImage.observe(this@ImageActivity) {
                 scanMedia(it)
