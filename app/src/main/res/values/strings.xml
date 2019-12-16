@@ -35,4 +35,5 @@
     <string name="enter_code">Enter code and press equals</string>
     <string name="pick_media_title">Pick type of media</string>
     <string name="decrypting">Decrypting</string>
+    <string name="move_to_album">Move to album</string>
 </resources>

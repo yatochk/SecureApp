@@ -5,19 +5,19 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="6dp"
     android:layout_marginEnd="8dp"
     app:cardBackgroundColor="@color/colorAccent"
     app:cardCornerRadius="6dp">
 
     <TextView
         android:id="@+id/picker_album_name"
-        android:maxWidth="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:lines="1"
         android:ellipsize="end"
+        android:lines="1"
+        android:maxWidth="100dp"
         android:textColor="@color/titleTextColor"
         android:textSize="18sp"
         tools:text="photo" />
