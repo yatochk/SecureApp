@@ -17,8 +17,10 @@ class ImagesRepository @Inject constructor(
         imagesDao.deleteImage(image)
     }
 
+    suspend fun updateImage(image: Image) = imagesDao.updateImage(image)
+
     fun getImages() = imagesDao.getImages()
 
-    fun getAlbums() = imagesDao.getAlbums()
+    fun getAnotherAlbums(exclude: String) = imagesDao.getAlbumsExcept(exclude)
 
 }

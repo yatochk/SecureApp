@@ -8,13 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yatochk.secure.app.R
 import kotlinx.android.synthetic.main.album_picker_item.view.*
 
-class AlbumsAdapter : ListAdapter<String, AlbumPickerViewHolder>(AlbumPickerDiffUtil()) {
+class AlbumsAdapter(
+    private val listener: (String) -> Unit
+) : ListAdapter<String, AlbumPickerViewHolder>(AlbumPickerDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumPickerViewHolder =
         AlbumPickerViewHolder(parent)
 
-    override fun onBindViewHolder(holder: AlbumPickerViewHolder, position: Int) =
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: AlbumPickerViewHolder, position: Int) {
+        val name = getItem(position)
+        holder.bind(name) {
+            listener(name)
+        }
+    }
 
 }
 
@@ -34,8 +40,11 @@ class AlbumPickerViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 
     private val albumName = itemView.picker_album_name
 
-    fun bind(name: String) {
+    fun bind(name: String, clickListener: () -> Unit) {
         albumName.text = name
+        itemView.setOnClickListener {
+            clickListener()
+        }
     }
 
 }

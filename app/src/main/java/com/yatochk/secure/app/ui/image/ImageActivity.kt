@@ -71,7 +71,9 @@ class ImageActivity : MediaActivity() {
     }
 
     private fun initAlbumsRecycler() {
-        albumsAdapter = AlbumsAdapter()
+        albumsAdapter = AlbumsAdapter {
+            viewModel.onPickAlbum(it)
+        }
         recycler_albums.layoutManager = FlexboxLayoutManager(this).apply {
             justifyContent = JustifyContent.FLEX_START
         }

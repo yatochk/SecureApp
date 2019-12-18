@@ -11,6 +11,7 @@ import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
 import com.yatochk.secure.app.ui.main.MediaErrorType
 import com.yatochk.secure.app.utils.DECRYPTED_POSTFIX
+import com.yatochk.secure.app.utils.postEvent
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.coroutineScope
@@ -37,8 +38,8 @@ open class MediaViewModel @Inject constructor(
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
 
-    private val mutableFinish = LiveEvent<Void>()
-    val finish: LiveData<Void> = mutableFinish
+    private val eventFinish = LiveEvent<Void>()
+    val finish: LiveData<Void> = eventFinish
 
     private val mutableError = LiveEvent<String>()
     val mediaError: LiveData<String> = mutableError
@@ -46,14 +47,29 @@ open class MediaViewModel @Inject constructor(
     private val mutableOpenAlbumPicker = LiveEvent<Boolean>()
     val openAlbumPicker: LiveData<Boolean> = mutableOpenAlbumPicker
 
-    val albums = imagesRepository.getAlbums()
+    lateinit var albums: LiveData<List<String>>
+        private set
 
     open fun initMedia(image: Image) {
         currentMedia = image
+        albums = imagesRepository.getAnotherAlbums(currentMedia.album)
+    }
+
+    fun onPickAlbum(moveAlbum: String) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
+            mutableError.value = localizationManager.getErrorString(MediaErrorType.TO_ALBUM)
+        }) {
+            val movedMedia = currentMedia.apply {
+                album = moveAlbum
+            }
+            imagesRepository.updateImage(movedMedia)
+            eventFinish.postEvent()
+        }
     }
 
     fun animationEnd() {
-        mutableFinish.value = null
+        eventFinish.postEvent()
     }
 
     fun onAlbumsPickCancel() {

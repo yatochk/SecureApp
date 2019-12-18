@@ -5,7 +5,8 @@ enum class MediaErrorType {
     ADD_IMAGE,
     ENCRYPT_MEDIA,
     DELETE_IMAGE,
-    TO_GALLERY
+    TO_GALLERY,
+    TO_ALBUM
 }
 
 enum class ContactErrorType {
