@@ -52,7 +52,7 @@ open class MediaViewModel @Inject constructor(
 
     open fun initMedia(image: Image) {
         currentMedia = image
-        albums = imagesRepository.getAnotherAlbums(currentMedia.album)
+        albums = imagesRepository.getAlbumsNames(currentMedia.album)
     }
 
     fun onPickAlbum(moveAlbum: String) {

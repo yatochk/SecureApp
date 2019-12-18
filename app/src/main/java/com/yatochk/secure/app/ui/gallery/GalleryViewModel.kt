@@ -4,10 +4,15 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.images.Album
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class GalleryViewModel @Inject constructor(
@@ -18,25 +23,38 @@ class GalleryViewModel @Inject constructor(
     private val mutableOpenAlbum = LiveEvent<Pair<String, View>>()
     val openAlbum: LiveData<Pair<String, View>> = mutableOpenAlbum
 
+    private val albumsExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+
+    }
+
+    private val albumsChanel = Channel<Album>()
+
     val albums: LiveData<List<Album>> = MediatorLiveData<List<Album>>().apply {
         addSource(imagesRepository.getImages()) { images ->
-            val displayImages = arrayListOf<Album>()
+            value = emptyList()
             images.map { it.album }.toSet().forEach { name ->
-                try {
+                viewModelScope.launch(Dispatchers.IO + albumsExceptionHandler) {
                     val imageBytes = imageSecureController.decryptImageFromFile(
                         images.last { it.album == name }.securePath
                     )
-                    displayImages.add(
+                    albumsChanel.send(
                         Album(
                             name,
                             imageBytes
                         )
                     )
-                } catch (e: Throwable) {
-
                 }
             }
-            value = displayImages
+            viewModelScope.launch(albumsExceptionHandler) {
+                for (album in albumsChanel) {
+                    val newAlbums =
+                        mutableListOf<Album>().apply {
+                            value?.also { addAll(it) }
+                            add(album)
+                        }
+                    value = newAlbums
+                }
+            }
         }
     }
 

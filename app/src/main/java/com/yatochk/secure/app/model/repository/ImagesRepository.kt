@@ -21,6 +21,6 @@ class ImagesRepository @Inject constructor(
 
     fun getImages() = imagesDao.getImages()
 
-    fun getAnotherAlbums(exclude: String) = imagesDao.getAlbumsExcept(exclude)
+    fun getAlbumsNames(exclude: String) = imagesDao.getAlbumsExcept(exclude)
 
 }
