@@ -21,6 +21,9 @@ class NewAlbumDialog : DialogFragment() {
             btn_create.setOnClickListener {
                 createListener?.invoke(edit_new_album.text.toString())
             }
+            btn_cancel.setOnClickListener {
+                dialog?.dismiss()
+            }
         }
 
 }

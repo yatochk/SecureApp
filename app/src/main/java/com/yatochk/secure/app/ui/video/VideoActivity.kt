@@ -73,8 +73,13 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
         (intent.getSerializableExtra(VIDEO) as? Image)?.also { video ->
-            viewModel.initMedia(video)
-            initPlayer(video.regularPath)
+            if (savedInstanceState == null) {
+                viewModel.initMedia(video)
+                initPlayer(video.regularPath)
+                albumDialog.createListener = { name ->
+                    viewModel.onCreateNewAlbum(name)
+                }
+            }
         }
         button_image_delete.setOnClickListener {
             viewModel.onDelete()
@@ -87,6 +92,9 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
         }
         btn_album_cancel.setOnClickListener {
             viewModel.onAlbumsPickCancel()
+        }
+        btn_new_album.setOnClickListener {
+            viewModel.onclickNewAlbum()
         }
         observers()
         initAlbumsRecycler()
@@ -115,6 +123,9 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
             }
             albums.observe(this@VideoActivity) {
                 albumsAdapter.submitList(it)
+            }
+            newAlbum.observe(this@VideoActivity) {
+                openNewAlbumDialog()
             }
             scanImage.observe(this@VideoActivity) {
                 scanMedia(it)

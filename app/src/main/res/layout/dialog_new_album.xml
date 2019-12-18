@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
+        android:layout_margin="12dp"
         android:text="@string/new_album"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/titleTextColor"
@@ -23,9 +23,9 @@
 
     <EditText
         android:id="@+id/edit_new_album"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_width="300dp"
         android:backgroundTint="@android:color/transparent"
         android:hint="@string/new_album"
         android:paddingStart="12dp"

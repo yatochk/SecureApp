@@ -4,12 +4,14 @@ import android.transition.TransitionManager
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import com.yatochk.secure.app.ui.image.NewAlbumDialog
 import kotlinx.android.synthetic.main.activity_image.*
 
 abstract class MediaActivity : BaseActivity() {
 
     companion object {
         private const val DURATION_ANIMATION = 500L
+        private const val NEW_ALBUM = "new_album"
     }
 
     abstract fun onAnimationEnd()
@@ -17,6 +19,8 @@ abstract class MediaActivity : BaseActivity() {
     abstract val globalContainer: ConstraintLayout
     abstract val openedAlbumPicker: ConstraintSet
     abstract val closedAlbumPicker: ConstraintSet
+
+    protected val albumDialog = NewAlbumDialog()
 
     protected fun animateAlbumPicker(needOpen: Boolean) {
         TransitionManager.beginDelayedTransition(globalContainer)
@@ -69,5 +73,11 @@ abstract class MediaActivity : BaseActivity() {
             .alpha(0f)
             .setDuration(DURATION_ANIMATION)
             .start()
+    }
+
+    protected fun openNewAlbumDialog() {
+        if (supportFragmentManager.findFragmentByTag(NEW_ALBUM) == null) {
+            albumDialog.show(supportFragmentManager, NEW_ALBUM)
+        }
     }
 }

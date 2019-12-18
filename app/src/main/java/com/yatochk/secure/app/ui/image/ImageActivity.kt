@@ -35,7 +35,6 @@ class ImageActivity : MediaActivity() {
 
     companion object {
         private const val IMAGE = "opened_image"
-        private const val NEW_ALBUM = "new_album"
 
         fun intent(context: Context, image: Image) =
             Intent(context, ImageActivity::class.java).apply {
@@ -49,7 +48,6 @@ class ImageActivity : MediaActivity() {
     @Inject
     lateinit var imageSecureController: ImageSecureController
     private lateinit var albumsAdapter: AlbumsAdapter
-    private val albumDialog = NewAlbumDialog()
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -138,10 +136,6 @@ class ImageActivity : MediaActivity() {
                 showErrorToast(this@ImageActivity, it)
             }
         }
-    }
-
-    private fun openNewAlbumDialog() {
-        albumDialog.show(supportFragmentManager, NEW_ALBUM)
     }
 
     override fun onAnimationEnd() {
