@@ -275,7 +275,9 @@ class MainActivity : BaseActivity() {
                 }
             }
             PICK_VIDEO -> {
-
+                data?.data?.toPath(this)?.also {
+                    mainViewModel.receivedGalleryVideo(it)
+                }
             }
         }
     }

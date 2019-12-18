@@ -102,4 +102,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun receivedGalleryVideo(regularPath: String) {
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Log.e("Error on securing", throwable.localizedMessage, throwable)
+            mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_IMAGE)
+        }) {
+            val file = encryptGalleryMedia(regularPath)
+            imagesDao.addImage(
+                Image(
+                    file.path,
+                    regularPath,
+                    DEFAULT_GALLERY_ALBUM
+                )
+            )
+            mutableScanImage.value = regularPath
+        }
+    }
+
 }
