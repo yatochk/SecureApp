@@ -47,6 +47,9 @@ open class MediaViewModel @Inject constructor(
     private val mutableOpenAlbumPicker = LiveEvent<Boolean>()
     val openAlbumPicker: LiveData<Boolean> = mutableOpenAlbumPicker
 
+    private val eventNewAlbum = LiveEvent<Void>()
+    val newAlbum: LiveData<Void> = eventNewAlbum
+
     lateinit var albums: LiveData<List<String>>
         private set
 
@@ -70,6 +73,14 @@ open class MediaViewModel @Inject constructor(
 
     fun animationEnd() {
         eventFinish.postEvent()
+    }
+
+    fun onclickNewAlbum() {
+        eventNewAlbum.postEvent()
+    }
+
+    fun onCreateNewAlbum(newName: String) {
+        onPickAlbum(newName)
     }
 
     fun onAlbumsPickCancel() {

@@ -1,5 +1,6 @@
 package com.yatochk.secure.app.ui.gallery
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -24,7 +25,7 @@ class GalleryViewModel @Inject constructor(
     val openAlbum: LiveData<Pair<String, View>> = mutableOpenAlbum
 
     private val albumsExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-
+        Log.e(GalleryViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
     }
 
     private val albumsChanel = Channel<Album>()

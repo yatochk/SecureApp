@@ -20,7 +20,14 @@ import com.yatochk.secure.app.ui.MediaActivity
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
 import com.yatochk.secure.app.utils.showErrorToast
-import kotlinx.android.synthetic.main.activity_image.*
+import kotlinx.android.synthetic.main.activity_image.btn_album_cancel
+import kotlinx.android.synthetic.main.activity_image.button_image_delete
+import kotlinx.android.synthetic.main.activity_image.button_image_rename
+import kotlinx.android.synthetic.main.activity_image.button_image_upload
+import kotlinx.android.synthetic.main.activity_image.container_image
+import kotlinx.android.synthetic.main.activity_image.gallery_image
+import kotlinx.android.synthetic.main.activity_image.recycler_albums
+import kotlinx.android.synthetic.main.image_opened_albums.*
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -28,6 +35,7 @@ class ImageActivity : MediaActivity() {
 
     companion object {
         private const val IMAGE = "opened_image"
+        private const val NEW_ALBUM = "new_album"
 
         fun intent(context: Context, image: Image) =
             Intent(context, ImageActivity::class.java).apply {
@@ -41,6 +49,7 @@ class ImageActivity : MediaActivity() {
     @Inject
     lateinit var imageSecureController: ImageSecureController
     private lateinit var albumsAdapter: AlbumsAdapter
+    private val albumDialog = NewAlbumDialog()
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -52,6 +61,9 @@ class ImageActivity : MediaActivity() {
         intent.getSerializableExtra(IMAGE)?.also {
             if (savedInstanceState == null) {
                 viewModel.initMedia(it as Image)
+                albumDialog.createListener = { name ->
+                    viewModel.onCreateNewAlbum(name)
+                }
             }
         }
         button_image_delete.setOnClickListener {
@@ -65,6 +77,9 @@ class ImageActivity : MediaActivity() {
         }
         btn_album_cancel.setOnClickListener {
             viewModel.onAlbumsPickCancel()
+        }
+        btn_new_album.setOnClickListener {
+            viewModel.onclickNewAlbum()
         }
         initAlbumsRecycler()
         observers()
@@ -113,6 +128,9 @@ class ImageActivity : MediaActivity() {
             scanImage.observe(this@ImageActivity) {
                 scanMedia(it)
             }
+            newAlbum.observe(this@ImageActivity) {
+                openNewAlbumDialog()
+            }
             finish.observe(this@ImageActivity) {
                 finish()
             }
@@ -120,6 +138,10 @@ class ImageActivity : MediaActivity() {
                 showErrorToast(this@ImageActivity, it)
             }
         }
+    }
+
+    private fun openNewAlbumDialog() {
+        albumDialog.show(supportFragmentManager, NEW_ALBUM)
     }
 
     override fun onAnimationEnd() {

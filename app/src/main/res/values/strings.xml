@@ -37,4 +37,6 @@
     <string name="pick_media_title">Pick type of media</string>
     <string name="decrypting">Decrypting</string>
     <string name="move_to_album">Move to album</string>
+    <string name="new_album">New album</string>
+    <string name="create">Create</string>
 </resources>
