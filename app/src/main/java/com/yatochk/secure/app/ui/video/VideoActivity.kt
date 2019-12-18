@@ -11,9 +11,12 @@ import android.widget.MediaController
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
+import com.yatochk.secure.app.ui.AlbumsAdapter
 import com.yatochk.secure.app.ui.MediaActivity
 import com.yatochk.secure.app.utils.SurfaceHolderCallback
 import com.yatochk.secure.app.utils.observe
@@ -42,6 +45,7 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
     private val videoPlayer = MediaPlayer()
     private lateinit var videoController: MediaController
     private val viewModel: VideoViewModel by viewModels { viewModelFactory }
+    private lateinit var albumsAdapter: AlbumsAdapter
 
     private fun initPlayer(path: String) {
         videoController = MediaController(this)
@@ -85,6 +89,17 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
             viewModel.onAlbumsPickCancel()
         }
         observers()
+        initAlbumsRecycler()
+    }
+
+    private fun initAlbumsRecycler() {
+        albumsAdapter = AlbumsAdapter {
+            viewModel.onPickAlbum(it)
+        }
+        recycler_albums.layoutManager = FlexboxLayoutManager(this).apply {
+            justifyContent = JustifyContent.FLEX_START
+        }
+        recycler_albums.adapter = albumsAdapter
     }
 
     private fun observers() {
@@ -97,6 +112,9 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
             }
             openAlbumPicker.observe(this@VideoActivity) {
                 animateAlbumPicker(it)
+            }
+            albums.observe(this@VideoActivity) {
+                albumsAdapter.submitList(it)
             }
             scanImage.observe(this@VideoActivity) {
                 scanMedia(it)
