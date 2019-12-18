@@ -17,7 +17,6 @@
         android:id="@+id/progress_decrypt"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="2dp"
         android:alpha="0.3"
         android:progressDrawable="@drawable/seek_progress"
         app:layout_constraintBottom_toTopOf="@id/recycler_album_photo"
