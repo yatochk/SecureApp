@@ -6,24 +6,41 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/cardBackground"
+        app:layout_constraintBottom_toTopOf="@id/recycler_album_photo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progress_decrypt"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:alpha="0.3"
+        android:progressDrawable="@drawable/seek_progress"
+        app:layout_constraintBottom_toTopOf="@id/recycler_album_photo"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/text_album_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:textColor="@color/titleTextColor"
         android:textSize="25sp"
         android:transitionName="@string/album_transition"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="lollipop" />
+        tools:targetApi="lollipop"
+        tools:text="photo" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_album_photo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_album_name" />
 

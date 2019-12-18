@@ -3,4 +3,7 @@
     <external-path
         name="regular_photo"
         path="photo" />
+    <external-files-path
+        name="regular_video"
+        path="photo" />
 </paths>

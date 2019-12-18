@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.transition.TransitionManager
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -36,7 +38,9 @@ class MainActivity : BaseActivity() {
 
     companion object {
         private const val TAKE_PHOTO = 0
-        private const val PICK_IMAGE = 1
+        private const val TAKE_VIDEO = 1
+        private const val PICK_PHOTO = 2
+        private const val PICK_VIDEO = 3
 
         fun intent(context: Context) =
             Intent(context, MainActivity::class.java)
@@ -50,6 +54,32 @@ class MainActivity : BaseActivity() {
     private val browserFragment by lazy { BrowserFragment() }
 
     private lateinit var imageName: String
+    private lateinit var videoName: String
+
+    private val mainSet = ConstraintSet()
+    private val pickerSet = ConstraintSet()
+
+    private fun initPicker() {
+        button_cancel_pick.setOnClickListener {
+            galleryMenuViewModel.onPickerCancel()
+        }
+        btn_pick_image.setOnClickListener {
+            galleryMenuViewModel.onPickImage()
+        }
+        btn_pick_video.setOnClickListener {
+            galleryMenuViewModel.onPickVideo()
+        }
+        mainSet.clone(container)
+        pickerSet.clone(this, R.layout.main_pick_media_type)
+    }
+
+    private fun animatePicker(open: Boolean) {
+        TransitionManager.beginDelayedTransition(container)
+        (if (open) pickerSet else mainSet).applyTo(container)
+        floating_menu_gallery.apply {
+            collapse()
+        }
+    }
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -58,6 +88,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initPicker()
         goToFragment(galleryFragment)
         galleryFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
@@ -138,6 +169,14 @@ class MainActivity : BaseActivity() {
 
     private fun initGalleryMenuObservers() {
         with(galleryMenuViewModel) {
+            openTypePicker.observe(this@MainActivity) {
+                animatePicker(true)
+            }
+
+            hideTypePicker.observe(this@MainActivity) {
+                animatePicker(false)
+            }
+
             openCamera.observe(this@MainActivity) {
                 val imagePath = File(ImageSecureController.regularPath)
                 imagePath.mkdirs()
@@ -148,6 +187,7 @@ class MainActivity : BaseActivity() {
                     BuildConfig.APPLICATION_ID + ".provider",
                     File(imagePath, imageName)
                 )
+
                 val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                     putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -155,12 +195,39 @@ class MainActivity : BaseActivity() {
                 startActivityForResult(takePicture, TAKE_PHOTO)
             }
 
+            openVideoCamera.observe(this@MainActivity) {
+                val videoPath = File(ImageSecureController.regularPath)
+                videoPath.mkdirs()
+                videoName = "Video_${Date().toTimeString()}.MPEG_4"
+
+                val videoUri = FileProvider.getUriForFile(
+                    this@MainActivity,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    File(videoPath, videoName)
+                )
+
+                val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).apply {
+                    putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
+                    putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivityForResult(takeVideoIntent, TAKE_VIDEO)
+            }
+
             openGallery.observe(this@MainActivity) {
                 val pickPhoto = Intent(
                     Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
-                startActivityForResult(pickPhoto, PICK_IMAGE)
+                startActivityForResult(pickPhoto, PICK_PHOTO)
+            }
+
+            openVideoGallery.observe(this@MainActivity) {
+                val pickPhoto = Intent(
+                    Intent.ACTION_PICK,
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                )
+                startActivityForResult(pickPhoto, PICK_VIDEO)
             }
         }
     }
@@ -172,26 +239,7 @@ class MainActivity : BaseActivity() {
             }
 
             showImageError.observe(this@MainActivity) {
-                showErrorToast(
-                    this@MainActivity,
-                    when (it) {
-                        ImageErrorType.ADD_PHOTO -> {
-                            getString(R.string.error_photo)
-                        }
-                        ImageErrorType.ADD_IMAGE -> {
-                            getString(R.string.error_gallery)
-                        }
-                        ImageErrorType.ENCRYPT_IMAGE -> {
-                            getString(R.string.error_encrypt_image)
-                        }
-                        ImageErrorType.DELETE_IMAGE -> {
-                            getString(R.string.error_delete_image)
-                        }
-                        ImageErrorType.TO_GALLERY -> {
-                            getString(R.string.error_to_gallery)
-                        }
-                    }
-                )
+                showErrorToast(this@MainActivity, it)
             }
 
         }
@@ -218,9 +266,17 @@ class MainActivity : BaseActivity() {
             TAKE_PHOTO -> {
                 mainViewModel.receivedPhoto(imageName)
             }
-            PICK_IMAGE -> {
+            TAKE_VIDEO -> {
+                mainViewModel.receivedVideo(videoName)
+            }
+            PICK_PHOTO -> {
                 data?.data?.toPath(this)?.also {
                     mainViewModel.receivedGalleryImage(it)
+                }
+            }
+            PICK_VIDEO -> {
+                data?.data?.toPath(this)?.also {
+                    mainViewModel.receivedGalleryVideo(it)
                 }
             }
         }

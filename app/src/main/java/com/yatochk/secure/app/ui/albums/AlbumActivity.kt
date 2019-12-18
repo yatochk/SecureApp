@@ -1,9 +1,9 @@
 package com.yatochk.secure.app.ui.albums
 
+import android.animation.ObjectAnimator
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -14,7 +14,10 @@ import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseActivity
 import com.yatochk.secure.app.ui.gallery.ImageRecyclerAdapter
 import com.yatochk.secure.app.ui.image.ImageActivity
+import com.yatochk.secure.app.ui.video.VideoActivity
 import com.yatochk.secure.app.utils.observe
+import com.yatochk.secure.app.utils.setCompleteListener
+import com.yatochk.secure.app.utils.showErrorToast
 import kotlinx.android.synthetic.main.activity_album.*
 
 class AlbumActivity : BaseActivity() {
@@ -64,17 +67,7 @@ class AlbumActivity : BaseActivity() {
     private fun startObservers() {
         with(viewModel) {
             images.observe(this@AlbumActivity) { imageList ->
-                adapter.submitList(
-                    imageList.map {
-                        Pair(
-                            it.first,
-                            BitmapFactory.decodeByteArray(
-                                it.second,
-                                0,
-                                it.second.size
-                            )
-                        )
-                    })
+                adapter.submitList(imageList)
             }
             openImage.observe(this@AlbumActivity) {
                 val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -88,13 +81,34 @@ class AlbumActivity : BaseActivity() {
                 }
                 startActivity(ImageActivity.intent(this@AlbumActivity, it.first), bundle)
             }
+            openVideo.observe(this@AlbumActivity) {
+                startActivity(VideoActivity.intent(this@AlbumActivity, it))
+            }
             finish.observe(this@AlbumActivity) {
                 finish()
             }
             showImageError.observe(this@AlbumActivity) {
-                //TODO
+                showErrorToast(this@AlbumActivity, it)
+            }
+            decryptionSeek.observe(this@AlbumActivity) {
+                showDecryptingProgress(it)
             }
         }
+    }
+
+    private fun showDecryptingProgress(data: DecryptionSeek) {
+        val progress = (100 * data.decryptedCount.toDouble() / data.count).toInt()
+        ObjectAnimator.ofInt(progress_decrypt, "progress", progress)
+            .setDuration(500)
+            .setCompleteListener {
+                if (!data.needShow) {
+                    progress_decrypt.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .start()
+                }
+            }
+            .start()
     }
 
 }

@@ -9,11 +9,18 @@ class ImagesRepository @Inject constructor(
     private val imagesDao: ImagesDao
 ) {
 
-    fun deleteImage(image: Image) {
-        File(image.securePath).delete()
+    suspend fun deleteImage(image: Image) {
+        File(image.securePath).also {
+            if (it.exists())
+                it.delete()
+        }
         imagesDao.deleteImage(image)
     }
 
+    suspend fun updateImage(image: Image) = imagesDao.updateImage(image)
+
     fun getImages() = imagesDao.getImages()
+
+    fun getAlbumsNames(exclude: String) = imagesDao.getAlbumsExcept(exclude)
 
 }

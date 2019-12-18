@@ -4,8 +4,8 @@ import android.content.Context
 import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import android.util.Base64InputStream
+import java.io.*
 import java.math.BigInteger
 import java.security.Key
 import java.security.KeyPairGenerator
@@ -50,6 +50,23 @@ class Cypher @Inject constructor(private val context: Context) {
         val c = Cipher.getInstance(AES_MODE, "BC")
         c.init(Cipher.DECRYPT_MODE, secretKey)
         return c.doFinal(Base64.decode(bytes, Base64.DEFAULT))
+    }
+
+    @Throws(IllegalBlockSizeException::class)
+    fun decryptFile(input: FileInputStream, output: FileOutputStream) {
+        val buf = ByteArray(1024 * 1024)
+        val c = Cipher.getInstance(AES_MODE, "BC")
+        c.init(Cipher.DECRYPT_MODE, secretKey)
+
+        val cipherInput =
+            BufferedInputStream(CipherInputStream(Base64InputStream(input, Base64.DEFAULT), c))
+        var read: Int
+        while (cipherInput.read(buf).also { read = it } > 0) {
+            output.write(buf, 0, read)
+        }
+
+        input.close()
+        output.close()
     }
 
     private fun getRSAKey(): KeyStore.PrivateKeyEntry {

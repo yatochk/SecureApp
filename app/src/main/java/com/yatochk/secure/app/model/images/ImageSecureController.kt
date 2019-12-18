@@ -31,6 +31,23 @@ class ImageSecureController @Inject constructor(
         }
     }
 
+    fun decryptVideo(image: Image): File {
+        val secureFile = File(image.securePath)
+        require(secureFile.exists()) { "this file is not exist" }
+
+        val regularFile = File(image.regularPath)
+
+        val inputStream = secureFile.inputStream()
+        val outputStream = regularFile.outputStream()
+
+        cypher.decryptFile(inputStream, outputStream)
+
+        inputStream.close()
+        outputStream.close()
+
+        return regularFile
+    }
+
     fun decryptImageFromFile(path: String): ByteArray {
         val imageFile = File(path)
         require(imageFile.exists()) { "this file is not exist" }

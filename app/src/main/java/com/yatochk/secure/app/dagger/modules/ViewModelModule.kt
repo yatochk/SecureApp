@@ -1,6 +1,7 @@
 package com.yatochk.secure.app.dagger.modules
 
 import androidx.lifecycle.ViewModel
+import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.dagger.ViewModelKey
 import com.yatochk.secure.app.ui.albums.AlbumViewModel
 import com.yatochk.secure.app.ui.browser.BrowserViewModel
@@ -10,10 +11,11 @@ import com.yatochk.secure.app.ui.contact.ContactViewModel
 import com.yatochk.secure.app.ui.contact.EditContactViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.gallery.GalleryViewModel
-import com.yatochk.secure.app.ui.image.ImageVIewModel
+import com.yatochk.secure.app.ui.image.ImageViewModel
 import com.yatochk.secure.app.ui.main.MainViewModel
 import com.yatochk.secure.app.ui.notes.EditNoteViewModel
 import com.yatochk.secure.app.ui.notes.NotesViewModel
+import com.yatochk.secure.app.ui.video.VideoViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -43,8 +45,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ImageVIewModel::class)
-    internal abstract fun imageViewModel(viewModel: ImageVIewModel): ViewModel
+    @ViewModelKey(ImageViewModel::class)
+    internal abstract fun imageViewModel(viewModel: ImageViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -75,6 +77,16 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EditNoteViewModel::class)
     internal abstract fun editNoteViewModel(viewModel: EditNoteViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MediaViewModel::class)
+    internal abstract fun mediaViewModel(viewModel: MediaViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(VideoViewModel::class)
+    internal abstract fun videoViewModel(viewModel: VideoViewModel): ViewModel
 
     @Binds
     @IntoMap

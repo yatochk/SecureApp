@@ -7,11 +7,15 @@
     <string name="title_browser">Internet</string>
 
     <string name="error_photo">Error on take photo</string>
+    <string name="some_error">Something do wrong</string>
     <string name="error_gallery">Error on pick image</string>
-    <string name="error_to_gallery">Error on pick image</string>
-    <string name="error_encrypt_image">Error on encrypting image</string>
+    <string name="error_to_gallery">Error on move to gallery</string>
+    <string name="error_to_album">Error on move to another album</string>
+    <string name="error_encrypt_image">Error on encrypting media</string>
+    <string name="error_display_image">Error on try displaying image</string>
     <string name="error_delete_image">Error on removing image</string>
     <string name="error_delete_contact">Error on removing contact</string>
+    <string name="error_update_contact">Error on updating contact</string>
 
     <string name="album_transition" translatable="false">email_transition</string>
     <string name="image_transition" translatable="false">image_transition</string>
@@ -30,4 +34,9 @@
 
     <string name="ok">OK</string>
     <string name="enter_code">Enter code and press equals</string>
+    <string name="pick_media_title">Pick type of media</string>
+    <string name="decrypting">Decrypting</string>
+    <string name="move_to_album">Move to album</string>
+    <string name="new_album">New album</string>
+    <string name="create">Create</string>
 </resources>

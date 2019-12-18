@@ -1,13 +1,20 @@
 package com.yatochk.secure.app.ui.gallery
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
-import com.snakydesign.livedataextensions.map
 import com.yatochk.secure.app.model.images.Album
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
+import com.yatochk.secure.app.utils.isVideoPath
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class GalleryViewModel @Inject constructor(
@@ -18,15 +25,42 @@ class GalleryViewModel @Inject constructor(
     private val mutableOpenAlbum = LiveEvent<Pair<String, View>>()
     val openAlbum: LiveData<Pair<String, View>> = mutableOpenAlbum
 
-    val albums: LiveData<List<Album>> = imagesRepository.getImages().map { images ->
-        images.map { it.album }.toSet().map { name ->
-            val imageBytes = imageSecureController.decryptImageFromFile(
-                images.last { it.album == name }.securePath
-            )
-            Album(
-                name,
-                imageBytes
-            )
+    private val albumsExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(GalleryViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
+    }
+
+    private val albumsChanel = Channel<Album>()
+
+    val albums: LiveData<List<Album>> = MediatorLiveData<List<Album>>().apply {
+        addSource(imagesRepository.getImages()) { images ->
+            value = emptyList()
+            images.map { it.album }.toSet().forEach { name ->
+                viewModelScope.launch(Dispatchers.IO + albumsExceptionHandler) {
+                    val mediaPath = images.last { it.album == name }.securePath
+                    val imageBytes =
+                        if (mediaPath.isVideoPath()) {
+                            null
+                        } else {
+                            imageSecureController.decryptImageFromFile(mediaPath)
+                        }
+                    albumsChanel.send(
+                        Album(
+                            name,
+                            imageBytes
+                        )
+                    )
+                }
+            }
+            viewModelScope.launch(albumsExceptionHandler) {
+                for (album in albumsChanel) {
+                    val newAlbums =
+                        mutableListOf<Album>().apply {
+                            value?.also { addAll(it) }
+                            add(album)
+                        }
+                    value = newAlbums
+                }
+            }
         }
     }
 

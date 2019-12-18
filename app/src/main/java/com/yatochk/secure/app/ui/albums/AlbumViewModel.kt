@@ -1,31 +1,36 @@
 package com.yatochk.secure.app.ui.albums
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.ThumbnailUtils
+import android.provider.MediaStore
 import android.widget.ImageView
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.hadilq.liveevent.LiveEvent
+import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.database.dao.ImagesDao
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
-import com.yatochk.secure.app.ui.main.ImageErrorType
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import com.yatochk.secure.app.ui.main.MediaErrorType
+import com.yatochk.secure.app.utils.isVideoPath
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 class AlbumViewModel @Inject constructor(
     private val imageSecureController: ImageSecureController,
-    private val imagesDao: ImagesDao
+    private val imagesDao: ImagesDao,
+    private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
-    private val mediatorImages = MediatorLiveData<List<Pair<Image, ByteArray>>>()
-    val images: LiveData<List<Pair<Image, ByteArray>>> = mediatorImages
+    private val mediatorImages = MediatorLiveData<List<Pair<Image, Bitmap>>>()
+    val images: LiveData<List<Pair<Image, Bitmap>>> = mediatorImages
 
-    private val mutableShowError = LiveEvent<ImageErrorType>()
-    val showImageError: LiveData<ImageErrorType> = mutableShowError
+    private val mutableShowError = LiveEvent<String>()
+    val showImageError: LiveData<String> = mutableShowError
 
     private val mutableFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = mutableFinish
@@ -33,38 +38,79 @@ class AlbumViewModel @Inject constructor(
     private val mutableOpenImage = LiveEvent<Pair<Image, ImageView>>()
     val openImage: LiveData<Pair<Image, ImageView>> = mutableOpenImage
 
+    private val mutableOpenVideo = LiveEvent<Image>()
+    val openVideo: LiveData<Image> = mutableOpenVideo
+
     private val mutableStartObserving = MutableLiveData<Void>()
     val startObserving: LiveData<Void> = mutableStartObserving
 
-    private val compositeDisposable = CompositeDisposable()
+    private val mutableDecryptionSeek = MutableLiveData<DecryptionSeek>()
+    val decryptionSeek: LiveData<DecryptionSeek> = mutableDecryptionSeek
+
+    private val decryptedVideos = arrayListOf<String>()
 
     fun screenOpened() {
         mutableStartObserving.value = null
     }
 
+    private val chanel = Channel<Pair<Image, Bitmap>>()
+
+    override fun onCleared() {
+        super.onCleared()
+        chanel.close()
+        decryptedVideos.forEach { path ->
+            File(path).also {
+                if (it.exists())
+                    it.delete()
+            }
+        }
+    }
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+        mutableShowError.postValue(localizationManager.getErrorString(MediaErrorType.ENCRYPT_MEDIA))
+    }
+
     private fun decryptImages(images: List<Image>) {
+        mutableDecryptionSeek.value = DecryptionSeek(images.size, 0, true)
         mediatorImages.value = emptyList()
-        compositeDisposable.add(
-            Observable.fromIterable(images)
-                .subscribeOn(Schedulers.io())
-                .map {
-                    val decryptedBytes = imageSecureController.decryptImageFromFile(it.securePath)
-                    Pair(it, decryptedBytes)
+        images.forEach {
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+                val bitmap = if (it.regularPath.isVideoPath()) {
+                    decryptedVideos.add(it.regularPath)
+                    ThumbnailUtils.createVideoThumbnail(
+                        imageSecureController.decryptVideo(it).absolutePath,
+                        MediaStore.Images.Thumbnails.MINI_KIND
+                    )
+                } else {
+                    val decryptedBytes =
+                        imageSecureController.decryptImageFromFile(it.securePath)
+                    BitmapFactory.decodeByteArray(
+                        decryptedBytes,
+                        0,
+                        decryptedBytes.size
+                    )
                 }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { newImage ->
-                        val newImages = mutableListOf<Pair<Image, ByteArray>>().apply {
-                            mediatorImages.value?.also { addAll(it) }
-                            add(newImage)
-                        }
-                        mediatorImages.value = newImages
-                    },
-                    {
-                        mutableShowError.value = ImageErrorType.ENCRYPT_IMAGE
+                val newImage = Pair(it, bitmap)
+                chanel.send(newImage)
+            }
+        }
+        viewModelScope.launch(exceptionHandler) {
+            for (image in chanel) {
+                val newImages =
+                    mutableListOf<Pair<Image, Bitmap>>().apply {
+                        mediatorImages.value?.also { addAll(it) }
+                        add(image)
                     }
-                )
-        )
+                mediatorImages.value = newImages
+                val decryptedCount = newImages.size
+                mutableDecryptionSeek.value =
+                    DecryptionSeek(
+                        images.size,
+                        decryptedCount,
+                        decryptedCount != images.size
+                    )
+            }
+        }
     }
 
     fun initAlbum(albumName: String) {
@@ -78,12 +124,11 @@ class AlbumViewModel @Inject constructor(
     }
 
     fun clickImage(image: Image, imageView: ImageView) {
-        mutableOpenImage.value = Pair(image, imageView)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.dispose()
+        if (image.regularPath.isVideoPath()) {
+            mutableOpenVideo.value = image
+        } else {
+            mutableOpenImage.value = Pair(image, imageView)
+        }
     }
 
 }

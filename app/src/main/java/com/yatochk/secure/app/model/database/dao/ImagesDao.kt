@@ -7,19 +7,22 @@ import com.yatochk.secure.app.model.images.Image
 @Dao
 interface ImagesDao {
 
-    @Query("SELECT * FROM Image")
+    @Query("SELECT * FROM Image ORDER BY album")
     fun getImages(): LiveData<List<Image>>
 
     @Query("SELECT * FROM Image WHERE album = :albumName")
     fun getImages(albumName: String): LiveData<List<Image>>
 
+    @Query("SELECT DISTINCT album FROM Image WHERE album != :excepted")
+    fun getAlbumsExcept(excepted: String): LiveData<List<String>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addImage(image: Image)
+    suspend fun addImage(image: Image)
 
     @Update
-    fun updateImage(image: Image)
+    suspend fun updateImage(image: Image)
 
     @Delete
-    fun deleteImage(image: Image)
+    suspend fun deleteImage(image: Image)
 
 }

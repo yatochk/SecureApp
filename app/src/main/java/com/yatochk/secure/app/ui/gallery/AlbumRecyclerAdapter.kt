@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.model.images.Album
+import com.yatochk.secure.app.utils.contentEqualsNullable
 import kotlinx.android.synthetic.main.album_item.view.*
 
 class AlbumRecyclerAdapter(
@@ -33,7 +34,7 @@ class DiffAlbum : DiffUtil.ItemCallback<Album>() {
         oldItem.name == newItem.name
 
     override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean =
-        oldItem.name == newItem.name && oldItem.preview.contentEquals(newItem.preview)
+        oldItem.name == newItem.name && oldItem.preview?.contentEqualsNullable(newItem.preview) == true
 
 }
 
@@ -48,9 +49,11 @@ class AlbumViewHolder(parent: ViewGroup) :
     fun bind(album: Album, clickListener: (View) -> Unit) {
         itemView.setOnClickListener { clickListener(textName) }
         textName.text = album.name
-        Glide.with(itemView.context)
-            .load(album.preview)
-            .into(imageView)
+        album.preview?.also {
+            Glide.with(itemView.context)
+                .load(it)
+                .into(imageView)
+        }
     }
 
 }

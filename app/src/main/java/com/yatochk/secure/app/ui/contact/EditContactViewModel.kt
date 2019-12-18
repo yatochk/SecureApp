@@ -5,15 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
+import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.contact.Contact
 import com.yatochk.secure.app.model.database.dao.ContactDao
 import com.yatochk.secure.app.ui.main.ContactErrorType
 import com.yatochk.secure.app.utils.postEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EditContactViewModel @Inject constructor(
-    private val contactDao: ContactDao
+    private val contactDao: ContactDao,
+    private val localizationManager: LocalizationManager
 ) : ViewModel() {
 
     private val mutableContact = MutableLiveData<Contact>()
@@ -25,8 +28,8 @@ class EditContactViewModel @Inject constructor(
     private val eventCall = LiveEvent<String>()
     val call: LiveData<String> = eventCall
 
-    private val eventError = LiveEvent<ContactErrorType>()
-    val error: LiveData<ContactErrorType> = eventError
+    private val eventError = LiveEvent<String>()
+    val error: LiveData<String> = eventError
 
     fun initContact(contact: Contact) {
         mutableContact.value = contact
@@ -51,12 +54,16 @@ class EditContactViewModel @Inject constructor(
     }
 
     private fun updateContact(updated: Contact) =
-        viewModelScope.launch {
+        viewModelScope.launch(CoroutineExceptionHandler { _, _ ->
+            eventError.value = localizationManager.getErrorString(ContactErrorType.UPDATE_CONTACT)
+        }) {
             contactDao.updateContact(updated)
         }
 
     fun delete() {
-        viewModelScope.launch {
+        viewModelScope.launch(CoroutineExceptionHandler { _, _ ->
+            eventError.value = localizationManager.getErrorString(ContactErrorType.DELETE_CONTACT)
+        }) {
             contactDao.deleteContact(contact.value!!)
             eventFinish.postEvent()
         }

@@ -5,24 +5,35 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
-import com.yatochk.secure.app.ui.BaseActivity
-import com.yatochk.secure.app.ui.main.ImageErrorType
+import com.yatochk.secure.app.ui.AlbumsAdapter
+import com.yatochk.secure.app.ui.MediaActivity
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.scaleDown
 import com.yatochk.secure.app.utils.showErrorToast
-import kotlinx.android.synthetic.main.activity_image.*
+import kotlinx.android.synthetic.main.activity_image.btn_album_cancel
+import kotlinx.android.synthetic.main.activity_image.button_image_delete
+import kotlinx.android.synthetic.main.activity_image.button_image_rename
+import kotlinx.android.synthetic.main.activity_image.button_image_upload
+import kotlinx.android.synthetic.main.activity_image.container_image
+import kotlinx.android.synthetic.main.activity_image.gallery_image
+import kotlinx.android.synthetic.main.activity_image.recycler_albums
+import kotlinx.android.synthetic.main.image_opened_albums.*
 import javax.inject.Inject
 import kotlin.math.min
 
-class ImageActivity : BaseActivity() {
+class ImageActivity : MediaActivity() {
 
     companion object {
-        private const val DURATION_ANIMATION = 500L
         private const val IMAGE = "opened_image"
 
         fun intent(context: Context, image: Image) =
@@ -32,10 +43,11 @@ class ImageActivity : BaseActivity() {
 
     }
 
-    private val viewModel: ImageVIewModel by viewModels { viewModelFactory }
+    private val viewModel: ImageViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var imageSecureController: ImageSecureController
+    private lateinit var albumsAdapter: AlbumsAdapter
 
     override fun inject() {
         SecureApplication.appComponent.inject(this)
@@ -46,7 +58,10 @@ class ImageActivity : BaseActivity() {
         setContentView(R.layout.activity_image)
         intent.getSerializableExtra(IMAGE)?.also {
             if (savedInstanceState == null) {
-                viewModel.initImage(it as Image)
+                viewModel.initMedia(it as Image)
+                albumDialog.createListener = { name ->
+                    viewModel.onCreateNewAlbum(name)
+                }
             }
         }
         button_image_delete.setOnClickListener {
@@ -58,22 +73,43 @@ class ImageActivity : BaseActivity() {
         button_image_upload.setOnClickListener {
             viewModel.onToGallery()
         }
+        btn_album_cancel.setOnClickListener {
+            viewModel.onAlbumsPickCancel()
+        }
+        btn_new_album.setOnClickListener {
+            viewModel.onclickNewAlbum()
+        }
+        initAlbumsRecycler()
         observers()
+    }
+
+    private fun initAlbumsRecycler() {
+        albumsAdapter = AlbumsAdapter {
+            viewModel.onPickAlbum(it)
+        }
+        recycler_albums.layoutManager = FlexboxLayoutManager(this).apply {
+            justifyContent = JustifyContent.FLEX_START
+        }
+        recycler_albums.adapter = albumsAdapter
     }
 
     private fun observers() {
         with(viewModel) {
             image.observe(this@ImageActivity) {
-                val fullSizeBitmap = BitmapFactory.decodeByteArray(
-                    it,
-                    0,
-                    it.size
-                )
-                val displaySize = Point()
-                windowManager.defaultDisplay.getSize(displaySize)
-                gallery_image.setImageBitmap(
-                    fullSizeBitmap.scaleDown(min(displaySize.x, displaySize.y).toFloat(), true)
-                )
+                try {
+                    val fullSizeBitmap = BitmapFactory.decodeByteArray(
+                        it,
+                        0,
+                        it.size
+                    )
+                    val displaySize = Point()
+                    windowManager.defaultDisplay.getSize(displaySize)
+                    gallery_image.setImageBitmap(
+                        fullSizeBitmap.scaleDown(min(displaySize.x, displaySize.y).toFloat(), true)
+                    )
+                } catch (e: Throwable) {
+                    showErrorToast(this@ImageActivity, getString(R.string.error_display_image))
+                }
             }
             delete.observe(this@ImageActivity) {
                 deleteAnimation()
@@ -81,69 +117,46 @@ class ImageActivity : BaseActivity() {
             toGallery.observe(this@ImageActivity) {
                 toGalleryAnimation()
             }
-            openRename.observe(this@ImageActivity) {
-                openRenameAnimation()
+            openAlbumPicker.observe(this@ImageActivity) {
+                animateAlbumPicker(it)
+            }
+            albums.observe(this@ImageActivity) {
+                albumsAdapter.submitList(it)
             }
             scanImage.observe(this@ImageActivity) {
                 scanMedia(it)
             }
+            newAlbum.observe(this@ImageActivity) {
+                openNewAlbumDialog()
+            }
             finish.observe(this@ImageActivity) {
                 finish()
             }
-            imageError.observe(this@ImageActivity) {
-                if (it == ImageErrorType.TO_GALLERY) {
-                    showErrorToast(this@ImageActivity, getString(R.string.error_to_gallery))
-                }
+            mediaError.observe(this@ImageActivity) {
+                showErrorToast(this@ImageActivity, it)
             }
         }
     }
 
-    private fun openRenameAnimation() {
-
+    override fun onAnimationEnd() {
+        viewModel.animationEnd()
     }
 
-    private fun toGalleryAnimation() {
-        gallery_image.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .scaleX(0f)
-            .scaleY(0f)
-            .withEndAction {
-                viewModel.animationEnd()
-            }
-            .start()
+    override val mediaView: View?
+        get() = gallery_image
 
-        image_to_gallery.animate()
-            .alpha(1f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
+    override val globalContainer: ConstraintLayout
+        get() = container_image
 
-        container_image_options.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
+    override val openedAlbumPicker: ConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(this@ImageActivity, R.layout.image_opened_albums)
+        }
     }
-
-    private fun deleteAnimation() {
-        gallery_image.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .scaleX(0f)
-            .scaleY(0f)
-            .withEndAction {
-                viewModel.animationEnd()
-            }
-            .start()
-
-        image_deleted.animate()
-            .alpha(1f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
-
-        container_image_options.animate()
-            .alpha(0f)
-            .setDuration(DURATION_ANIMATION)
-            .start()
+    override val closedAlbumPicker: ConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(this@ImageActivity, R.layout.activity_image)
+        }
     }
 
 }

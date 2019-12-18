@@ -37,20 +37,20 @@
         android:layout_marginBottom="16dp"
         app:fab_addButtonColorNormal="@color/colorAccent"
         app:fab_addButtonColorPressed="@color/colorAccent"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nav_view" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="82dp"
+        android:layout_marginBottom="16dp"
         app:cardBackgroundColor="@color/cardBackground"
         app:cardCornerRadius="12dp"
         app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_picker"
@@ -76,7 +76,7 @@
                 android:id="@+id/btn_pick_image"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="48dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="24dp"
                 app:cardBackgroundColor="@color/colorPrimaryDark"
@@ -99,7 +99,7 @@
                 android:layout_height="64dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="48dp"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/colorPrimaryDark"
                 app:cardCornerRadius="10dp"
