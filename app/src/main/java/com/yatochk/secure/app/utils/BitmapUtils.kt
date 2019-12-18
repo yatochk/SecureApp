@@ -23,3 +23,8 @@ fun Bitmap.scaleDown(
         height, filter
     )
 }
+
+fun ByteArray.contentEqualsNullable(other: ByteArray?): Boolean {
+    if (other == null) return false
+    return contentEquals(other)
+}

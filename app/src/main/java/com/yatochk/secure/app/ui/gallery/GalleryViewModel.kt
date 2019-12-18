@@ -10,6 +10,7 @@ import com.hadilq.liveevent.LiveEvent
 import com.yatochk.secure.app.model.images.Album
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
+import com.yatochk.secure.app.utils.isVideoPath
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -35,9 +36,13 @@ class GalleryViewModel @Inject constructor(
             value = emptyList()
             images.map { it.album }.toSet().forEach { name ->
                 viewModelScope.launch(Dispatchers.IO + albumsExceptionHandler) {
-                    val imageBytes = imageSecureController.decryptImageFromFile(
-                        images.last { it.album == name }.securePath
-                    )
+                    val mediaPath = images.last { it.album == name }.securePath
+                    val imageBytes =
+                        if (mediaPath.isVideoPath()) {
+                            null
+                        } else {
+                            imageSecureController.decryptImageFromFile(mediaPath)
+                        }
                     albumsChanel.send(
                         Album(
                             name,
