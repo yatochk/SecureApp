@@ -92,4 +92,8 @@ dependencies {
 
     //inflate dex
     implementation 'com.android.support:multidex:1.0.3'
+
+    //ads
+    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.11.2'
 }

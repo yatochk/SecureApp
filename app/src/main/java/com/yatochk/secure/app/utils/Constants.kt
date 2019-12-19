@@ -5,3 +5,5 @@ const val DEFAULT_GALLERY_ALBUM = "gallery"
 const val DECRYPTED_POSTFIX = "-decrypt"
 const val REGULAR_VIDEO_FORMAT = "mp4"
 const val CAMERA_VIDEO_FORMAT = "MPEG_4"
+
+const val TEST_DEVICE = ""
