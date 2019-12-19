@@ -300,6 +300,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showExitDialog() {
+        TransitionManager.beginDelayedTransition(container)
         main_ad_view.isVisible = false
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.exit_frame, exitDialog, EXIT_DIALOG)
@@ -307,6 +308,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun hideExitDialog() {
+        TransitionManager.beginDelayedTransition(container)
         main_ad_view.isVisible = true
         val transaction = supportFragmentManager.beginTransaction()
         transaction.remove(exitDialog)
@@ -314,6 +316,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        //maybe need debounce
         val foundFragment = supportFragmentManager.findFragmentByTag(EXIT_DIALOG)
         if (foundFragment == null) {
             showExitDialog()

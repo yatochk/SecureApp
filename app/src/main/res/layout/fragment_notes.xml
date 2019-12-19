@@ -64,7 +64,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
             <ImageView
                 android:id="@+id/note_divider"
                 android:layout_width="match_parent"
