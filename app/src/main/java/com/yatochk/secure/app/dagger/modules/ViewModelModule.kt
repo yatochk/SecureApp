@@ -3,6 +3,7 @@ package com.yatochk.secure.app.dagger.modules
 import androidx.lifecycle.ViewModel
 import com.yatochk.secure.app.MediaViewModel
 import com.yatochk.secure.app.dagger.ViewModelKey
+import com.yatochk.secure.app.ui.AdViewModel
 import com.yatochk.secure.app.ui.albums.AlbumViewModel
 import com.yatochk.secure.app.ui.browser.BrowserViewModel
 import com.yatochk.secure.app.ui.calculator.CalculatorViewModel
@@ -19,6 +20,7 @@ import com.yatochk.secure.app.ui.video.VideoViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import javax.inject.Singleton
 
 @Module
 abstract class ViewModelModule {
@@ -92,5 +94,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CalculatorViewModel::class)
     internal abstract fun calculatorViewModel(viewModel: CalculatorViewModel): ViewModel
+
+    @Singleton
+    @Binds
+    @IntoMap
+    @ViewModelKey(AdViewModel::class)
+    internal abstract fun adViewModel(viewModel: AdViewModel): ViewModel
 
 }

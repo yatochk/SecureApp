@@ -20,15 +20,13 @@ import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.ui.BaseActivity
+import com.yatochk.secure.app.ui.ExitDialog
 import com.yatochk.secure.app.ui.browser.BrowserFragment
 import com.yatochk.secure.app.ui.contact.ContactFragment
 import com.yatochk.secure.app.ui.gallery.GalleryFragment
 import com.yatochk.secure.app.ui.gallery.GalleryMenuViewModel
 import com.yatochk.secure.app.ui.notes.NotesFragment
-import com.yatochk.secure.app.utils.observe
-import com.yatochk.secure.app.utils.showErrorToast
-import com.yatochk.secure.app.utils.toPath
-import com.yatochk.secure.app.utils.toTimeString
+import com.yatochk.secure.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.*
@@ -42,12 +40,26 @@ class MainActivity : BaseActivity() {
         private const val PICK_PHOTO = 2
         private const val PICK_VIDEO = 3
 
+        private const val EXIT_DIALOG = "exit_dialog"
+
         fun intent(context: Context) =
             Intent(context, MainActivity::class.java)
     }
 
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
     private val galleryMenuViewModel: GalleryMenuViewModel by viewModels { viewModelFactory }
+
+    private val exitDialog by lazy {
+        ExitDialog().apply {
+            initAds(this@MainActivity)
+            cancelListener = {
+                hideExitDialog()
+            }
+            exitListener = {
+                finishAffinity()
+            }
+        }
+    }
 
     private val galleryFragment by lazy { GalleryFragment() }
     private val notesFragment by lazy { NotesFragment() }
@@ -112,6 +124,11 @@ class MainActivity : BaseActivity() {
             true
         }
         initObservers()
+        initMainAd()
+    }
+
+    private fun initMainAd() {
+        main_ad_view.loadAd(getDefaultAdRequest())
     }
 
     private fun replaceFloatingMenu(fragment: Fragment) {
@@ -279,6 +296,32 @@ class MainActivity : BaseActivity() {
                     mainViewModel.receivedGalleryVideo(it)
                 }
             }
+        }
+    }
+
+    private fun showExitDialog() {
+        TransitionManager.beginDelayedTransition(container)
+        main_ad_view.isVisible = false
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.add(R.id.exit_frame, exitDialog, EXIT_DIALOG)
+        transaction.commit()
+    }
+
+    private fun hideExitDialog() {
+        TransitionManager.beginDelayedTransition(container)
+        main_ad_view.isVisible = true
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.remove(exitDialog)
+        transaction.commit()
+    }
+
+    override fun onBackPressed() {
+        //maybe need debounce
+        val foundFragment = supportFragmentManager.findFragmentByTag(EXIT_DIALOG)
+        if (foundFragment == null) {
+            showExitDialog()
+        } else {
+            hideExitDialog()
         }
     }
 }
