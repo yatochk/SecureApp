@@ -60,11 +60,12 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-
+    /*
+    TODO viewModelScope.isActive == false if fragment not recreated
     private val galleryFragment by lazy { GalleryFragment() }
     private val notesFragment by lazy { NotesFragment() }
     private val browserFragment by lazy { BrowserFragment() }
-
+*/
     private lateinit var imageName: String
     private lateinit var videoName: String
 
@@ -101,22 +102,22 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initPicker()
-        goToFragment(galleryFragment)
+        goToFragment(GalleryFragment())
         galleryFloatingMenu()
         nav_view.setOnNavigationItemSelectedListener {
             goToFragment(
                 when (it.itemId) {
                     R.id.navigation_gallery -> {
-                        galleryFragment
+                        GalleryFragment()
                     }
                     R.id.navigation_contact -> {
                         ContactFragment()
                     }
                     R.id.navigation_notes -> {
-                        notesFragment
+                        NotesFragment()
                     }
                     R.id.navigation_internet -> {
-                        browserFragment
+                        BrowserFragment()
                     }
                     else -> throw IllegalStateException("Not implement FAButton for ${it.itemId}")
                 }
