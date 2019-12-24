@@ -17,6 +17,7 @@ import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseFragment
 import com.yatochk.secure.app.utils.clear
+import com.yatochk.secure.app.utils.hideKeyboard
 import com.yatochk.secure.app.utils.observe
 import com.yatochk.secure.app.utils.toContact
 import kotlinx.android.synthetic.main.fragment_contact.*
@@ -118,6 +119,7 @@ class ContactFragment : BaseFragment() {
             hideNewContact.observe(this@ContactFragment) {
                 new_contact_name.clear()
                 new_contact_number.clear()
+                activity?.hideKeyboard()
                 animateNewContact(false)
             }
         }

@@ -12,6 +12,7 @@ import com.yatochk.secure.app.R
 import com.yatochk.secure.app.dagger.SecureApplication
 import com.yatochk.secure.app.ui.BaseFragment
 import com.yatochk.secure.app.utils.clear
+import com.yatochk.secure.app.utils.hideKeyboard
 import com.yatochk.secure.app.utils.observe
 import kotlinx.android.synthetic.main.fragment_notes.*
 
@@ -81,6 +82,9 @@ class NotesFragment : BaseFragment() {
         viewModel.showNewNote.observe(this) {
             new_note_title.clear()
             new_note_body.clear()
+            if (!it) {
+                activity?.hideKeyboard()
+            }
             animateShowNewNote(it)
         }
     }

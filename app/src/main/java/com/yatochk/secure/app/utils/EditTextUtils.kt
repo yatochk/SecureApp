@@ -1,5 +1,6 @@
 package com.yatochk.secure.app.utils
 
+import android.app.Activity
 import android.content.Context
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
@@ -41,3 +42,10 @@ inline fun EditText.onSearch(crossinline listener: (String) -> Unit) {
 
 fun EditText.clear() =
     setText("")
+
+fun Activity.hideKeyboard() {
+    currentFocus?.also {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(it.windowToken, 0)
+    }
+}
