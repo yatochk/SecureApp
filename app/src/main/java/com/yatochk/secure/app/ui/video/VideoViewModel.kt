@@ -17,19 +17,22 @@ class VideoViewModel @Inject constructor(
     localizationManager: LocalizationManager
 ) : MediaViewModel(imageSecureController, imagesRepository, localizationManager) {
 
-    override suspend fun mediaToGallery(media: Image): File =
+    override suspend fun mediaToGallery(media: Image): String =
         coroutineScope {
             File(media.regularPath).also {
                 if (it.exists()) {
                     val regularPath = it.path
                     val newName =
                         regularPath.substring(0, regularPath.indexOf(".$REGULAR_VIDEO_FORMAT"))
-                    val renamedFile = File("${newName}$DECRYPTED_POSTFIX.$REGULAR_VIDEO_FORMAT")
+                    val galleryPath = "${newName}$DECRYPTED_POSTFIX.$REGULAR_VIDEO_FORMAT"
+                    val renamedFile = File(galleryPath)
                     if (!renamedFile.exists()) {
                         it.renameTo(renamedFile)
                     }
+                    return@coroutineScope galleryPath
                 }
             }
+            return@coroutineScope ""
         }
 
 }
