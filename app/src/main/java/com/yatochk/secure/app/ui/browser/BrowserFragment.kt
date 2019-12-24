@@ -56,6 +56,9 @@ class BrowserFragment : BaseFragment() {
         button_home.setOnClickListener {
             viewModel.clickHome()
         }
+        button_back.setOnClickListener {
+            if (web_view.canGoBack()) web_view.goBack()
+        }
         observers()
     }
 
