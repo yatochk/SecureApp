@@ -12,8 +12,9 @@ import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.utils.DEFAULT_CAMERA_ALBUM
 import com.yatochk.secure.app.utils.DEFAULT_GALLERY_ALBUM
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -60,7 +61,7 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun encryptMedia(name: String): String =
-        coroutineScope {
+        withContext(Dispatchers.IO) {
             val imageFile = File(ImageSecureController.regularPath + name)
             val secureFile = File(ImageSecureController.securePath + imageFile.name)
             val secureImage = imageSecureController.encryptAndSaveFile(imageFile, secureFile)
@@ -69,7 +70,7 @@ class MainViewModel @Inject constructor(
         }
 
     private suspend fun encryptGalleryMedia(regularPath: String): File =
-        coroutineScope {
+        withContext(Dispatchers.IO) {
             val imageName = regularPath.substring(regularPath.lastIndexOf("/") + 1)
             val imageFile = File(regularPath)
             require(imageFile.exists()) { "this file is not exist" }
