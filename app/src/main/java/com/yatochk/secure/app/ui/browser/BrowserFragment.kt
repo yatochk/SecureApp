@@ -1,5 +1,6 @@
 package com.yatochk.secure.app.ui.browser
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
@@ -29,12 +30,21 @@ class BrowserFragment : BaseFragment() {
     private lateinit var urlConstraint: ConstraintSet
     private lateinit var editUrlConstraint: ConstraintSet
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         urlConstraint = ConstraintSet()
         urlConstraint.clone(root_browser)
         editUrlConstraint = ConstraintSet()
         editUrlConstraint.clone(activity, R.layout.fragment_browser_edit)
+        web_view.settings.apply {
+            javaScriptEnabled = true
+            javaScriptCanOpenWindowsAutomatically = true
+            domStorageEnabled = true
+            setAppCacheEnabled(true)
+            databaseEnabled = true
+            loadWithOverviewMode = true
+        }
         web_view.webChromeClient = WebChromeClient()
         web_view.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
