@@ -62,14 +62,9 @@ class MainViewModel @Inject constructor(
     private suspend fun encryptMedia(name: String): String =
         coroutineScope {
             val imageFile = File(ImageSecureController.regularPath + name)
-            val imageBytes = imageFile.readBytes()
-            val photoName = imageFile.name
-            imageSecureController.encryptAndSaveImage(
-                imageBytes,
-                photoName
-            )
+            val secureImage = imageSecureController.encryptAndSaveFile(imageFile)
             imageFile.delete()
-            photoName
+            secureImage.name
         }
 
     private suspend fun encryptGalleryMedia(regularPath: String): File =

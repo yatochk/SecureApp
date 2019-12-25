@@ -5,6 +5,7 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Base64InputStream
+import android.util.Base64OutputStream
 import java.io.*
 import java.math.BigInteger
 import java.security.Key
@@ -46,6 +47,24 @@ class Cypher @Inject constructor(private val context: Context) {
     }
 
     @Throws(IllegalBlockSizeException::class)
+    fun encryptFile(input: FileInputStream, output: FileOutputStream) {
+        val buf = ByteArray(1024 * 1024)
+        val c = Cipher.getInstance(AES_MODE, "BC")
+        c.init(Cipher.ENCRYPT_MODE, secretKey)
+
+
+        val cipherOutput =
+            CipherOutputStream(Base64OutputStream(output, Base64.DEFAULT), c)
+        var read: Int
+        while (input.read(buf).also { read = it } > 0) {
+            cipherOutput.write(buf, 0, read)
+        }
+        cipherOutput.close()
+        input.close()
+        output.close()
+    }
+
+    @Throws(IllegalBlockSizeException::class)
     fun decrypt(bytes: ByteArray): ByteArray {
         val c = Cipher.getInstance(AES_MODE, "BC")
         c.init(Cipher.DECRYPT_MODE, secretKey)
@@ -64,7 +83,7 @@ class Cypher @Inject constructor(private val context: Context) {
         while (cipherInput.read(buf).also { read = it } > 0) {
             output.write(buf, 0, read)
         }
-
+        cipherInput.close()
         input.close()
         output.close()
     }

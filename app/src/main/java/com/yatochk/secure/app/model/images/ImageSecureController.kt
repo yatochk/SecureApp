@@ -23,6 +23,17 @@ class ImageSecureController @Inject constructor(
 
     }
 
+    fun encryptAndSaveFile(regularFile: File): File {
+        val directory = File(securePath)
+        directory.mkdirs()
+        val secureFile = File(securePath + regularFile.name)
+        cypher.encryptFile(
+            regularFile.inputStream(),
+            secureFile.outputStream()
+        )
+        return secureFile
+    }
+
     fun encryptAndSaveImage(bytes: ByteArray, name: String): File {
         val directory = File(securePath)
         directory.mkdirs()
