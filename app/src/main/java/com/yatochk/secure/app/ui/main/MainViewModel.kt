@@ -62,7 +62,8 @@ class MainViewModel @Inject constructor(
     private suspend fun encryptMedia(name: String): String =
         coroutineScope {
             val imageFile = File(ImageSecureController.regularPath + name)
-            val secureImage = imageSecureController.encryptAndSaveFile(imageFile)
+            val secureFile = File(ImageSecureController.securePath + imageFile.name)
+            val secureImage = imageSecureController.encryptAndSaveFile(imageFile, secureFile)
             imageFile.delete()
             secureImage.name
         }
@@ -72,12 +73,12 @@ class MainViewModel @Inject constructor(
             val imageName = regularPath.substring(regularPath.lastIndexOf("/") + 1)
             val imageFile = File(regularPath)
             require(imageFile.exists()) { "this file is not exist" }
-            val imageBytes = imageFile.readBytes()
+
+            val secureFile = File(ImageSecureController.securePath + imageName)
+            val encryptedFile = imageSecureController.encryptAndSaveFile(imageFile, secureFile)
+
             imageFile.delete()
-            imageSecureController.encryptAndSaveImage(
-                imageBytes,
-                imageName
-            )
+            encryptedFile
         }
 
     fun receivedGalleryImage(regularPath: String) {
