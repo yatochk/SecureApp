@@ -14,6 +14,7 @@ class ImageSecureController @Inject constructor(
     companion object {
         private const val SECURE_FOLDER = "/calculator_need_container/"
         private const val REGULAR_FOLDER = "/photo/"
+        const val FAKE_FORMAT = ".txt"
 
         val regularPath = Environment.getExternalStorageDirectory().absolutePath +
                 REGULAR_FOLDER
@@ -31,14 +32,6 @@ class ImageSecureController @Inject constructor(
             secureFile.outputStream()
         )
         return secureFile
-    }
-
-    fun encryptAndSaveImage(bytes: ByteArray, name: String): File {
-        val directory = File(securePath)
-        directory.mkdirs()
-        return File(securePath + name).apply {
-            writeBytes(cypher.encrypt(bytes))
-        }
     }
 
     fun decryptVideo(image: Image): File {

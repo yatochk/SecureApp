@@ -31,23 +31,38 @@ class MainViewModel @Inject constructor(
     private val mutableScanImage = LiveEvent<String>()
     val scanImage: LiveData<String> = mutableScanImage
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e("Error on securing", throwable.localizedMessage, throwable)
+        mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_IMAGE)
+    }
+
     fun receivedPhoto(receivedName: String) {
         receivedMedia(receivedName, receivedName)
     }
 
     fun receivedVideo(receivedName: String) {
-        val nameForSave = "${receivedName.substring(0, receivedName.lastIndexOf("."))}.mp4"
-        receivedMedia(
-            receivedName,
-            nameForSave
-        )
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            val nameForSave = "${receivedName.substring(0, receivedName.lastIndexOf("."))}.mp4"
+            val imageFile = File(ImageSecureController.regularPath + receivedName)
+            val secureFile = File(ImageSecureController.securePath + imageFile.name + ".txt")
+            val directory = File(ImageSecureController.securePath)
+            directory.mkdirs()
+
+            imageFile.copyTo(secureFile, true)
+            imageFile.delete()
+
+            imagesDao.addImage(
+                Image(
+                    ImageSecureController.securePath + secureFile.name,
+                    ImageSecureController.regularPath + nameForSave,
+                    DEFAULT_CAMERA_ALBUM
+                )
+            )
+        }
     }
 
     private fun receivedMedia(receivedName: String, saveName: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
-            Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_PHOTO)
-        }) {
+        viewModelScope.launch(exceptionHandler) {
             val name = encryptMedia(receivedName)
             imagesDao.addImage(
                 Image(
@@ -83,10 +98,7 @@ class MainViewModel @Inject constructor(
         }
 
     fun receivedGalleryImage(regularPath: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
-            Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_IMAGE)
-        }) {
+        viewModelScope.launch(exceptionHandler) {
             val file = encryptGalleryMedia(regularPath)
             imagesDao.addImage(
                 Image(
@@ -100,14 +112,19 @@ class MainViewModel @Inject constructor(
     }
 
     fun receivedGalleryVideo(regularPath: String) {
-        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
-            Log.e("Error on securing", throwable.localizedMessage, throwable)
-            mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_IMAGE)
-        }) {
-            val file = encryptGalleryMedia(regularPath)
+        viewModelScope.launch(exceptionHandler) {
+            val imageFile = File(regularPath)
+            val secureName = imageFile.name + ImageSecureController.FAKE_FORMAT
+            val secureFile =
+                File(ImageSecureController.securePath + secureName)
+            val directory = File(ImageSecureController.securePath)
+            directory.mkdirs()
+
+            imageFile.copyTo(secureFile, true)
+            imageFile.delete()
             imagesDao.addImage(
                 Image(
-                    file.path,
+                    secureFile.path,
                     regularPath,
                     DEFAULT_GALLERY_ALBUM
                 )

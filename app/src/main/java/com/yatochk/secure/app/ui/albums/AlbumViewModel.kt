@@ -76,9 +76,14 @@ class AlbumViewModel @Inject constructor(
         images.forEach {
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 val bitmap = if (it.regularPath.isVideoPath()) {
+                    val secureFile = File(it.securePath)
+                    require(secureFile.exists()) { "this file is not exist" }
+                    val regularFile = File(it.regularPath)
+                    secureFile.copyTo(regularFile)
+
                     decryptedVideos.add(it.regularPath)
                     ThumbnailUtils.createVideoThumbnail(
-                        imageSecureController.decryptVideo(it).absolutePath,
+                        regularFile.absolutePath,
                         MediaStore.Images.Thumbnails.MINI_KIND
                     )
                 } else {
