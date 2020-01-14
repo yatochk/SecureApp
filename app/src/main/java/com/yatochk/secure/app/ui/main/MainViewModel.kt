@@ -11,6 +11,7 @@ import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.utils.DEFAULT_CAMERA_ALBUM
 import com.yatochk.secure.app.utils.DEFAULT_GALLERY_ALBUM
+import com.yatochk.secure.app.utils.changeFormat
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,7 +115,7 @@ class MainViewModel @Inject constructor(
     fun receivedGalleryVideo(regularPath: String) {
         viewModelScope.launch(exceptionHandler) {
             val imageFile = File(regularPath)
-            val secureName = imageFile.name + ImageSecureController.FAKE_FORMAT
+            val secureName = imageFile.name.changeFormat(ImageSecureController.FAKE_FORMAT)
             val secureFile =
                 File(ImageSecureController.securePath + secureName)
             val directory = File(ImageSecureController.securePath)

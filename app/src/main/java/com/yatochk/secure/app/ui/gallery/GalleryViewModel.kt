@@ -36,12 +36,17 @@ class GalleryViewModel @Inject constructor(
             value = emptyList()
             images.map { it.album }.toSet().forEach { name ->
                 viewModelScope.launch(Dispatchers.IO + albumsExceptionHandler) {
-                    val mediaPath = images.last { it.album == name }.securePath
+                    val regularPath: String
+                    val securePath: String
+                    images.last { it.album == name }.also {
+                        securePath = it.securePath
+                        regularPath = it.regularPath
+                    }
                     val imageBytes =
-                        if (mediaPath.isVideoPath()) {
+                        if (regularPath.isVideoPath()) {
                             null
                         } else {
-                            imageSecureController.decryptImageFromFile(mediaPath)
+                            imageSecureController.decryptImageFromFile(securePath)
                         }
                     albumsChanel.send(
                         Album(
