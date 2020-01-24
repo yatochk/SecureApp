@@ -5,8 +5,6 @@ import com.yatochk.secure.app.model.LocalizationManager
 import com.yatochk.secure.app.model.images.Image
 import com.yatochk.secure.app.model.images.ImageSecureController
 import com.yatochk.secure.app.model.repository.ImagesRepository
-import com.yatochk.secure.app.utils.DECRYPTED_POSTFIX
-import com.yatochk.secure.app.utils.REGULAR_VIDEO_FORMAT
 import kotlinx.coroutines.coroutineScope
 import java.io.File
 import javax.inject.Inject
@@ -19,20 +17,13 @@ class VideoViewModel @Inject constructor(
 
     override suspend fun mediaToGallery(media: Image): String =
         coroutineScope {
-            File(media.regularPath).also {
-                if (it.exists()) {
-                    val regularPath = it.path
-                    val newName =
-                        regularPath.substring(0, regularPath.indexOf(".$REGULAR_VIDEO_FORMAT"))
-                    val galleryPath = "${newName}$DECRYPTED_POSTFIX.$REGULAR_VIDEO_FORMAT"
-                    val renamedFile = File(galleryPath)
-                    if (!renamedFile.exists()) {
-                        it.renameTo(renamedFile)
-                    }
-                    return@coroutineScope galleryPath
-                }
-            }
-            return@coroutineScope ""
+            val secureVideo = File(media.securePath)
+            require(secureVideo.exists()) { "video is not exist" }
+            val regularFile = File(media.regularPath)
+            regularFile.mkdirs()
+            secureVideo.copyTo(regularFile, overwrite = true)
+            secureVideo.delete()
+            regularFile.path
         }
 
 }

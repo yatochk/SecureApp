@@ -75,7 +75,7 @@ class VideoActivity : MediaActivity(), MediaController.MediaPlayerControl {
         (intent.getSerializableExtra(VIDEO) as? Image)?.also { video ->
             if (savedInstanceState == null) {
                 viewModel.initMedia(video)
-                initPlayer(video.regularPath)
+                initPlayer(video.securePath)
                 albumDialog.createListener = { name ->
                     viewModel.onCreateNewAlbum(name)
                 }

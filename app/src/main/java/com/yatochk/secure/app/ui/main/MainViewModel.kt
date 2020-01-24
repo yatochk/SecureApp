@@ -34,7 +34,7 @@ class MainViewModel @Inject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e("Error on securing", throwable.localizedMessage, throwable)
-        mutableShowError.value = localizationManager.getErrorString(MediaErrorType.ADD_IMAGE)
+        mutableShowError.postValue(localizationManager.getErrorString(MediaErrorType.ADD_IMAGE))
     }
 
     fun receivedPhoto(receivedName: String) {
@@ -113,7 +113,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun receivedGalleryVideo(regularPath: String) {
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val imageFile = File(regularPath)
             val secureName = imageFile.name.changeFormat(ImageSecureController.FAKE_FORMAT)
             val secureFile =
@@ -130,7 +130,7 @@ class MainViewModel @Inject constructor(
                     DEFAULT_GALLERY_ALBUM
                 )
             )
-            mutableScanImage.value = regularPath
+            mutableScanImage.postValue(regularPath)
         }
     }
 

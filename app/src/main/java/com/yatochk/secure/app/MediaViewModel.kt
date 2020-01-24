@@ -15,6 +15,7 @@ import com.yatochk.secure.app.utils.insertPostfix
 import com.yatochk.secure.app.utils.postEvent
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -116,13 +117,13 @@ open class MediaViewModel @Inject constructor(
 
     fun onToGallery() {
         mutableToGallery.value = null
-        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+        GlobalScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.e(MediaViewModel::class.java.simpleName, throwable.localizedMessage, throwable)
-            mutableError.value = localizationManager.getErrorString(MediaErrorType.TO_GALLERY)
+            mutableError.postValue(localizationManager.getErrorString(MediaErrorType.TO_GALLERY))
         }) {
             val galleryPath = mediaToGallery(currentMedia)
             imagesRepository.deleteImage(currentMedia)
-            mutableScanImage.value = galleryPath
+            mutableScanImage.postValue(galleryPath)
         }
     }
 

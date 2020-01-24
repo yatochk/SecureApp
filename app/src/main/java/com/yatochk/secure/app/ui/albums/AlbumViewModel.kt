@@ -47,8 +47,6 @@ class AlbumViewModel @Inject constructor(
     private val mutableDecryptionSeek = MutableLiveData<DecryptionSeek>()
     val decryptionSeek: LiveData<DecryptionSeek> = mutableDecryptionSeek
 
-    private val decryptedVideos = arrayListOf<String>()
-
     fun screenOpened() {
         mutableStartObserving.value = null
     }
@@ -58,12 +56,6 @@ class AlbumViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         chanel.close()
-        decryptedVideos.forEach { path ->
-            File(path).also {
-                if (it.exists())
-                    it.delete()
-            }
-        }
     }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
@@ -75,26 +67,24 @@ class AlbumViewModel @Inject constructor(
         mediatorImages.value = emptyList()
         images.forEach {
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-                val bitmap = if (it.regularPath.isVideoPath()) {
-                    val secureFile = File(it.securePath)
-                    require(secureFile.exists()) { "this file is not exist" }
-                    val regularFile = File(it.regularPath)
-                    secureFile.copyTo(regularFile)
+                val bitmap =
+                    if (it.regularPath.isVideoPath()) {
+                        val secureFile = File(it.securePath)
+                        require(secureFile.exists()) { "this file is not exist" }
 
-                    decryptedVideos.add(it.regularPath)
-                    ThumbnailUtils.createVideoThumbnail(
-                        regularFile.absolutePath,
-                        MediaStore.Images.Thumbnails.MINI_KIND
-                    )
-                } else {
-                    val decryptedBytes =
-                        imageSecureController.decryptImageFromFile(it.securePath)
-                    BitmapFactory.decodeByteArray(
-                        decryptedBytes,
-                        0,
-                        decryptedBytes.size
-                    )
-                }
+                        ThumbnailUtils.createVideoThumbnail(
+                            secureFile.absolutePath,
+                            MediaStore.Images.Thumbnails.MINI_KIND
+                        )
+                    } else {
+                        val decryptedBytes =
+                            imageSecureController.decryptImageFromFile(it.securePath)
+                        BitmapFactory.decodeByteArray(
+                            decryptedBytes,
+                            0,
+                            decryptedBytes.size
+                        )
+                    }
                 val newImage = Pair(it, bitmap)
                 chanel.send(newImage)
             }
