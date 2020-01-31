@@ -15,7 +15,7 @@ class VideoViewModel @Inject constructor(
     localizationManager: LocalizationManager
 ) : MediaViewModel(imageSecureController, imagesRepository, localizationManager) {
 
-    override suspend fun mediaToGallery(media: Image): String =
+    override suspend fun mediaToGallery(media: Image): File =
         coroutineScope {
             val secureVideo = File(media.securePath)
             require(secureVideo.exists()) { "video is not exist" }
@@ -23,7 +23,7 @@ class VideoViewModel @Inject constructor(
             regularFile.mkdirs()
             secureVideo.copyTo(regularFile, overwrite = true)
             secureVideo.delete()
-            regularFile.path
+            regularFile
         }
 
 }

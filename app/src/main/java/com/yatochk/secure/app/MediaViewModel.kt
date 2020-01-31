@@ -37,8 +37,8 @@ open class MediaViewModel @Inject constructor(
     private val mutableToGallery = LiveEvent<Void>()
     val toGallery: LiveData<Void> = mutableToGallery
 
-    private val mutableScanImage = LiveEvent<String>()
-    val scanImage: LiveData<String> = mutableScanImage
+    private val mutableScanImage = LiveEvent<File>()
+    val scanImage: LiveData<File> = mutableScanImage
 
     private val eventFinish = LiveEvent<Void>()
     val finish: LiveData<Void> = eventFinish
@@ -103,7 +103,7 @@ open class MediaViewModel @Inject constructor(
         mutableOpenAlbumPicker.value = true
     }
 
-    protected open suspend fun mediaToGallery(media: Image) =
+    protected open suspend fun mediaToGallery(media: Image): File =
         coroutineScope {
             val regularImage = imageSecureController.decryptImageFromFile(media.securePath)
             val galleryPath = media.regularPath.insertPostfix(DECRYPTED_POSTFIX)
@@ -112,7 +112,7 @@ open class MediaViewModel @Inject constructor(
                 File(media.regularPath.substring(0, media.regularPath.lastIndexOf("/")))
             imageDirectory.mkdirs()
             imageFile.writeBytes(regularImage)
-            galleryPath
+            imageFile
         }
 
     fun onToGallery() {
