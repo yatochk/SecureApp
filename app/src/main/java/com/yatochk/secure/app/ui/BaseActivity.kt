@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.yatochk.secure.app.dagger.ViewModelFactory
 import java.io.File
 import javax.inject.Inject
@@ -30,9 +31,16 @@ abstract class BaseActivity : AppCompatActivity() {
         MediaScannerConnection.scanFile(
             this,
             arrayOf(path),
-            null,
             null
-        )
+        ) { createdPath, uri ->
+            FirebaseAnalytics.getInstance(this).logEvent(
+                "Scan_media_finished",
+                Bundle().apply {
+                    putString("Path", createdPath)
+                    putString("Uri", uri.toString())
+                }
+            )
+        }
     }
 
     /**
