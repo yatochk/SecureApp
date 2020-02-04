@@ -4,6 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.appdistribution'
 
 android {
 
@@ -26,6 +27,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        firebaseAppDistribution {
+            appId "1:535330396315:android:9cf6d183d21092d2b38e3e"
+            releaseNotes = generateChangelog()
+            groups = "customer"
+        }
     }
     buildTypes {
         release {
