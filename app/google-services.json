@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "535330396315",
+    "firebase_url": "https://app-d07ca.firebaseio.com",
+    "project_id": "app-d07ca",
+    "storage_bucket": "app-d07ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535330396315:android:9cf6d183d21092d2b38e3e",
+        "android_client_info": {
+          "package_name": "com.yatochk.secure.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "535330396315-a4u25k1vjib25oijuj3eedoq232cunja.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNXvH3tKRt8fNavQqaF60G18xt1qxkcOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535330396315-a4u25k1vjib25oijuj3eedoq232cunja.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
